@@ -78,6 +78,7 @@ export default function LearnPage() {
   const [isCorrect, setIsCorrect] = React.useState<boolean | null>(null);
   const [sessionProgress, setSessionProgress] = React.useState(20);
   const [accuracy, setAccuracy] = React.useState(0);
+  const [predictedSign, setPredictedSign] = React.useState<string | null>(null);
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const [isWebcamOn, setIsWebcamOn] = React.useState(true);
@@ -182,6 +183,7 @@ export default function LearnPage() {
           try {
             const response = await recognizeGesture({ landmarks });
             const { prediction, confidence } = response;
+            setPredictedSign(prediction);
             const targetSign = currentSign;
             setIsCorrect(prediction === targetSign);
             setAccuracy(Math.round(confidence * 100));
@@ -194,6 +196,7 @@ export default function LearnPage() {
         } else {
           setIsCorrect(null);
           setAccuracy(0);
+          setPredictedSign(null);
         }
       }
     }
@@ -302,13 +305,13 @@ export default function LearnPage() {
         </div>
 
         <div className="text-center">
-            <p className="text-sm text-muted-foreground">Active Sign</p>
+            <p className="text-sm text-muted-foreground">Target Sign</p>
             <p className="text-lg font-bold">{currentSign}</p>
         </div>
 
         <div className="text-center">
-            <p className="text-sm text-muted-foreground">Next Sign</p>
-            <p className="text-lg font-bold">{nextSign}</p>
+            <p className="text-sm text-muted-foreground">You are signing</p>
+            <p className="text-lg font-bold text-accent-green">{predictedSign || '...'}</p>
         </div>
         
         <div className="w-48">
@@ -439,4 +442,5 @@ export default function LearnPage() {
     </div>
   );
 }
+
 
