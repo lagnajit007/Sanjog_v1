@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, Check, CheckCircle, Crown, Gamepad2, Lightbulb, PenTool, User, Users, Video } from 'lucide-react';
+import { ArrowRight, Check, CheckCircle, Crown, Gamepad2, GraduationCap, Lightbulb, PenTool, User, Users, Video } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -15,6 +15,14 @@ import { useUser } from '@/firebase';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+
+const CreativeActivitiesIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 8V12M12 12V16M12 12H16M12 12H8" stroke="#7B61FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M18.5 12C18.5 13.9655 18.0051 15.8239 17.1375 17.391C16.2699 18.9581 15.071 20.157 13.6822 20.8528C12.2934 21.5486 10.7719 21.713 9.29616 21.3259C7.82041 20.9387 6.46747 20.0223 5.42173 18.721C4.37599 17.4197 3.69931 15.8113 3.48679 14.1221C3.27426 12.433 3.53526 10.7455 4.23896 9.24751C4.94265 7.74952 6.05943 6.51263 7.44754 5.68888C8.83566 4.86514 10.4373 4.5 12 4.5" stroke="#7B61FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 
 const LandingPage = () => {
   const { user, isUserLoading } = useUser();
@@ -208,41 +216,35 @@ const LandingPage = () => {
         {/* Interactive Features Section */}
         <section className="bg-surface py-16 md:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h2 className="text-center text-3xl font-headline font-bold text-textPrimary md:text-4xl">
-              Our interactive features
-            </h2>
+            <div className="text-left mb-12">
+                <h2 className="text-lg font-bold text-primary">interactive</h2>
+            </div>
             <div className="mt-12 grid gap-8 md:grid-cols-3">
-              <Card className="bg-[#E8E4FF] text-center">
-                <CardHeader>
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white">
-                    <PenTool className="h-6 w-6 text-primary" />
+              <Card className="bg-[#F1F0FB] p-6 text-left border-none">
+                  <div className="mb-4 inline-block rounded-full bg-white p-3 shadow-sm" style={{ clipPath: 'polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%)'}}>
+                    <GraduationCap className="h-8 w-8 text-textPrimary" />
                   </div>
-                  <CardTitle className="mt-4">Fun Quiz</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-textSecondary">Discover thousands of fun and interactive learning quizzes.</p>
+                  <CardTitle className="mt-4 text-2xl font-bold">Fun Quiz</CardTitle>
+                <CardContent className="p-0 mt-2">
+                  <p className="text-textSecondary">Discover thousands of fun and interactive learning.</p>
                 </CardContent>
               </Card>
-              <Card className="bg-[#DAD5FF] text-center">
-                <CardHeader>
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white">
-                    <Lightbulb className="h-6 w-6 text-primary" />
+              <Card className="bg-primary p-6 text-left text-white border-none">
+                  <div className="mb-4 inline-block rounded-full bg-white/20 p-3 shadow-sm" style={{ clipPath: 'polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%)'}}>
+                    <CreativeActivitiesIcon />
                   </div>
-                  <CardTitle className="mt-4">Creative Activities</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-textSecondary">Learn through creative and engaging challenges.</p>
+                  <CardTitle className="mt-4 text-2xl font-bold">Creative Activities</CardTitle>
+                <CardContent className="p-0 mt-2">
+                  <p className="text-white/80">Discover thousands of fun and interactive learning activities.</p>
                 </CardContent>
               </Card>
-              <Card className="bg-secondary text-center">
-                <CardHeader>
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white">
-                    <Gamepad2 className="h-6 w-6 text-secondary-foreground" />
+              <Card className="bg-[#FFC94D] p-6 text-left border-none">
+                  <div className="mb-4 inline-block rounded-full bg-white/50 p-3 shadow-sm" style={{ clipPath: 'polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%)'}}>
+                    <Gamepad2 className="h-8 w-8 text-textPrimary" />
                   </div>
-                  <CardTitle className="mt-4 text-secondary-foreground">Learn with Games</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-secondary-foreground">Playful ways to enhance sign language learning.</p>
+                  <CardTitle className="mt-4 text-2xl font-bold">Learn with Games</CardTitle>
+                <CardContent className="p-0 mt-2">
+                  <p className="text-textSecondary">Discover thousands of fun and interactive learning.</p>
                 </CardContent>
               </Card>
             </div>
