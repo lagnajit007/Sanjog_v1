@@ -186,30 +186,32 @@ const LandingPage = () => {
         </section>
 
         {/* Feature Video Section */}
-        <section id="features" className="py-16 md:py-24 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid items-center gap-12 md:grid-cols-2">
-            <div className="order-2 md:order-1">
-              <h2 className="text-3xl font-headline font-bold text-textPrimary md:text-4xl">
-                Simplify Your Video Translation Today
-              </h2>
-              <p className="mt-4 text-textSecondary">
-                Instantly translate your videos to sign language with AI. Sanjog bridges accessibility gaps for the deaf and hard-of-hearing community.
-              </p>
-              <div className="mt-6">
-                <Button onClick={() => openAuthModal('signup')}>Sign Up</Button>
+        <section id="features" className="bg-[#0F0434] text-white py-16 md:py-24">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid items-center gap-12 md:grid-cols-2">
+              <div className="order-1 md:order-2">
+                <h2 className="text-3xl font-headline font-bold md:text-4xl">
+                  Simplify Your Video Translation Today
+                </h2>
+                <p className="mt-4 text-white/80">
+                  Instantly translate your videos to sign language with AI. Sanjog bridges accessibility gaps for the deaf and hard-of-hearing community, making content accessible to profoundly Deaf people worldwide.
+                </p>
+                <div className="mt-6">
+                  <Button variant="secondary" className="bg-primary text-primary-foreground" onClick={() => openAuthModal('signup')}>Sign Up <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                </div>
               </div>
-            </div>
-            <div className="order-1 md:order-2">
-              {videoPreviewImage && 
-                <Image
-                  src={videoPreviewImage.imageUrl}
-                  alt={videoPreviewImage.description}
-                  width={600}
-                  height={400}
-                  className="rounded-lg shadow-lg"
-                  data-ai-hint={videoPreviewImage.imageHint}
-                />
-              }
+              <div className="order-2 md:order-1">
+                {videoPreviewImage && 
+                  <Image
+                    src={videoPreviewImage.imageUrl}
+                    alt={videoPreviewImage.description}
+                    width={600}
+                    height={400}
+                    className="rounded-lg shadow-lg"
+                    data-ai-hint={videoPreviewImage.imageHint}
+                  />
+                }
+              </div>
             </div>
           </div>
         </section>
@@ -358,7 +360,7 @@ const LandingPage = () => {
         </section>
 
         {/* Pricing Section */}
-        <section id="pricing" className="text-textPrimary py-16 md:py-24">
+        <section id="pricing" className="text-textPrimary py-16 md:py-24 bg-surface">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <span className="inline-block bg-secondary text-primary text-sm font-semibold px-4 py-1.5 rounded-full">Pricing</span>
