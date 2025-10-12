@@ -307,7 +307,7 @@ const LandingPage = () => {
         {/* Mission Section */}
         <section id="about" className="py-16 md:py-24 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-lg font-bold text-primary uppercase">Our Mission</h2>
+            <span className="inline-block bg-secondary text-primary text-sm font-semibold px-4 py-1.5 rounded-full uppercase">Our Mission</span>
              <p className="mt-2 text-3xl md:text-4xl font-headline font-bold text-textPrimary max-w-2xl mx-auto">
                 Making Communication Accessible for All
             </p>
