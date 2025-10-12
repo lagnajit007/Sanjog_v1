@@ -3,3 +3,4 @@ config();
 
 import '@/ai/flows/personalized-lesson-feedback.ts';
 import '@/ai/flows/adaptive-lesson-difficulty.ts';
+import '@/ai/flows/gesture-recognition.ts';

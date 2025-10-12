@@ -13,6 +13,7 @@ import { Camera, CheckCircle, XCircle, ArrowRight, Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { HandLandmarker, FilesetResolver } from "@mediapipe/tasks-vision";
+import { recognizeGesture } from '@/ai/flows/gesture-recognition';
 
 
 // Mock Data
@@ -56,12 +57,14 @@ export default function LearnPage() {
   const { toast } = useToast();
   const [isCorrect, setIsCorrect] = React.useState<boolean | null>(null);
   const [sessionProgress, setSessionProgress] = React.useState(20);
-  const [accuracy, setAccuracy] = React.useState(87);
+  const [accuracy, setAccuracy] = React.useState(0);
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const [isWebcamOn, setIsWebcamOn] = React.useState(true);
   const [hasCameraPermission, setHasCameraPermission] = React.useState<boolean | null>(null);
   const [handLandmarker, setHandLandmarker] = useState<HandLandmarker | null>(null);
   const animationFrameId = useRef<number | null>(null);
+  const lastPredictionTime = useRef(0);
+  const PREDICTION_INTERVAL = 500; // 500ms between predictions
 
   useEffect(() => {
     const createHandLandmarker = async () => {
@@ -115,23 +118,38 @@ export default function LearnPage() {
     getCameraPermission();
   }, [toast]);
   
-  const predictWebcam = () => {
-    if (!handLandmarker || !videoRef.current || !isWebcamOn) {
+  const predictWebcam = async () => {
+    if (!handLandmarker || !videoRef.current || !isWebcamOn || videoRef.current.readyState < 3) {
       if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
-      return;
-    }
-
-    if (videoRef.current.readyState < 3) {
       animationFrameId.current = requestAnimationFrame(predictWebcam);
       return;
     }
-    
-    const startTimeMs = performance.now();
-    const results = handLandmarker.detectForVideo(videoRef.current, startTimeMs);
 
-    if (results.landmarks && results.landmarks.length > 0) {
-      console.log(results.landmarks);
-      // Here you would process the landmarks and send to your model
+    const now = performance.now();
+    if (now - lastPredictionTime.current > PREDICTION_INTERVAL) {
+      lastPredictionTime.current = now;
+      
+      const results = handLandmarker.detectForVideo(videoRef.current, now);
+
+      if (results.landmarks && results.landmarks.length > 0) {
+        const landmarks = results.landmarks[0].flatMap(lm => [lm.x, lm.y]);
+        try {
+          const response = await recognizeGesture({ landmarks });
+          const { prediction, confidence } = response;
+          // For now, let's assume the target sign is "H" for "HELLO"
+          const targetSign = 'H'; 
+          setIsCorrect(prediction === targetSign);
+          setAccuracy(Math.round(confidence * 100));
+
+        } catch (error) {
+          console.error("Prediction error:", error);
+          setIsCorrect(null);
+          setAccuracy(0);
+        }
+      } else {
+        setIsCorrect(null);
+        setAccuracy(0);
+      }
     }
 
     animationFrameId.current = requestAnimationFrame(predictWebcam);
