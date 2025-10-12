@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Flame, Trophy, Star, Shield, Zap, Award, Share2 } from 'lucide-react';
 import ProgressCircle from '@/components/dashboard/progress-circle';
+import { Label } from '@/components/ui/label';
 
 // Mock Data
 const user = {
@@ -203,5 +204,3 @@ export default function AchievementsPage() {
     </div>
   );
 }
-
-    
