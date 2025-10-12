@@ -56,6 +56,14 @@ export default function SignupPage() {
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (password.length < 6) {
+            toast({
+                variant: 'destructive',
+                title: 'Signup Failed',
+                description: 'Password should be at least 6 characters.',
+            });
+            return;
+        }
         try {
             initiateEmailSignUp(auth, email, password);
         } catch (error: any) {
