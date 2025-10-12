@@ -85,10 +85,14 @@ const recognizeGestureFlow = ai.defineFlow(
     outputSchema: GestureRecognitionOutputSchema,
   },
   async (input) => {
-    // Call the Python prediction tool
-    const predictionResult = await pythonPredictionTool.run({ landmarks: input.landmarks });
+    // Call the Python prediction tool and destructure the 'result'
+    const { result } = await pythonPredictionTool.run({ landmarks: input.landmarks });
     
-    return predictionResult;
+    // Return the destructured result which matches the output schema
+    return {
+      prediction: result.prediction,
+      confidence: result.confidence,
+    };
   }
 );
 
