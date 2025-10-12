@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Bell, Flame, Trophy } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import Link from 'next/link';
@@ -22,15 +22,6 @@ const HeaderRightContent = () => {
   return (
     <>
       <div className="flex items-center gap-4">
-          <div className="hidden sm:flex items-center gap-2">
-            <Flame className="h-6 w-6 text-[#FF6C3E]" />
-            <span className="font-bold text-sm">7 Days</span>
-          </div>
-          <div className="hidden sm:flex items-center gap-2">
-            <Trophy className="h-6 w-6 text-primary" />
-            <span className="font-bold text-sm">1250 XP</span>
-          </div>
-
           <Sheet>
             <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
