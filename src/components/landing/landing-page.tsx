@@ -355,12 +355,12 @@ const LandingPage = () => {
         </section>
 
         {/* Pricing Section */}
-        <section id="pricing" className="bg-[#0F0434] text-white py-16 md:py-24">
+        <section id="pricing" className="text-textPrimary py-16 md:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-              <span className="inline-block bg-white/10 text-sm font-semibold px-4 py-1.5 rounded-full">Pricing</span>
+              <span className="inline-block bg-secondary text-sm font-semibold px-4 py-1.5 rounded-full">Pricing</span>
               <h2 className="text-3xl font-headline font-bold mt-4 md:text-4xl">Our pricing plans</h2>
-              <p className="mx-auto mt-4 max-w-2xl text-white/80">
+              <p className="mx-auto mt-4 max-w-2xl text-textSecondary">
                 Lorem ipsum dolor sit amet consectetur adipiscing elit dolor posuere vel venenatis eu sit massa volutpat.
               </p>
               <div className="mt-8 flex justify-center items-center gap-4">
@@ -377,27 +377,27 @@ const LandingPage = () => {
                   className={cn(
                     "rounded-2xl p-8 h-full flex flex-col",
                     plan.isPopular 
-                      ? 'bg-primary/90 text-white relative shadow-2xl shadow-primary/30 scale-105'
-                      : 'bg-white/5 text-white'
+                      ? 'bg-primary text-white relative shadow-2xl shadow-primary/30 scale-105'
+                      : 'bg-card text-card-foreground border'
                   )}
                 >
                   {plan.isPopular && (
                     <div className="absolute -top-3 right-8 bg-white text-primary text-sm font-semibold px-4 py-1 rounded-full">Popular</div>
                   )}
                   <div className="flex items-center gap-4 mb-4">
-                      <div className={cn("w-16 h-16 rounded-lg flex items-center justify-center", plan.isPopular ? "bg-white/20" : "bg-white/10")}>
+                      <div className={cn("w-16 h-16 rounded-lg flex items-center justify-center", plan.isPopular ? "bg-white/20" : "bg-secondary")}>
                           {plan.icon}
                       </div>
                       <div>
-                          <p className="text-sm text-white/80">{plan.for}</p>
+                          <p className={cn("text-sm", plan.isPopular ? "text-white/80" : "text-muted-foreground")}>{plan.for}</p>
                           <p className="text-2xl font-bold">{plan.title}</p>
                       </div>
                   </div>
-                  <p className="text-white/70 text-sm mb-6">{plan.description}</p>
+                  <p className={cn("text-sm mb-6", plan.isPopular ? "text-white/70" : "text-muted-foreground")}>{plan.description}</p>
                   
                   <div className="mb-8">
                     <span className="text-5xl font-bold">{plan.price}</span>
-                    {plan.period && <span className="text-white/70">{plan.period}</span>}
+                    {plan.period && <span className={cn("text-sm", plan.isPopular ? "text-white/70" : "text-muted-foreground")}>{plan.period}</span>}
                   </div>
 
                   <div className="flex-grow">
@@ -405,7 +405,7 @@ const LandingPage = () => {
                       <ul className="space-y-3">
                         {plan.features.map((feature, i) => (
                           <li key={i} className="flex items-center gap-3">
-                            <div className={cn("w-6 h-6 rounded-full flex items-center justify-center", plan.isPopular ? "bg-white/20" : "bg-white/10")}>
+                            <div className={cn("w-6 h-6 rounded-full flex items-center justify-center", plan.isPopular ? "bg-white/20" : "bg-secondary")}>
                                 <Check className="h-4 w-4" />
                             </div>
                             <span className="text-sm">{feature}</span>
@@ -417,8 +417,9 @@ const LandingPage = () => {
                   <Button 
                     className={cn(
                       "w-full mt-8 rounded-full py-6 text-lg font-semibold",
-                      plan.isPopular ? 'bg-white text-primary hover:bg-gray-100' : 'bg-white/10 hover:bg-white/20'
+                      plan.isPopular ? 'bg-white text-primary hover:bg-gray-100' : ''
                     )}
+                    variant={plan.isPopular ? 'default' : 'outline'}
                     onClick={() => openAuthModal('signup')}
                   >
                     Get started
@@ -502,5 +503,3 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
-
-    
