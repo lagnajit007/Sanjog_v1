@@ -1,24 +1,29 @@
+
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
-import { Camera, CheckCircle, XCircle, Flame, Trophy, RefreshCw, Pause, Play, ArrowRight } from 'lucide-react';
+import { Camera, CheckCircle, XCircle, RefreshCw, Pause, Play, ArrowRight, Target } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { HandLandmarker, FilesetResolver } from '@mediapipe/tasks-vision';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const PracticePage = () => {
-  const [hasCameraPermission, setHasCameraPermission] = useState(true);
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [isWebcamOn, setIsWebcamOn] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { toast } = useToast();
   const [handLandmarker, setHandLandmarker] = useState<HandLandmarker | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [sessionProgress, setSessionProgress] = useState(20);
+  const [accuracy, setAccuracy] = useState(87);
 
+  // Initialize Hand Landmarker
   useEffect(() => {
     async function createHandLandmarker() {
       try {
@@ -40,6 +45,7 @@ const PracticePage = () => {
     createHandLandmarker();
   }, [toast]);
 
+  // Handle Webcam and Permissions
   useEffect(() => {
     if (!isWebcamOn || !handLandmarker) {
       if (videoRef.current && videoRef.current.srcObject) {
@@ -53,13 +59,18 @@ const PracticePage = () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         setHasCameraPermission(true);
+
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
         }
       } catch (error) {
         console.error('Error accessing camera:', error);
         setHasCameraPermission(false);
-        toast({ variant: 'destructive', title: 'Camera Access Denied', description: 'Please enable camera permissions in your browser settings.' });
+        toast({
+          variant: 'destructive',
+          title: 'Camera Access Denied',
+          description: 'Please enable camera permissions in your browser settings to use this app.',
+        });
       }
     };
 
@@ -72,101 +83,118 @@ const PracticePage = () => {
     };
   }, [isWebcamOn, handLandmarker, toast]);
 
-  const toggleWebcam = () => setIsWebcamOn(prev => !prev);
-  const togglePause = () => setIsPaused(prev => !prev);
 
   // Mock feedback based on timer
   useEffect(() => {
-    if (isPaused || !isWebcamOn) {
+    if (isPaused || !isWebcamOn || !hasCameraPermission) {
       setIsCorrect(null);
       return;
     }
     const interval = setInterval(() => {
       const randomResult = Math.random() > 0.5;
       setIsCorrect(randomResult);
-      setTimeout(() => setIsCorrect(null), 1000);
+      if(randomResult) {
+        setAccuracy(prev => Math.min(prev + 5, 100));
+        setSessionProgress(prev => Math.min(prev + 10, 100));
+      } else {
+        setAccuracy(prev => Math.max(prev - 3, 0));
+      }
+      setTimeout(() => setIsCorrect(null), 1500);
     }, 3000);
     return () => clearInterval(interval);
-  }, [isPaused, isWebcamOn]);
+  }, [isPaused, isWebcamOn, hasCameraPermission]);
+
+  const toggleWebcam = () => setIsWebcamOn(prev => !prev);
+  const togglePause = () => setIsPaused(prev => !prev);
+
+  const cameraStatusText = hasCameraPermission === false ? "Camera access denied." : (isWebcamOn ? "Analyzing your sign..." : "Webcam is off.");
 
   return (
-    <div className="flex h-screen w-full flex-col bg-[#F9F8FF] p-4 font-sans">
-      <main className="grid flex-1 grid-cols-1 gap-6 lg:grid-cols-2 lg:grid-rows-1">
-        {/* Left Panel */}
-        <div className="flex flex-col gap-4 rounded-lg p-4">
-          <h1 className="text-2xl font-bold text-[#1E1E1E]">Today's Practice: Greetings & Basics</h1>
-          <p className="text-base text-[#555]">Follow the instructions and show the correct sign on your webcam.</p>
+    <div className="grid h-screen w-full grid-cols-1 lg:grid-cols-2 lg:grid-rows-1 bg-[#F9F8FF] font-sans p-4 gap-6" style={{ gridTemplateColumns: '1.1fr 1.3fr' }}>
+      {/* Left Panel */}
+      <Card className="flex flex-col gap-4 rounded-2xl p-6 shadow-lg border-none bg-white">
+          <h1 className="text-2xl font-bold text-[#6C4CF1]">HELLO 👋</h1>
           
-          <Card className="border-none bg-[#E7E1FF] p-4 text-center shadow-md">
-            <p className="text-sm font-semibold text-[#6C4CF1]/80">Active Sign</p>
-            <p className="text-2xl font-bold text-[#6C4CF1]">HELLO 👋</p>
-          </Card>
+          <div className="flex justify-center items-center h-[200px] bg-secondary rounded-lg">
+             {/* Replace with actual sign image */}
+            <Image src="https://picsum.photos/seed/hello-sign/300/200" alt="Hello sign illustration" width={300} height={200} className="rounded-lg object-cover" data-ai-hint="sign language hello" />
+          </div>
 
-          <Card className="border-none bg-[#FFF7E0] p-4 text-center shadow-md">
-            <p className="text-sm font-semibold text-[#F1A200]/80">Next Sign</p>
-            <p className="text-xl font-bold text-[#F1A200]">THANK YOU 🙏</p>
-          </Card>
+          <p className="text-base text-[#555]">Make the 'Hello' sign: place your flat hand to your forehead, then move it outwards and away.</p>
           
-          <div className="mt-auto space-y-4">
-            <div>
-              <label htmlFor="accuracy" className="text-sm font-medium text-[#333]">Accuracy</label>
-              <Progress value={75} indicatorClassName="bg-[#6C4CF1]" className="h-2.5" />
-              <p className="mt-1 text-right text-sm font-semibold text-[#333]">75%</p>
-            </div>
-            <hr className="border-t border-gray-200" />
-            <div className="flex items-center justify-around">
-              <div className="flex items-center gap-2">
-                <Flame className="h-6 w-6 text-[#FF6C3E]" />
-                <span className="font-bold text-[#FF6C3E]">Streak: 7 Days</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Trophy className="h-6 w-6 text-[#6C4CF1]" />
-                <span className="font-bold text-[#6C4CF1]">XP: 1250</span>
-              </div>
-            </div>
-          </div>
-        </div>
+          <div className='flex-grow' />
 
-        {/* Right Panel */}
-        <div className="flex flex-col items-center justify-center gap-4">
-          <div
-            className={cn(
-              "relative h-full w-full cursor-pointer overflow-hidden rounded-2xl border-4 object-cover shadow-lg transition-all duration-300",
-              isCorrect === true && "border-success shadow-green-300",
-              isCorrect === false && "border-destructive shadow-red-300"
-            )}
-            onClick={toggleWebcam}
-          >
-            <video ref={videoRef} className="h-full w-full scale-x-[-1]" autoPlay muted playsInline />
-            {!isWebcamOn && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 text-white">
-                <Camera className="mb-4 h-16 w-16" />
-                <p className="text-lg font-semibold">Webcam is off</p>
-                <p>Click to turn on</p>
-              </div>
-            )}
-            {isCorrect === true && <CheckCircle className="absolute top-4 right-4 h-10 w-10 text-success animate-subtle-bounce" />}
-            {isCorrect === false && <XCircle className="absolute top-4 right-4 h-10 w-10 text-destructive animate-subtle-bounce" />}
+          <div>
+              <label htmlFor="session-progress" className="text-sm font-medium text-[#333]">Session Progress</label>
+              <Progress value={sessionProgress} indicatorClassName="bg-[#6C4CF1]" className="h-2.5 mt-1" />
           </div>
-          <div className="flex items-center gap-3">
-             <Image src="/ai-buddy.png" alt="AI Buddy" width={60} height={60} className="animate-subtle-bounce" />
-             <p className="rounded-full bg-white px-4 py-2 font-semibold text-[#333] shadow-md">
-                {isCorrect === true ? "Great job! Try the next one!" : "Nice try! Let's do it again."}
-            </p>
+
+          <div className="flex items-center justify-between gap-4">
+              <Button variant="outline" className="w-full">Show Hint</Button>
+              <Button className="w-full bg-primary text-white">Next Step <ArrowRight className="ml-2 h-4 w-4" /></Button>
           </div>
+          
+          <p className="text-center font-semibold text-accent-green h-6">
+            {isCorrect === true ? "Excellent!" : isCorrect === false ? "Try that one more time." : ""}
+          </p>
+      </Card>
+
+      {/* Right Panel */}
+      <div className="flex flex-col items-center justify-center gap-4">
+        <div
+          className={cn(
+            "relative h-full w-full max-h-[70vh] cursor-pointer overflow-hidden rounded-2xl border-4 object-cover shadow-lg transition-all duration-300 bg-[#F3F2FF]",
+            isCorrect === true && "border-success shadow-green-300",
+            isCorrect === false && "border-destructive shadow-red-300",
+            isCorrect === null && "border-primary"
+          )}
+          onClick={toggleWebcam}
+        >
+          <video ref={videoRef} className="h-full w-full scale-x-[-1]" autoPlay muted playsInline />
+          
+          { (!isWebcamOn || hasCameraPermission === false) && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 text-white p-4">
+              <Camera className="mb-4 h-16 w-16" />
+              <p className="text-lg font-semibold">{isWebcamOn ? "Camera permission needed" : "Webcam is off"}</p>
+              <p className="text-center">{isWebcamOn ? "Please allow camera access in your browser." : "Click to turn on"}</p>
+            </div>
+          )}
+
+          {isCorrect === true && <CheckCircle className="absolute top-4 right-4 h-10 w-10 text-success animate-subtle-bounce" />}
+          {isCorrect === false && <XCircle className="absolute top-4 right-4 h-10 w-10 text-destructive animate-subtle-bounce" />}
         </div>
-      </main>
+        
+        <p className="font-semibold text-primary text-lg">{accuracy}% Accuracy</p>
+        <p className="text-sm text-muted-foreground">{cameraStatusText}</p>
+      </div>
 
       {/* Bottom Panel */}
-      <footer className="mt-4 flex items-center justify-between rounded-full bg-white p-3 shadow-lg">
-        <Button variant="secondary" className="rounded-full font-bold" style={{ backgroundColor: '#E7E1FF', color: '#6C4CF1' }}>
-          <RefreshCw className="mr-2 h-5 w-5" /> Repeat Sign
-        </Button>
-        <Button onClick={togglePause} variant="secondary" className="rounded-full font-bold" style={{ backgroundColor: '#FFF7E0', color: '#F1A200' }}>
-          {isPaused ? <Play className="mr-2 h-5 w-5" /> : <Pause className="mr-2 h-5 w-5" />} {isPaused ? 'Resume' : 'Pause'}
-        </Button>
-        <Button className="rounded-full font-bold text-white" style={{ backgroundColor: '#6C4CF1' }}>
-          Next Step <ArrowRight className="ml-2 h-5 w-5" />
+      <footer className="fixed bottom-0 left-0 right-0 h-[100px] flex items-center justify-around rounded-t-2xl bg-white p-4 shadow-lg border-t">
+        <div className="flex items-center gap-3">
+          <Target className="h-8 w-8 text-primary" />
+          <div>
+            <p className="text-sm text-muted-foreground">Accuracy</p>
+            <p className="text-xl font-bold text-primary">{accuracy}%</p>
+          </div>
+        </div>
+
+        <div className="text-center">
+            <p className="text-sm text-muted-foreground">Active Sign</p>
+            <p className="text-lg font-bold">HELLO</p>
+        </div>
+
+        <div className="text-center">
+            <p className="text-sm text-muted-foreground">Next Sign</p>
+            <p className="text-lg font-bold">THANK YOU</p>
+        </div>
+        
+        <div className="w-48">
+            <p className="text-sm text-muted-foreground mb-1">XP Gain</p>
+            <Progress value={sessionProgress} indicatorClassName="bg-accent-green" className="h-2" />
+        </div>
+        
+        <Button className="rounded-full font-bold text-white bg-primary px-8 py-6 text-lg">
+          Next <ArrowRight className="ml-2 h-5 w-5" />
         </Button>
       </footer>
     </div>
@@ -174,3 +202,5 @@ const PracticePage = () => {
 };
 
 export default PracticePage;
+
+    
