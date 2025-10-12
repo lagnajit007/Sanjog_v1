@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -88,13 +88,27 @@ const AchievementCard = ({ icon: Icon, title, locked }: { icon: React.ElementTyp
   </Card>
 );
 
-const EditProfileModal = ({ isOpen, onClose, user, onSave }: { isOpen: boolean, onClose: () => void, user: typeof initialUser, onSave: (updatedUser: {name: string, tagline: string}) => void }) => {
+const EditProfileModal = ({ isOpen, onClose, user, onSave }: { isOpen: boolean, onClose: () => void, user: typeof initialUser, onSave: (updatedUser: {name: string, tagline: string, avatar: string}) => void }) => {
     const [name, setName] = useState(user.name);
     const [tagline, setTagline] = useState(user.tagline);
+    const [avatar, setAvatar] = useState(user.avatar);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleSave = () => {
-        onSave({ name, tagline });
+        onSave({ name, tagline, avatar });
         onClose();
+    };
+
+    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                if (event.target?.result) {
+                    setAvatar(event.target.result as string);
+                }
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        }
     };
     
     if (!isOpen) return null;
@@ -108,10 +122,19 @@ const EditProfileModal = ({ isOpen, onClose, user, onSave }: { isOpen: boolean, 
                 <div className="space-y-4 py-4">
                     <div className="flex items-center gap-4">
                         <Avatar className="h-24 w-24">
-                            <AvatarImage src={user.avatar} alt={user.name} />
+                            <AvatarImage src={avatar} alt={user.name} />
                             <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                         </Avatar>
-                        <Button variant="outline"><Upload className="w-4 h-4 mr-2" /> Change Avatar</Button>
+                        <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+                            <Upload className="w-4 h-4 mr-2" /> Change Avatar
+                        </Button>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            className="hidden"
+                            accept="image/*"
+                            onChange={handleAvatarChange}
+                        />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="name">Username</Label>
@@ -136,7 +159,7 @@ export default function ProfilePage() {
     const [user, setUser] = useState(initialUser);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const handleSaveProfile = (updatedUser: {name: string, tagline: string}) => {
+    const handleSaveProfile = (updatedUser: {name: string, tagline: string, avatar: string}) => {
         setUser(prevUser => ({...prevUser, ...updatedUser}));
     };
 
@@ -271,3 +294,5 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+    
