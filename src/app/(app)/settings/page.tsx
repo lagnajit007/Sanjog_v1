@@ -14,7 +14,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserCog, BookOpen, Settings as SettingsIcon, Upload, Bell, Palette, Bot, Shield, Trash2 } from "lucide-react";
 import { useAuth, useUser } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useTheme } from 'next-themes';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 
@@ -74,7 +73,7 @@ const AccountTab = () => {
     };
     
     const handleResetPassword = () => {
-        if (user && user.email) {
+        if (auth && user && user.email) {
             sendPasswordResetEmail(auth, user.email)
                 .then(() => {
                     toast({
@@ -172,21 +171,10 @@ const AccountTab = () => {
 };
 
 const PreferencesTab = () => {
-  const { theme, setTheme } = useTheme();
 
   return (
     <div className="space-y-6">
       <Section title="Appearance" description="Customize the look and feel of the app.">
-        <FormField label="Theme">
-          <div className="flex items-center gap-4">
-            <Switch
-              id="dark-mode"
-              checked={theme === 'dark'}
-              onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-            />
-            <Label htmlFor="dark-mode">Dark Mode</Label>
-          </div>
-        </FormField>
         <FormField label="Language">
           <Select defaultValue="en">
             <SelectTrigger>

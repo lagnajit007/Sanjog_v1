@@ -2,11 +2,10 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { FirebaseClientProvider } from '@/firebase';
-import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
   title: 'Sanjog - AI Sign Language Learning',
-  description: 'A vibrant, inclusive web experience for learning sign language with AI-powered translation, interactive lessons, and community features.',
+  description: 'A vibrant, inclusive web experience for learning sign language with interactive lessons, and community features.',
 };
 
 export default function RootLayout({
@@ -22,17 +21,10 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased bg-background text-textPrimary" suppressHydrationWarning>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
           <FirebaseClientProvider>
             {children}
           </FirebaseClientProvider>
           <Toaster />
-        </ThemeProvider>
       </body>
     </html>
   );
