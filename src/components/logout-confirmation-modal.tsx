@@ -29,7 +29,7 @@ const LogoutConfirmationModal: React.FC<LogoutConfirmationModalProps> = ({
 
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
-      <AlertDialogContent className="backdrop-blur-sm bg-white/80">
+      <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
           <AlertDialogDescription>

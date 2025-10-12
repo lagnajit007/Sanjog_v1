@@ -61,7 +61,7 @@ const HeaderRightContent = ({ onLogoutClick }: { onLogoutClick: () => void }) =>
                 <Link href="/settings">Settings</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={onLogoutClick} className="text-red-500 cursor-pointer">
+              <DropdownMenuItem onClick={onLogoutClick} className="text-red-500 cursor-pointer focus:bg-red-100 focus:text-red-600">
                 Logout
               </DropdownMenuItem>
             </DropdownMenuContent>
