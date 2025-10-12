@@ -1,12 +1,12 @@
 
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Flame, Star, Award, BarChart3, TrendingUp, UserPlus, CheckCircle, Edit, Users } from 'lucide-react';
+import { Flame, Star, Award, BarChart3, TrendingUp, UserPlus, CheckCircle, Edit, Users, Upload } from 'lucide-react';
 import {
   BarChart,
   Bar,
@@ -16,9 +16,13 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 // Mock Data
-const user = {
+const initialUser = {
   name: 'Jenny Wilson',
   tagline: 'Lover of languages and lifelong learner.',
   level: 8,
@@ -84,8 +88,58 @@ const AchievementCard = ({ icon: Icon, title, locked }: { icon: React.ElementTyp
   </Card>
 );
 
+const EditProfileModal = ({ isOpen, onClose, user, onSave }: { isOpen: boolean, onClose: () => void, user: typeof initialUser, onSave: (updatedUser: {name: string, tagline: string}) => void }) => {
+    const [name, setName] = useState(user.name);
+    const [tagline, setTagline] = useState(user.tagline);
+
+    const handleSave = () => {
+        onSave({ name, tagline });
+        onClose();
+    };
+    
+    if (!isOpen) return null;
+
+    return (
+        <Dialog open={isOpen} onOpenChange={onClose}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Edit Profile</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                    <div className="flex items-center gap-4">
+                        <Avatar className="h-24 w-24">
+                            <AvatarImage src={user.avatar} alt={user.name} />
+                            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <Button variant="outline"><Upload className="w-4 h-4 mr-2" /> Change Avatar</Button>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="name">Username</Label>
+                        <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="tagline">Bio/Tagline</Label>
+                        <Textarea id="tagline" value={tagline} onChange={(e) => setTagline(e.target.value)} />
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button variant="ghost" onClick={onClose}>Cancel</Button>
+                    <Button onClick={handleSave}>Save Changes</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
 
 export default function ProfilePage() {
+    const [user, setUser] = useState(initialUser);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleSaveProfile = (updatedUser: {name: string, tagline: string}) => {
+        setUser(prevUser => ({...prevUser, ...updatedUser}));
+    };
+
   return (
     <div className="space-y-6">
        <div className="mb-8">
@@ -101,7 +155,7 @@ export default function ProfilePage() {
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
               </Avatar>
-              <Button size="icon" className="absolute bottom-0 right-0 h-8 w-8 rounded-full">
+              <Button size="icon" className="absolute bottom-0 right-0 h-8 w-8 rounded-full" onClick={() => setIsModalOpen(true)}>
                 <Edit className="h-4 w-4" />
               </Button>
             </div>
@@ -121,7 +175,7 @@ export default function ProfilePage() {
                 <Progress value={user.xpPercent} indicatorClassName="bg-primary" />
               </div>
             </div>
-             <Button variant="outline" className="mt-4 sm:mt-0">Edit Profile</Button>
+             <Button variant="outline" className="mt-4 sm:mt-0" onClick={() => setIsModalOpen(true)}>Edit Profile</Button>
           </div>
         </CardContent>
       </Card>
@@ -207,7 +261,13 @@ export default function ProfilePage() {
             <Button><UserPlus className="h-4 w-4 mr-2" /> Invite a Friend</Button>
           </CardContent>
         </Card>
+
+        <EditProfileModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            user={user}
+            onSave={handleSaveProfile}
+        />
     </div>
   );
 }
-
