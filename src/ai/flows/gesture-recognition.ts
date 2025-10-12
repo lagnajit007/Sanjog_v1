@@ -10,6 +10,9 @@ import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import { exec } from 'child_process';
 import path from 'path';
+import util from 'util';
+
+const execPromise = util.promisify(exec);
 
 // Define the input schema for the gesture recognition flow
 const GestureRecognitionInputSchema = z.object({
@@ -33,49 +36,43 @@ const pythonPredictionTool = ai.defineTool(
     outputSchema: GestureRecognitionOutputSchema,
   },
   async (input) => {
-    // This is a simplified example of invoking a Python script.
-    // In a real-world scenario, you would have a long-running server
-    // and make an HTTP request to it.
-    
-    // For this example, we'll execute the Python script as a one-off process.
-    // This is not efficient for real-time use but demonstrates the concept.
     const pythonScriptPath = path.resolve(process.cwd(), 'src/models/predict_server.py');
     const modelPath = path.resolve(process.cwd(), 'src/models/model.p');
     
-    // We'll pass landmarks as a JSON string argument to the script.
-    const landmarksJson = JSON.stringify(input.landmarks);
+    // Pass landmarks as a JSON string argument to the script.
+    const landmarksJsonString = JSON.stringify(input.landmarks);
 
-    // In a real application, you would manage this server process more robustly.
-    // For now, we simulate a request/response by running the script.
-    // This is a placeholder for an actual HTTP request to a running Flask server.
-    
-    // For now, let's return a mocked response.
-    // Replace this with actual prediction logic when the backend is ready.
-    const mockPrediction = () => {
-      const signs = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-      const randomSign = signs[Math.floor(Math.random() * signs.length)];
-      if (input.landmarks.length === 42) {
-          if (Math.random() > 0.3) {
-            return {
-                prediction: 'A',
-                confidence: Math.random() * 0.3 + 0.7, // 70-100%
-            };
-          }
-          return {
-            prediction: randomSign,
-            confidence: Math.random(),
-          };
+    // Escape single quotes in the JSON string for shell command
+    const escapedLandmarks = landmarksJsonString.replace(/'/g, "'\\''");
+
+    try {
+      const { stdout } = await execPromise(`python3 ${pythonScriptPath} '${escapedLandmarks}'`, {
+          env: { ...process.env, MODEL_PATH: modelPath }
+      });
+      const result = JSON.parse(stdout);
+
+      if (result.error) {
+        console.error('Python script error:', result.error);
+        return {
+          prediction: 'unknown',
+          confidence: 0,
+        };
       }
+      
       return {
-        prediction: 'unknown',
+        prediction: result.prediction,
+        confidence: result.confidence,
+      };
+
+    } catch (error) {
+      console.error("Error executing Python script:", error);
+      return {
+        prediction: 'error',
         confidence: 0,
-      }
-    };
-    
-    return mockPrediction();
+      };
+    }
   }
 );
-
 
 // Define the main flow for gesture recognition
 const recognizeGestureFlow = ai.defineFlow(
@@ -85,18 +82,13 @@ const recognizeGestureFlow = ai.defineFlow(
     outputSchema: GestureRecognitionOutputSchema,
   },
   async (input) => {
-    // Call the Python prediction tool and destructure the 'result'
-    const { result } = await pythonPredictionTool.run({ landmarks: input.landmarks });
-    
-    // Return the destructured result which matches the output schema
-    return {
-      prediction: result.prediction,
-      confidence: result.confidence,
-    };
+    // Call the Python prediction tool
+    const result = await pythonPredictionTool(input);
+    return result;
   }
 );
 
 // Export a wrapper function for client-side use
 export async function recognizeGesture(input: GestureRecognitionInput): Promise<GestureRecognitionOutput> {
-  return recognizeGestureFlow(input);
+  return await recognizeGestureFlow(input);
 }
