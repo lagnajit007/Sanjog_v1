@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, Check, CheckCircle, Crown, Gamepad2, GraduationCap, Lightbulb, PenTool, User, Users, Video } from 'lucide-react';
+import { Award, ArrowRight, BookOpen, Check, CheckCircle, Crown, Gamepad2, GraduationCap, Lightbulb, PenTool, User, Users, Video } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -189,17 +189,6 @@ const LandingPage = () => {
         <section id="features" className="bg-[#0F0434] text-white py-16 md:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid items-center gap-12 md:grid-cols-2">
-              <div className="order-1 md:order-2">
-                <h2 className="text-3xl font-headline font-bold md:text-4xl">
-                  Simplify Your Video Translation Today
-                </h2>
-                <p className="mt-4 text-white/80">
-                  Instantly translate your videos to sign language with AI. Sanjog bridges accessibility gaps for the deaf and hard-of-hearing community, making content accessible to profoundly Deaf people worldwide.
-                </p>
-                <div className="mt-6">
-                  <Button variant="secondary" className="bg-primary text-primary-foreground" onClick={() => openAuthModal('signup')}>Sign Up <ArrowRight className="ml-2 h-4 w-4" /></Button>
-                </div>
-              </div>
               <div className="order-2 md:order-1">
                 {videoPreviewImage && 
                   <Image
@@ -212,73 +201,97 @@ const LandingPage = () => {
                   />
                 }
               </div>
+              <div className="order-1 md:order-2">
+                <h2 className="text-3xl font-headline font-bold md:text-4xl">
+                  Simplify Your Video Translation Today
+                </h2>
+                <p className="mt-4 text-white/80">
+                  Instantly translate your videos to sign language with AI. Sanjog bridges accessibility gaps for the deaf and hard-of-hearing community, making content accessible to profoundly Deaf people worldwide.
+                </p>
+                <div className="mt-6">
+                  <Button variant="secondary" className="bg-primary text-primary-foreground" onClick={() => openAuthModal('signup')}>Sign Up <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
         {/* Interactive Features Section */}
         <section className="bg-surface py-16 md:py-24">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="text-left mb-12">
-                <h2 className="text-lg font-bold text-primary">interactive</h2>
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="text-left mb-12">
+                    <h2 className="text-lg font-bold text-primary">INTERACTIVE FEATURES</h2>
+                    <p className="mt-2 text-3xl md:text-4xl font-headline font-bold text-textPrimary max-w-2xl">
+                        Our interactive features
+                    </p>
+                </div>
+                <div className="mt-12 grid gap-8 md:grid-cols-3">
+                    <Card className="bg-[#F1F0FB] p-6 text-left border-none">
+                        <div className="mb-4 inline-block rounded-full bg-white p-3 shadow-sm" style={{ clipPath: 'polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%)' }}>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 8V12M12 12V16M12 12H16M12 12H8" stroke="#7B61FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M18.5 12C18.5 13.9655 18.0051 15.8239 17.1375 17.391C16.2699 18.9581 15.071 20.157 13.6822 20.8528C12.2934 21.5486 10.7719 21.713 9.29616 21.3259C7.82041 20.9387 6.46747 20.0223 5.42173 18.721C4.37599 17.4197 3.69931 15.8113 3.48679 14.1221C3.27426 12.433 3.53526 10.7455 4.23896 9.24751C4.94265 7.74952 6.05943 6.51263 7.44754 5.68888C8.83566 4.86514 10.4373 4.5 12 4.5" stroke="#7B61FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+                        </div>
+                        <CardTitle className="mt-4 text-2xl font-bold">Fun Quiz</CardTitle>
+                        <CardContent className="p-0 mt-2">
+                            <p className="text-textSecondary">Discover thousands of fun and interactive learning.</p>
+                        </CardContent>
+                    </Card>
+                    <Card className="bg-primary p-6 text-left text-white border-none">
+                        <div className="mb-4 inline-block rounded-full bg-white/20 p-3 shadow-sm" style={{ clipPath: 'polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%)' }}>
+                           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 8V12M12 12V16M12 12H16M12 12H8" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M18.5 12C18.5 13.9655 18.0051 15.8239 17.1375 17.391C16.2699 18.9581 15.071 20.157 13.6822 20.8528C12.2934 21.5486 10.7719 21.713 9.29616 21.3259C7.82041 20.9387 6.46747 20.0223 5.42173 18.721C4.37599 17.4197 3.69931 15.8113 3.48679 14.1221C3.27426 12.433 3.53526 10.7455 4.23896 9.24751C4.94265 7.74952 6.05943 6.51263 7.44754 5.68888C8.83566 4.86514 10.4373 4.5 12 4.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+                        </div>
+                        <CardTitle className="mt-4 text-2xl font-bold">Creative Activities</CardTitle>
+                        <CardContent className="p-0 mt-2">
+                            <p className="text-white/80">Discover thousands of fun and interactive learning activities.</p>
+                        </CardContent>
+                    </Card>
+                    <Card className="bg-[#FFC94D] p-6 text-left border-none">
+                        <div className="mb-4 inline-block rounded-full bg-white/50 p-3 shadow-sm" style={{ clipPath: 'polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%)' }}>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 8V12M12 12V16M12 12H16M12 12H8" stroke="#1F2937" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M18.5 12C18.5 13.9655 18.0051 15.8239 17.1375 17.391C16.2699 18.9581 15.071 20.157 13.6822 20.8528C12.2934 21.5486 10.7719 21.713 9.29616 21.3259C7.82041 20.9387 6.46747 20.0223 5.42173 18.721C4.37599 17.4197 3.69931 15.8113 3.48679 14.1221C3.27426 12.433 3.53526 10.7455 4.23896 9.24751C4.94265 7.74952 6.05943 6.51263 7.44754 5-68888C8.83566 4.86514 10.4373 4.5 12 4.5" stroke="#1F2937" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+                        </div>
+                        <CardTitle className="mt-4 text-2xl font-bold">Learn with Games</CardTitle>
+                        <CardContent className="p-0 mt-2">
+                            <p className="text-textSecondary">Discover thousands of fun and interactive learning.</p>
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
-            <div className="mt-12 grid gap-8 md:grid-cols-3">
-              <Card className="bg-[#F1F0FB] p-6 text-left border-none">
-                  <div className="mb-4 inline-block rounded-full bg-white p-3 shadow-sm" style={{ clipPath: 'polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%)'}}>
-                    <GraduationCap className="h-8 w-8 text-textPrimary" />
-                  </div>
-                  <CardTitle className="mt-4 text-2xl font-bold">Fun Quiz</CardTitle>
-                <CardContent className="p-0 mt-2">
-                  <p className="text-textSecondary">Discover thousands of fun and interactive learning.</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-primary p-6 text-left text-white border-none">
-                  <div className="mb-4 inline-block rounded-full bg-white/20 p-3 shadow-sm" style={{ clipPath: 'polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%)'}}>
-                    <CreativeActivitiesIcon />
-                  </div>
-                  <CardTitle className="mt-4 text-2xl font-bold">Creative Activities</CardTitle>
-                <CardContent className="p-0 mt-2">
-                  <p className="text-white/80">Discover thousands of fun and interactive learning activities.</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-[#FFC94D] p-6 text-left border-none">
-                  <div className="mb-4 inline-block rounded-full bg-white/50 p-3 shadow-sm" style={{ clipPath: 'polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%)'}}>
-                    <Gamepad2 className="h-8 w-8 text-textPrimary" />
-                  </div>
-                  <CardTitle className="mt-4 text-2xl font-bold">Learn with Games</CardTitle>
-                <CardContent className="p-0 mt-2">
-                  <p className="text-textSecondary">Discover thousands of fun and interactive learning.</p>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
         </section>
 
         {/* Community Section */}
-        <section className="bg-[#EDEBFF] py-16 md:py-24">
+        <section id="community" className="bg-[#0F0434] text-white py-16 md:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl font-headline font-bold text-textPrimary md:text-4xl">
+            <span className="inline-block bg-primary/20 text-primary text-sm font-semibold px-4 py-1.5 rounded-full">Sparkly Growth</span>
+            <h2 className="text-3xl font-headline font-bold mt-4 md:text-4xl">
               Join a Thriving Learning Community
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-textSecondary">
-              Connect with millions of learners and experts worldwide to learn, share, and grow together.
+            <p className="mx-auto mt-4 max-w-2xl text-white/80">
+              Sparkly connects you with millions of learners and expert mentors, providing the guidance and resources needed to excel in your journey.
             </p>
             <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-3">
-              <div className="text-center">
-                <p className="text-4xl font-bold text-primary">2.5M+</p>
-                <p className="mt-2 text-textSecondary">Engaged Learners</p>
-              </div>
-              <div className="text-center">
-                <p className="text-4xl font-bold text-primary">5K+</p>
-                <p className="mt-2 text-textSecondary">Courses Available</p>
-              </div>
-              <div className="text-center">
-                <p className="text-4xl font-bold text-primary">800+</p>
-                <p className="mt-2 text-textSecondary">Expert Mentors</p>
-              </div>
+              <Card className="bg-transparent border-primary/20 text-center py-6">
+                <div className="mb-4 inline-flex items-center justify-center rounded-full bg-primary/20 p-3">
+                  <Award className="h-8 w-8 text-primary" />
+                </div>
+                <p className="text-4xl font-bold text-white">2.5M+</p>
+                <p className="mt-2 text-white/80">Engaged Learners</p>
+              </Card>
+              <Card className="bg-transparent border-primary/20 text-center py-6">
+                <div className="mb-4 inline-flex items-center justify-center rounded-full bg-primary/20 p-3">
+                  <BookOpen className="h-8 w-8 text-primary" />
+                </div>
+                <p className="text-4xl font-bold text-white">5K+</p>
+                <p className="mt-2 text-white/80">Courses Available</p>
+              </Card>
+              <Card className="bg-transparent border-primary/20 text-center py-6">
+                <div className="mb-4 inline-flex items-center justify-center rounded-full bg-primary/20 p-3">
+                  <Award className="h-8 w-8 text-primary" />
+                </div>
+                <p className="text-4xl font-bold text-white">800+</p>
+                <p className="mt-2 text-white/80">Expert Mentors</p>
+              </Card>
             </div>
             <div className="mt-12">
-                <Button size="lg" onClick={() => openAuthModal('signup')}>Explore Courses</Button>
+                <Button size="lg" onClick={() => openAuthModal('signup')}>Explore courses</Button>
             </div>
           </div>
         </section>
