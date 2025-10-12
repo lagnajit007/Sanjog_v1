@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserCog, BookOpen, Settings as SettingsIcon, Upload, Bell, Palette, Bot, Shield, Trash2 } from "lucide-react";
 import { useUser } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useTheme } from 'next-themes';
 
 const Section: React.FC<{ title: string; description: string; children: React.ReactNode; className?: string }> = ({ title, description, children, className }) => (
   <Card className={className}>
@@ -141,71 +142,79 @@ const AccountTab = () => {
     );
 };
 
-const PreferencesTab = () => (
-  <div className="space-y-6">
-    <Section title="Appearance" description="Customize the look and feel of the app.">
-      <FormField label="Theme">
-        <div className="flex items-center gap-4">
-          <Switch id="dark-mode" />
-          <Label htmlFor="dark-mode">Dark Mode</Label>
-        </div>
-      </FormField>
-      <FormField label="Language">
-        <Select defaultValue="en">
-          <SelectTrigger>
-            <SelectValue placeholder="Select language" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="en">English</SelectItem>
-            <SelectItem value="es">Spanish</SelectItem>
-            <SelectItem value="fr">French</SelectItem>
-             <SelectItem value="hi">Hindi</SelectItem>
-          </SelectContent>
-        </Select>
-      </FormField>
-    </Section>
-    <Section title="Learning" description="Adjust your learning and practice settings.">
-        <FormField label="Gesture Difficulty">
-            <Select defaultValue="medium">
-                <SelectTrigger>
-                    <SelectValue placeholder="Select difficulty" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="easy">Easy</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="hard">Hard</SelectItem>
-                </SelectContent>
-            </Select>
+const PreferencesTab = () => {
+  const { theme, setTheme } = useTheme();
+
+  return (
+    <div className="space-y-6">
+      <Section title="Appearance" description="Customize the look and feel of the app.">
+        <FormField label="Theme">
+          <div className="flex items-center gap-4">
+            <Switch
+              id="dark-mode"
+              checked={theme === 'dark'}
+              onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+            />
+            <Label htmlFor="dark-mode">Dark Mode</Label>
+          </div>
         </FormField>
-        <FormField label="Daily Goal">
-             <div className="flex items-center gap-4">
-                <Slider defaultValue={[5]} max={10} step={1} />
-                <span className="font-semibold w-12 text-center">5 lessons</span>
-            </div>
+        <FormField label="Language">
+          <Select defaultValue="en">
+            <SelectTrigger>
+              <SelectValue placeholder="Select language" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="en">English</SelectItem>
+              <SelectItem value="es">Spanish</SelectItem>
+              <SelectItem value="fr">French</SelectItem>
+               <SelectItem value="hi">Hindi</SelectItem>
+            </SelectContent>
+          </Select>
         </FormField>
-        <FormField label="Voice Assistant">
-             <div className="flex items-center gap-4">
-                <Switch id="voice-assistant" defaultChecked />
-                <Label htmlFor="voice-assistant">Enable voice feedback</Label>
-            </div>
-        </FormField>
-    </Section>
-    <Section title="Notifications" description="Manage how you receive notifications.">
-       <FormField label="Daily Reminders">
-             <div className="flex items-center gap-4">
-                <Switch id="reminders" defaultChecked />
-                <Label htmlFor="reminders">Receive daily practice reminders</Label>
-            </div>
-        </FormField>
-         <FormField label="Reminder Time">
-            <Input type="time" defaultValue="18:00" className="w-auto" />
-        </FormField>
-    </Section>
-    <div className="flex justify-end">
-        <Button>Save Preferences</Button>
+      </Section>
+      <Section title="Learning" description="Adjust your learning and practice settings.">
+          <FormField label="Gesture Difficulty">
+              <Select defaultValue="medium">
+                  <SelectTrigger>
+                      <SelectValue placeholder="Select difficulty" />
+                  </SelectTrigger>
+                  <SelectContent>
+                      <SelectItem value="easy">Easy</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="hard">Hard</SelectItem>
+                  </SelectContent>
+              </Select>
+          </FormField>
+          <FormField label="Daily Goal">
+               <div className="flex items-center gap-4">
+                  <Slider defaultValue={[5]} max={10} step={1} />
+                  <span className="font-semibold w-12 text-center">5 lessons</span>
+              </div>
+          </FormField>
+          <FormField label="Voice Assistant">
+               <div className="flex items-center gap-4">
+                  <Switch id="voice-assistant" defaultChecked />
+                  <Label htmlFor="voice-assistant">Enable voice feedback</Label>
+              </div>
+          </FormField>
+      </Section>
+      <Section title="Notifications" description="Manage how you receive notifications.">
+         <FormField label="Daily Reminders">
+               <div className="flex items-center gap-4">
+                  <Switch id="reminders" defaultChecked />
+                  <Label htmlFor="reminders">Receive daily practice reminders</Label>
+              </div>
+          </FormField>
+           <FormField label="Reminder Time">
+              <Input type="time" defaultValue="18:00" className="w-auto" />
+          </FormField>
+      </Section>
+      <div className="flex justify-end">
+          <Button>Save Preferences</Button>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const AccessibilityTab = () => (
     <div className="space-y-6">
