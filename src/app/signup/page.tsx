@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -45,12 +45,17 @@ export default function SignupPage() {
     const auth = useAuth();
     const { user, isUserLoading } = useUser();
 
+    useEffect(() => {
+        if (!isUserLoading && user) {
+            router.push('/dashboard');
+        }
+    }, [user, isUserLoading, router]);
+
     if (isUserLoading) {
         return <div>Loading...</div>
     }
 
     if(user) {
-        router.push('/dashboard');
         return null;
     }
 
