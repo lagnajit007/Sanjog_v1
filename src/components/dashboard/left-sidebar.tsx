@@ -1,7 +1,7 @@
 
 'use client';
 
-import { LogOut, Menu } from 'lucide-react';
+import { LogOut, Menu, User } from 'lucide-react';
 import { menuItems } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -10,14 +10,6 @@ import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { usePathname } from 'next/navigation';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useAuth } from '@/firebase';
 import { useRouter } from 'next/navigation';
 
@@ -37,30 +29,33 @@ const Logo = () => (
 const NavMenu = () => {
   const pathname = usePathname();
   const modifiedPath = pathname.replace('/(app)/','/');
+  const allMenuItems = [...menuItems, { icon: User, label: 'Profile', href: '/profile' }];
   return (
-    <nav className="flex-1">
-      <p className="mb-2 text-xs font-semibold uppercase text-muted-foreground">Menu</p>
-      <ul className="flex flex-col gap-2">
-        {menuItems.map((item) => (
-          <li key={item.label}>
-            <Link href={item.href}>
-              <Button
-                variant={modifiedPath === item.href ? 'secondary' : 'ghost'}
-                className="w-full justify-start text-base"
-                aria-current={modifiedPath === item.href ? 'page' : undefined}
-              >
-                <item.icon className="mr-3 h-5 w-5" />
-                <span>{item.label}</span>
-                {item.badge && (
-                  <Badge variant={modifiedPath === item.href ? 'default' : 'secondary'} className="ml-auto">
-                    {item.badge}
-                  </Badge>
-                )}
-              </Button>
-            </Link>
-          </li>
-        ))}
-      </ul>
+    <nav className="flex-1 space-y-4">
+      <div>
+        <p className="mb-2 px-4 text-xs font-semibold uppercase text-muted-foreground">Menu</p>
+        <ul className="flex flex-col gap-1">
+          {allMenuItems.map((item) => (
+            <li key={item.label}>
+              <Link href={item.href}>
+                <Button
+                  variant={modifiedPath === item.href ? 'secondary' : 'ghost'}
+                  className="w-full justify-start text-base"
+                  aria-current={modifiedPath === item.href ? 'page' : undefined}
+                >
+                  <item.icon className="mr-3 h-5 w-5" />
+                  <span>{item.label}</span>
+                  {item.badge && (
+                    <Badge variant={modifiedPath === item.href ? 'default' : 'secondary'} className="ml-auto">
+                      {item.badge}
+                    </Badge>
+                  )}
+                </Button>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
     </nav>
   )
 }
@@ -71,38 +66,26 @@ const UserProfile = () => {
   const router = useRouter();
 
   const handleLogout = () => {
-    auth.signOut();
+    if (auth) {
+      auth.signOut();
+    }
     router.push('/');
   }
 
   return (
-    <div className="mt-auto">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Link href="/profile">
-            <div className="flex w-full items-center gap-3 mb-4 rounded-lg p-2 transition-colors hover:bg-secondary">
-              <Avatar className="cursor-pointer h-12 w-12">
-                {userAvatar && <AvatarImage src={userAvatar.imageUrl} alt="Jenny Wilson" data-ai-hint={userAvatar.imageHint} />}
-                <AvatarFallback>JW</AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col overflow-hidden">
-                <span className="font-semibold truncate">Jenny Wilson</span>
-                <span className="text-sm text-muted-foreground truncate">jen.wilson@example.com</span>
-              </div>
-            </div>
-          </Link>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Link href="/profile">Profile</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-red-500" onClick={handleLogout}>Logout</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+    <div className="mt-auto space-y-4">
+       <Link href="/profile" className="block rounded-lg transition-colors hover:bg-secondary">
+        <div className="flex w-full items-center gap-3 p-2">
+          <Avatar className="cursor-pointer h-12 w-12">
+            {userAvatar && <AvatarImage src={userAvatar.imageUrl} alt="Jenny Wilson" data-ai-hint={userAvatar.imageHint} />}
+            <AvatarFallback>JW</AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col overflow-hidden">
+            <span className="font-semibold truncate">Jenny Wilson</span>
+            <span className="text-sm text-muted-foreground truncate">jen.wilson@example.com</span>
+          </div>
+        </div>
+      </Link>
       
       <Button variant="ghost" className="w-full justify-center items-center rounded-full bg-red-100/40 text-red-500 hover:bg-red-200/60 hover:text-red-600" onClick={handleLogout}>
         <LogOut className="mr-2 h-5 w-5" />
@@ -127,10 +110,10 @@ const LeftSidebarContent = () => {
 const LeftSidebar = () => {
   return (
     <>
-      <aside className="hidden lg:flex w-[260px] flex-col shrink-0 border-r bg-card p-6">
+      <aside className="fixed left-0 top-0 z-50 hidden h-screen w-[260px] flex-col border-r bg-card p-6 lg:flex">
         <LeftSidebarContent />
       </aside>
-      <div className="lg:hidden absolute top-4 left-4 z-10">
+      <div className="lg:hidden absolute top-4 left-4 z-50">
         <Sheet>
             <SheetTrigger asChild>
                 <Button variant="outline" size="icon">
