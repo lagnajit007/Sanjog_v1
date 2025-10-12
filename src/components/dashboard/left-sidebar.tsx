@@ -1,3 +1,4 @@
+
 'use client';
 
 import { LogOut, Menu } from 'lucide-react';
@@ -76,30 +77,33 @@ const UserProfile = () => {
 
   return (
     <div className="mt-auto">
-      <div className="flex items-center gap-3 mb-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Link href="/profile">
+            <div className="flex w-full items-center gap-3 mb-4 rounded-lg p-2 transition-colors hover:bg-secondary">
               <Avatar className="cursor-pointer h-12 w-12">
                 {userAvatar && <AvatarImage src={userAvatar.imageUrl} alt="Jenny Wilson" data-ai-hint={userAvatar.imageHint} />}
                 <AvatarFallback>JW</AvatarFallback>
               </Avatar>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/profile">Profile</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-red-500" onClick={handleLogout}>Logout</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        <div className="flex flex-col">
-          <span className="font-semibold">Jenny Wilson</span>
-          <span className="text-sm text-muted-foreground">jen.wilson@example.com</span>
-        </div>
-      </div>
+              <div className="flex flex-col overflow-hidden">
+                <span className="font-semibold truncate">Jenny Wilson</span>
+                <span className="text-sm text-muted-foreground truncate">jen.wilson@example.com</span>
+              </div>
+            </div>
+          </Link>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link href="/profile">Profile</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem>Settings</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem className="text-red-500" onClick={handleLogout}>Logout</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      
       <Button variant="ghost" className="w-full justify-center items-center rounded-full bg-red-100/40 text-red-500 hover:bg-red-200/60 hover:text-red-600" onClick={handleLogout}>
         <LogOut className="mr-2 h-5 w-5" />
         Log out
