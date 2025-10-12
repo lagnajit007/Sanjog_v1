@@ -190,7 +190,7 @@ const LandingPage = () => {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid items-center gap-12 md:grid-cols-2">
               <div className="order-2 md:order-1">
-                {videoPreviewImage && 
+                {videoPreviewImage && (
                   <Image
                     src={videoPreviewImage.imageUrl}
                     alt={videoPreviewImage.description}
@@ -199,7 +199,7 @@ const LandingPage = () => {
                     className="rounded-lg shadow-lg"
                     data-ai-hint={videoPreviewImage.imageHint}
                   />
-                }
+                )}
               </div>
               <div className="order-1 md:order-2">
                 <h2 className="text-3xl font-headline font-bold md:text-4xl">
@@ -209,7 +209,13 @@ const LandingPage = () => {
                   Instantly translate your videos to sign language with AI. Sanjog bridges accessibility gaps for the deaf and hard-of-hearing community, making content accessible to profoundly Deaf people worldwide.
                 </p>
                 <div className="mt-6">
-                  <Button variant="secondary" className="bg-primary text-primary-foreground" onClick={() => openAuthModal('signup')}>Sign Up <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                  <Button
+                    variant="secondary"
+                    className="bg-primary text-primary-foreground"
+                    onClick={() => openAuthModal('signup')}
+                  >
+                    Sign Up <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             </div>
@@ -228,7 +234,7 @@ const LandingPage = () => {
                 <div className="mt-12 grid gap-8 md:grid-cols-3">
                     <Card className="bg-[#F1F0FB] p-6 text-left border-none">
                         <div className="mb-4 inline-block rounded-full bg-white p-3 shadow-sm" style={{ clipPath: 'polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%)' }}>
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 8V12M12 12V16M12 12H16M12 12H8" stroke="#7B61FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M18.5 12C18.5 13.9655 18.0051 15.8239 17.1375 17.391C16.2699 18.9581 15.071 20.157 13.6822 20.8528C12.2934 21.5486 10.7719 21.713 9.29616 21.3259C7.82041 20.9387 6.46747 20.0223 5.42173 18.721C4.37599 17.4197 3.69931 15.8113 3.48679 14.1221C3.27426 12.433 3.53526 10.7455 4.23896 9.24751C4.94265 7.74952 6.05943 6.51263 7.44754 5.68888C8.83566 4.86514 10.4373 4.5 12 4.5" stroke="#7B61FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+                            <GraduationCap className="h-8 w-8 text-primary" />
                         </div>
                         <CardTitle className="mt-4 text-2xl font-bold">Fun Quiz</CardTitle>
                         <CardContent className="p-0 mt-2">
@@ -268,23 +274,23 @@ const LandingPage = () => {
               Sparkly connects you with millions of learners and expert mentors, providing the guidance and resources needed to excel in your journey.
             </p>
             <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-3">
-              <Card className="bg-transparent border-primary/20 text-center py-6">
+              <Card className="bg-white/10 border-primary/20 text-center py-6">
                 <div className="mb-4 inline-flex items-center justify-center rounded-full bg-primary/20 p-3">
                   <Award className="h-8 w-8 text-primary" />
                 </div>
                 <p className="text-4xl font-bold text-white">2.5M+</p>
                 <p className="mt-2 text-white/80">Engaged Learners</p>
               </Card>
-              <Card className="bg-transparent border-primary/20 text-center py-6">
+              <Card className="bg-white/10 border-primary/20 text-center py-6">
                 <div className="mb-4 inline-flex items-center justify-center rounded-full bg-primary/20 p-3">
                   <BookOpen className="h-8 w-8 text-primary" />
                 </div>
                 <p className="text-4xl font-bold text-white">5K+</p>
                 <p className="mt-2 text-white/80">Courses Available</p>
               </Card>
-              <Card className="bg-transparent border-primary/20 text-center py-6">
+              <Card className="bg-white/10 border-primary/20 text-center py-6">
                 <div className="mb-4 inline-flex items-center justify-center rounded-full bg-primary/20 p-3">
-                  <Award className="h-8 w-8 text-primary" />
+                  <Users className="h-8 w-8 text-primary" />
                 </div>
                 <p className="text-4xl font-bold text-white">800+</p>
                 <p className="mt-2 text-white/80">Expert Mentors</p>
@@ -298,38 +304,44 @@ const LandingPage = () => {
 
         {/* Mission Section */}
         <section id="about" className="py-16 md:py-24 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid items-center gap-12 md:grid-cols-2">
-            <div>
-              <h2 className="text-3xl font-headline font-bold text-textPrimary md:text-4xl">The Mission</h2>
-              <p className="mt-4 text-textSecondary">
-                Our real-time sign language translation platform aims to break down communication barriers globally, powered by advanced AI technology.
-              </p>
-              <div className="mt-8 grid grid-cols-2 gap-8">
-                <div>
-                  <p className="text-3xl font-bold text-primary">5,000+</p>
-                  <p className="mt-1 text-textSecondary">Deaf People Served</p>
-                </div>
-                <div>
-                  <p className="text-3xl font-bold text-primary">7M+</p>
-                  <p className="mt-1 text-textSecondary">Lives Impacted</p>
-                </div>
+          <div className="text-left mb-12">
+              <h2 className="text-lg font-bold text-primary uppercase">mission</h2>
+          </div>
+          <div className="grid lg:grid-cols-2 gap-8 items-start">
+              <div className="bg-[#1C1C35] text-white p-10 rounded-2xl h-full flex flex-col">
+                  <h3 className="text-4xl font-bold leading-tight mb-4">
+                      Introducing our real-time sign language translation platform, designed to break down communication instantly.
+                  </h3>
+                  <p className="text-white/70 mb-8 flex-grow">
+                    Profoundly Deaf people worldwide. Profoundly Deaf people worldwide. Profoundly Deaf people worldwide. Profoundly Deaf people worldwide.
+                  </p>
+                  <Button variant="secondary" className="bg-white text-black self-start">More about us</Button>
               </div>
-              <div className="mt-8">
-                <Button variant="outline" className="border-primary text-primary">More About Us</Button>
+              <div className="grid grid-cols-2 grid-rows-2 gap-8">
+                  <div className="col-span-1 row-span-1">
+                      {missionImage && (
+                          <Image
+                            src={missionImage.imageUrl}
+                            alt={missionImage.description}
+                            width={300}
+                            height={300}
+                            className="rounded-2xl shadow-lg object-cover w-full h-full"
+                            data-ai-hint={missionImage.imageHint}
+                          />
+                      )}
+                  </div>
+                  <div className="bg-[#FFC94D] text-black p-6 rounded-2xl flex flex-col justify-between col-span-1 row-span-1">
+                      <div>
+                          <p className="text-4xl font-bold">Over</p>
+                          <p className="text-5xl font-bold">5,000</p>
+                      </div>
+                      <p>Discover thousands of fun and interactive learning</p>
+                  </div>
+                  <div className="bg-primary/20 text-primary p-6 rounded-2xl flex items-end justify-between col-span-2 row-span-1">
+                      <p className="max-w-xs">Profoundly Deaf people worldwide</p>
+                      <p className="text-7xl font-bold">7m</p>
+                  </div>
               </div>
-            </div>
-            <div>
-            {missionImage && (
-                <Image
-                  src={missionImage.imageUrl}
-                  alt={missionImage.description}
-                  width={600}
-                  height={400}
-                  className="rounded-lg shadow-lg"
-                  data-ai-hint={missionImage.imageHint}
-                />
-            )}
-            </div>
           </div>
         </section>
 
