@@ -1,0 +1,170 @@
+/**
+ * @file Firestore Security Rules
+ * @description This ruleset enforces a strict user-ownership model for private data,
+ *              while allowing public read access to lessons and community leaderboard data.
+ *              All private data is nested under the `/users/{userId}` path.
+ *
+ * Data Structure:
+ * - /users/{userId}: User profiles, accessible only by the owning user.
+ * - /users/{userId}/progress: User's progress, accessible only by the owning user.
+ * - /users/{userId}/achievements/{achievementId}: User's achievements, accessible only by the owning user.
+ * - /leaderboard_entries/{leaderboardEntryId}: Public leaderboard entries. Write access is not granted to end users.
+ * - /lessons/{lessonId}: Public lesson content, readable by all. Write access is not granted to end users.
+ *
+ * Key Security Decisions:
+ * - User listing is disallowed.
+ * - All write operations on private data require authentication and ownership validation.
+ * - Read access to lessons and leaderboard entries is public.
+ *
+ * Denormalization for Authorization:
+ * - The `userId` is denormalized into the `Progress` and `Achievement` documents to avoid costly `get()` calls.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Enforces document ownership for user profiles.
+     * @path /users/{userId}
+     * @allow (create) User with ID 'user123' can create their own profile.
+     * @allow (get) User with ID 'user123' can read their own profile.
+     * @allow (update) User with ID 'user123' can update their own profile.
+     * @allow (delete) User with ID 'user123' can delete their own profile.
+     * @deny (create) User with ID 'user456' cannot create a profile for 'user123'.
+     * @deny (get) User with ID 'user456' cannot read the profile of 'user123'.
+     * @deny (update) User with ID 'user456' cannot update the profile of 'user123'.
+     * @deny (delete) User with ID 'user456' cannot delete the profile of 'user123'.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId} {
+      // Helper function to check if the user is signed in.
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      // Helper function to check if the requested user ID matches the authenticated user ID.
+      function isOwner(userId) {
+        return isSignedIn() && request.auth.uid == userId;
+      }
+
+      // Helper function to check if the user is an existing owner of a document.
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if false; // Listing users is not permitted.
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Enforces document ownership for user progress data.
+     * @path /users/{userId}/progress
+     * @allow (create) User with ID 'user123' can create their own progress.
+     * @allow (get) User with ID 'user123' can read their own progress.
+     * @allow (update) User with ID 'user123' can update their own progress.
+     * @allow (delete) User with ID 'user123' can delete their own progress.
+     * @deny (create) User with ID 'user456' cannot create progress for 'user123'.
+     * @deny (get) User with ID 'user456' cannot read the progress of 'user123'.
+     * @deny (update) User with ID 'user456' cannot update the progress of 'user123'.
+     * @deny (delete) User with ID 'user456' cannot delete the progress of 'user123'.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/progress {
+      // Helper function to check if the user is signed in.
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      // Helper function to check if the requested user ID matches the authenticated user ID.
+      function isOwner(userId) {
+        return isSignedIn() && request.auth.uid == userId;
+      }
+
+      // Helper function to check if the user is an existing owner of a document.
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+      
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Enforces document ownership for user achievements.
+     * @path /users/{userId}/achievements/{achievementId}
+     * @allow (create) User with ID 'user123' can create their own achievement.
+     * @allow (get) User with ID 'user123' can read their own achievement.
+     * @allow (update) User with ID 'user123' can update their own achievement.
+     * @allow (delete) User with ID 'user123' can delete their own achievement.
+     * @deny (create) User with ID 'user456' cannot create an achievement for 'user123'.
+     * @deny (get) User with ID 'user456' cannot read the achievement of 'user123'.
+     * @deny (update) User with ID 'user456' cannot update the achievement of 'user123'.
+     * @deny (delete) User with ID 'user456' cannot delete the achievement of 'user123'.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/achievements/{achievementId} {
+      // Helper function to check if the user is signed in.
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      // Helper function to check if the requested user ID matches the authenticated user ID.
+      function isOwner(userId) {
+        return isSignedIn() && request.auth.uid == userId;
+      }
+
+      // Helper function to check if the user is an existing owner of a document.
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Allows public read access to leaderboard entries, but restricts write access.
+     * @path /leaderboard_entries/{leaderboardEntryId}
+     * @allow (get) Any user can read leaderboard entries.
+     * @allow (list) Any user can list leaderboard entries.
+     * @deny (create) No user can create leaderboard entries through the client.
+     * @deny (update) No user can update leaderboard entries through the client.
+     * @deny (delete) No user can delete leaderboard entries through the client.
+     * @principle Allows public read access but restricts write access.
+     */
+    match /leaderboard_entries/{leaderboardEntryId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    /**
+     * @description Allows public read access to lessons, but restricts write access.
+     * @path /lessons/{lessonId}
+     * @allow (get) Any user can read lessons.
+     * @allow (list) Any user can list lessons.
+     * @deny (create) No user can create lessons through the client.
+     * @deny (update) No user can update lessons through the client.
+     * @deny (delete) No user can delete lessons through the client.
+     * @principle Allows public read access but restricts write access.
+     */
+    match /lessons/{lessonId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+  }
+}

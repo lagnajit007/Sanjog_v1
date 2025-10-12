@@ -1,0 +1,272 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the sign language learning platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user."
+        },
+        "name": {
+          "type": "string",
+          "description": "User's full name."
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email address.",
+          "format": "email"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "User's phone number."
+        },
+        "learnerType": {
+          "type": "string",
+          "description": "The type of learner (e.g., Student, Professional)."
+        },
+        "progressId": {
+          "type": "string",
+          "description": "Reference to Progress. (Relationship: User 1:1 Progress)"
+        },
+        "achievementIds": {
+          "type": "array",
+          "description": "References to Achievements. (Relationship: User 1:N Achievement)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "email",
+        "learnerType",
+        "progressId"
+      ]
+    },
+    "Progress": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Progress",
+      "type": "object",
+      "description": "Represents a user's learning progress.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the progress entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:1 Progress)"
+        },
+        "lessonsCompleted": {
+          "type": "number",
+          "description": "Number of lessons completed by the user."
+        },
+        "skillLevel": {
+          "type": "number",
+          "description": "User's current skill level."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "lessonsCompleted",
+        "skillLevel"
+      ]
+    },
+    "Achievement": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Achievement",
+      "type": "object",
+      "description": "Represents an achievement earned by a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the achievement."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Achievement)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the achievement."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the achievement."
+        },
+        "dateEarned": {
+          "type": "string",
+          "description": "Date the achievement was earned.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "name",
+        "description",
+        "dateEarned"
+      ]
+    },
+    "LeaderboardEntry": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "LeaderboardEntry",
+      "type": "object",
+      "description": "Represents an entry in the community leaderboard.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the leaderboard entry."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:1 LeaderboardEntry)"
+        },
+        "points": {
+          "type": "number",
+          "description": "User's points on the leaderboard."
+        },
+        "level": {
+          "type": "number",
+          "description": "User's level on the leaderboard."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "points",
+        "level"
+      ]
+    },
+    "Lesson": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Lesson",
+      "type": "object",
+      "description": "Represents a sign language lesson.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the lesson."
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the lesson."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the lesson."
+        },
+        "content": {
+          "type": "string",
+          "description": "Content of the lesson (e.g., text, video URL)."
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "description",
+        "content"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles. The `userId` parameter corresponds to the Firebase Authentication UID. User data is directly accessible via this path, ensuring Authorization Independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Authentication UID of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/progress",
+        "definition": {
+          "entityName": "Progress",
+          "schema": {
+            "$ref": "#/backend/entities/Progress"
+          },
+          "description": "Stores user progress data. Nested under the user document to ensure clear ownership. The `userId` field within the Progress document is redundant but supports Authorization Independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Authentication UID of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/achievements/{achievementId}",
+        "definition": {
+          "entityName": "Achievement",
+          "schema": {
+            "$ref": "#/backend/entities/Achievement"
+          },
+          "description": "Stores user achievements. Nested under the user document for clear ownership and simple security rules. The `userId` field is denormalized within the achievement document to support Authorization Independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Authentication UID of the user."
+            },
+            {
+              "name": "achievementId",
+              "description": "The unique identifier for the achievement."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/leaderboard_entries/{leaderboardEntryId}",
+        "definition": {
+          "entityName": "LeaderboardEntry",
+          "schema": {
+            "$ref": "#/backend/entities/LeaderboardEntry"
+          },
+          "description": "Stores leaderboard entries. While technically global, read access can be public, while write access is restricted to backend services or specific admin roles. Each entry contains a `userId` referencing the user.",
+          "params": [
+            {
+              "name": "leaderboardEntryId",
+              "description": "The unique identifier for the leaderboard entry."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/lessons/{lessonId}",
+        "definition": {
+          "entityName": "Lesson",
+          "schema": {
+            "$ref": "#/backend/entities/Lesson"
+          },
+          "description": "Stores lesson content. Publicly readable. Write access restricted to admins. No specific authorization data denormalized as all lessons are accessible to all users.",
+          "params": [
+            {
+              "name": "lessonId",
+              "description": "The unique identifier for the lesson."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to optimize security, scalability, and debuggability, adhering to the principles of Authorization Independence, Clarity of Intent, DBAC, and QAPs.  Authorization Independence is achieved through denormalization. For example, access to a user's progress is directly tied to the `users/{userId}` path, eliminating the need for `get()` calls to verify ownership. Similarly, achievements are stored under the user's document, ensuring clear ownership and preventing unauthorized access. Structural Segregation ensures that all documents within a collection share the same security requirements. Path-Based Ownership is consistently applied for private data, using `/users/{userId}` as the root for user-owned data, and continuing this hierarchy for nested data like achievements. This approach simplifies security rules by making ownership explicit in the document paths, enabling secure `list` operations (QAPs) without complex filtering logic. Role-Based Access Control (DBAC) is implemented without custom claims by leveraging the Firebase Authentication `uid` and structuring data access around user ownership."
+  }
+}
