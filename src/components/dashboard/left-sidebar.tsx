@@ -3,13 +3,14 @@
 
 import { LogOut, Menu } from 'lucide-react';
 import { menuItems } from '@/lib/data';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { usePathname } from 'next/navigation';
+import { useUser } from '@/firebase';
+import { Skeleton } from '../ui/skeleton';
 
 const Logo = () => (
     <Link href="/dashboard" className="flex items-center gap-2 mb-8">
@@ -51,19 +52,43 @@ const NavMenu = () => {
 }
 
 const UserProfile = ({ onLogoutClick }: { onLogoutClick: () => void }) => {
-  const userAvatar = PlaceHolderImages.find((img) => img.id === '1');
+  const { user, isUserLoading } = useUser();
+
+  const getInitials = (name: string | null | undefined) => {
+    if (!name) return 'U';
+    const names = name.split(' ');
+    if (names.length > 1) {
+      return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
+    }
+    return name.charAt(0).toUpperCase();
+  };
+
+  if (isUserLoading) {
+    return (
+      <div className="mt-auto space-y-4">
+        <div className="flex w-full items-center gap-3 p-2">
+          <Skeleton className="h-12 w-12 rounded-full" />
+          <div className="flex flex-col gap-1 w-full">
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-3 w-full" />
+          </div>
+        </div>
+        <Skeleton className="h-10 w-full rounded-full" />
+      </div>
+    );
+  }
 
   return (
     <div className="mt-auto space-y-4">
        <Link href="/profile" className="block rounded-lg transition-colors hover:bg-accent">
         <div className="flex w-full items-center gap-3 p-2">
           <Avatar className="cursor-pointer h-12 w-12">
-            {userAvatar && <AvatarImage src={userAvatar.imageUrl} alt="Jenny Wilson" data-ai-hint={userAvatar.imageHint} />}
-            <AvatarFallback>JW</AvatarFallback>
+            {user?.photoURL && <AvatarImage src={user.photoURL} alt={user.displayName || 'User avatar'} />}
+            <AvatarFallback>{getInitials(user?.displayName)}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col overflow-hidden">
-            <span className="font-semibold truncate">Jenny Wilson</span>
-            <span className="text-sm text-muted-foreground truncate">jen.wilson@example.com</span>
+            <span className="font-semibold truncate">{user?.displayName || 'New User'}</span>
+            <span className="text-sm text-muted-foreground truncate">{user?.email || 'No email'}</span>
           </div>
         </div>
       </Link>

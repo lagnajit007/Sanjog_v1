@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,17 +20,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useUser } from '@/firebase';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // Mock Data
-const initialUser = {
-  name: 'Jenny Wilson',
-  tagline: 'Lover of languages and lifelong learner.',
-  level: 8,
-  rank: 'Sign Master',
-  xpPercent: 75,
-  avatar: 'https://picsum.photos/seed/1/128/128',
-};
-
 const achievements = [
   { icon: Award, title: 'First 10 Signs', description: 'Learned your first 10 signs', locked: false },
   { icon: Flame, title: '7-Day Streak', description: 'Logged in for 7 days in a row', locked: false },
@@ -88,7 +81,7 @@ const AchievementCard = ({ icon: Icon, title, locked }: { icon: React.ElementTyp
   </Card>
 );
 
-const EditProfileModal = ({ isOpen, onClose, user, onSave }: { isOpen: boolean, onClose: () => void, user: typeof initialUser, onSave: (updatedUser: {name: string, tagline: string, avatar: string}) => void }) => {
+const EditProfileModal = ({ isOpen, onClose, user, onSave }: { isOpen: boolean, onClose: () => void, user: any, onSave: (updatedUser: {name: string, tagline: string, avatar: string}) => void }) => {
     const [name, setName] = useState(user.name);
     const [tagline, setTagline] = useState(user.tagline);
     const [avatar, setAvatar] = useState(user.avatar);
@@ -123,7 +116,7 @@ const EditProfileModal = ({ isOpen, onClose, user, onSave }: { isOpen: boolean, 
                     <div className="flex items-center gap-4">
                         <Avatar className="h-24 w-24">
                             <AvatarImage src={avatar} alt={user.name} />
-                            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                            <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
                             <Upload className="w-4 h-4 mr-2" /> Change Avatar
@@ -154,14 +147,53 @@ const EditProfileModal = ({ isOpen, onClose, user, onSave }: { isOpen: boolean, 
     );
 }
 
+const getInitials = (name: string | null | undefined) => {
+    if (!name) return 'U';
+    const names = name.split(' ');
+    if (names.length > 1) {
+      return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
+    }
+    return name.charAt(0).toUpperCase();
+};
 
 export default function ProfilePage() {
-    const [user, setUser] = useState(initialUser);
+    const { user, isUserLoading } = useUser();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    const [profileData, setProfileData] = useState({
+      name: 'Jenny Wilson',
+      tagline: 'Lover of languages and lifelong learner.',
+      level: 8,
+      rank: 'Sign Master',
+      xpPercent: 75,
+      avatar: 'https://picsum.photos/seed/1/128/128',
+    });
+
+    useEffect(() => {
+        if(user) {
+            setProfileData(prev => ({
+                ...prev,
+                name: user.displayName || 'New User',
+                avatar: user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=random`,
+                tagline: prev.tagline, // Keep mock tagline for now
+            }));
+        }
+    }, [user]);
+
     const handleSaveProfile = (updatedUser: {name: string, tagline: string, avatar: string}) => {
-        setUser(prevUser => ({...prevUser, ...updatedUser}));
+        setProfileData(prevUser => ({...prevUser, ...updatedUser}));
     };
+
+    if (isUserLoading) {
+        return (
+            <div className="space-y-6">
+                <Skeleton className="h-10 w-48" />
+                <Skeleton className="h-6 w-96" />
+                <Skeleton className="h-48 w-full" />
+                <Skeleton className="h-48 w-full" />
+            </div>
+        );
+    }
 
   return (
     <div className="space-y-6">
@@ -175,27 +207,27 @@ export default function ProfilePage() {
           <div className="flex flex-col sm:flex-row items-center gap-6">
             <div className="relative">
               <Avatar className="h-24 w-24 border-4 border-primary">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                <AvatarImage src={profileData.avatar} alt={profileData.name} />
+                <AvatarFallback>{getInitials(profileData.name)}</AvatarFallback>
               </Avatar>
               <Button size="icon" className="absolute bottom-0 right-0 h-8 w-8 rounded-full" onClick={() => setIsModalOpen(true)}>
                 <Edit className="h-4 w-4" />
               </Button>
             </div>
             <div className="flex-1 w-full text-center sm:text-left">
-              <h2 className="text-2xl font-bold">{user.name}</h2>
-              <p className="text-muted-foreground">{user.tagline}</p>
+              <h2 className="text-2xl font-bold">{profileData.name}</h2>
+              <p className="text-muted-foreground">{profileData.tagline}</p>
               <div className="mt-2 flex items-center justify-center sm:justify-start gap-2">
                  <span className="inline-block bg-secondary text-secondary-foreground font-semibold px-3 py-1 text-sm rounded-full">
-                    Level {user.level} • {user.rank}
+                    Level {profileData.level} • {profileData.rank}
                 </span>
               </div>
               <div className="mt-4">
                 <div className="flex justify-between text-sm text-muted-foreground mb-1">
                   <span>XP Progress</span>
-                  <span>{user.xpPercent}%</span>
+                  <span>{profileData.xpPercent}%</span>
                 </div>
-                <Progress value={user.xpPercent} indicatorClassName="bg-primary" />
+                <Progress value={profileData.xpPercent} indicatorClassName="bg-primary" />
               </div>
             </div>
              <Button variant="outline" className="mt-4 sm:mt-0" onClick={() => setIsModalOpen(true)}>Edit Profile</Button>
@@ -288,7 +320,7 @@ export default function ProfilePage() {
         <EditProfileModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
-            user={user}
+            user={profileData}
             onSave={handleSaveProfile}
         />
     </div>
