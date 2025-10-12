@@ -136,8 +136,7 @@ export default function LearnPage() {
         try {
           const response = await recognizeGesture({ landmarks });
           const { prediction, confidence } = response;
-          // For now, let's assume the target sign is "H" for "HELLO"
-          const targetSign = 'H'; 
+          const targetSign = 'A'; 
           setIsCorrect(prediction === targetSign);
           setAccuracy(Math.round(confidence * 100));
 
@@ -185,14 +184,14 @@ export default function LearnPage() {
     <div className="grid w-full grid-cols-1 lg:grid-cols-2 lg:grid-rows-1 font-sans p-4 gap-6" style={{ gridTemplateColumns: '1.1fr 1.3fr' }}>
       {/* Left Panel */}
       <Card className="flex flex-col gap-4 rounded-2xl p-6 shadow-lg border-none bg-white">
-          <h1 className="text-2xl font-bold text-primary">HELLO 👋</h1>
+          <h1 className="text-2xl font-bold text-primary">LETTER 'A'</h1>
           
           <div className="flex justify-center items-center h-[200px] bg-secondary rounded-lg">
              {/* Replace with actual sign image */}
-            <Image src="https://picsum.photos/seed/hello-sign/300/200" alt="Hello sign illustration" width={300} height={200} className="rounded-lg object-cover" data-ai-hint="sign language hello" />
+            <Image src="https://picsum.photos/seed/sign-a/300/200" alt="Letter A sign illustration" width={300} height={200} className="rounded-lg object-cover" data-ai-hint="sign language A" />
           </div>
 
-          <p className="text-base text-text-secondary">Make the 'Hello' sign: place your flat hand to your forehead, then move it outwards and away.</p>
+          <p className="text-base text-text-secondary">Make the 'A' sign: form a fist with your thumb resting on the side.</p>
           
           <div className='flex-grow' />
 
@@ -251,12 +250,12 @@ export default function LearnPage() {
 
         <div className="text-center">
             <p className="text-sm text-muted-foreground">Active Sign</p>
-            <p className="text-lg font-bold">HELLO</p>
+            <p className="text-lg font-bold">A</p>
         </div>
 
         <div className="text-center">
             <p className="text-sm text-muted-foreground">Next Sign</p>
-            <p className="text-lg font-bold">THANK YOU</p>
+            <p className="text-lg font-bold">B</p>
         </div>
         
         <div className="w-48">

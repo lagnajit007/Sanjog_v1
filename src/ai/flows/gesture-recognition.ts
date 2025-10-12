@@ -53,12 +53,12 @@ const pythonPredictionTool = defineTool(
     // For now, let's return a mocked response.
     // Replace this with actual prediction logic when the backend is ready.
     const mockPrediction = () => {
-      const signs = ['A', 'B', 'C', 'H', 'E', 'L', 'L', 'O'];
+      const signs = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
       const randomSign = signs[Math.floor(Math.random() * signs.length)];
       if (input.landmarks.length === 42) {
           if (Math.random() > 0.3) {
             return {
-                prediction: 'H',
+                prediction: 'A',
                 confidence: Math.random() * 0.3 + 0.7, // 70-100%
             };
           }
