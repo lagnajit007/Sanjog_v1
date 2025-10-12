@@ -16,6 +16,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { Input } from '../ui/input';
+import AuthModal from '../auth/auth-modal';
 
 const CreativeActivitiesIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -35,6 +36,8 @@ const LandingPage = () => {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
   const [isAnnual, setIsAnnual] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalView, setAuthModalView] = useState<'login' | 'signup'>('login');
   
   const heroAvatars = [
     PlaceHolderImages.find((img) => img.id === '1'),
@@ -53,6 +56,11 @@ const LandingPage = () => {
       router.push('/dashboard');
     }
   }, [user, isUserLoading, router]);
+
+  const openAuthModal = (view: 'login' | 'signup') => {
+    setAuthModalView(view);
+    setIsAuthModalOpen(true);
+  };
   
   const pricingPlans = {
     monthly: [
@@ -122,6 +130,11 @@ const LandingPage = () => {
 
   return (
     <div className="bg-background text-textPrimary font-body">
+       <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        initialView={authModalView}
+      />
       <header className="sticky top-0 z-50 bg-surface border-b">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
@@ -134,12 +147,8 @@ const LandingPage = () => {
               <Link href="#about" className="text-sm font-medium text-textSecondary hover:text-primary">About</Link>
             </nav>
             <div className="flex items-center gap-4">
-              <Link href="/login">
-                <Button variant="ghost">Log in</Button>
-              </Link>
-              <Link href="/signup">
-                <Button>Sign up</Button>
-              </Link>
+              <Button variant="ghost" onClick={() => openAuthModal('login')}>Log in</Button>
+              <Button onClick={() => openAuthModal('signup')}>Sign up</Button>
             </div>
           </div>
         </div>
@@ -156,11 +165,9 @@ const LandingPage = () => {
               Discover thousands of fun and interactive learning activities to support your sign language journey and track your progress.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link href="/signup">
-                <Button size="lg">
-                  Get Started <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
+              <Button size="lg" onClick={() => openAuthModal('signup')}>
+                Get Started <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
             </div>
             <div className="mt-8 flex items-center justify-center">
               <div className="flex -space-x-2">
@@ -212,13 +219,12 @@ const LandingPage = () => {
                   Instantly translate your videos to sign language with AI. Sanjog bridges accessibility gaps for the deaf and hard-of-hearing community, making content accessible to profoundly Deaf people worldwide.
                 </p>
                 <div className="mt-6">
-                  <Link href="/signup">
-                    <Button
-                      className="bg-primary text-primary-foreground"
-                    >
-                      Try for Free <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
+                  <Button
+                    onClick={() => openAuthModal('signup')}
+                    className="bg-primary text-primary-foreground"
+                  >
+                    Try for Free <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             </div>
@@ -303,9 +309,7 @@ const LandingPage = () => {
               </Card>
             </div>
             <div className="mt-12">
-              <Link href="/signup">
-                <Button size="lg">Join The Community</Button>
-              </Link>
+               <Button size="lg" onClick={() => openAuthModal('signup')}>Join The Community</Button>
             </div>
           </div>
         </section>
@@ -459,17 +463,16 @@ const LandingPage = () => {
                       </ul>
                   </div>
                   
-                  <Link href="/signup">
-                    <Button 
-                      className={cn(
-                        "w-full mt-8 rounded-full py-6 text-lg font-semibold",
-                        plan.isPopular ? 'bg-white text-primary hover:bg-gray-100' : ''
-                      )}
-                      variant={plan.isPopular ? 'default' : 'outline'}
-                    >
-                      Get started
-                    </Button>
-                  </Link>
+                  <Button 
+                    onClick={() => openAuthModal('signup')}
+                    className={cn(
+                      "w-full mt-8 rounded-full py-6 text-lg font-semibold",
+                      plan.isPopular ? 'bg-white text-primary hover:bg-gray-100' : ''
+                    )}
+                    variant={plan.isPopular ? 'default' : 'outline'}
+                  >
+                    Get started
+                  </Button>
                 </Card>
               ))}
             </div>
@@ -488,17 +491,16 @@ const LandingPage = () => {
                  Join thousands of others on the journey to master sign language. With our interactive tools and supportive community, you'll be signing with confidence in no time.
                 </p>
                 <div className="mt-6">
-                  <Link href="/signup">
-                    <Button 
-                        variant="secondary"
-                        className="rounded-full bg-white text-primary group"
-                    >
-                        Sign Up For Free
-                        <span className="ml-2 h-6 w-6 rounded-full bg-black/10 flex items-center justify-center transition-transform group-hover:translate-x-1">
-                            <ArrowRight className="h-4 w-4" />
-                        </span>
-                    </Button>
-                    </Link>
+                  <Button 
+                      onClick={() => openAuthModal('signup')}
+                      variant="secondary"
+                      className="rounded-full bg-white text-primary group"
+                  >
+                      Sign Up For Free
+                      <span className="ml-2 h-6 w-6 rounded-full bg-black/10 flex items-center justify-center transition-transform group-hover:translate-x-1">
+                          <ArrowRight className="h-4 w-4" />
+                      </span>
+                  </Button>
                 </div>
               </div>
               <div className="hidden md:block">
@@ -561,3 +563,4 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
+    
