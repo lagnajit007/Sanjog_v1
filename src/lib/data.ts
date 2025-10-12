@@ -14,7 +14,7 @@ export const menuItems: MenuItem[] = [
   { icon: Hand, label: 'Practice', href: '/practice' },
   { icon: BookOpen, label: 'Lessons', href: '/lessons' },
   { icon: Trophy, label: 'Achievements', href: '/achievements' },
-  { icon: Target, label: 'Challenges', href: '#' },
+  { icon: Target, label: 'Challenges', href: '/challenges' },
   { icon: BarChart, label: 'Progress', href: '/progress' },
   { icon: Users, label: 'Community', href: '/community', badge: '32' },
   { icon: User, label: 'Profile', href: '/profile' },
