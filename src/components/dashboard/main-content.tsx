@@ -10,6 +10,7 @@ import {
 import ProgressCard from './progress-card';
 import LearningCard from './learning-card';
 import { progressCards, learningCards } from '@/lib/data';
+import Link from 'next/link';
 
 const MainContent = () => {
   return (
@@ -20,9 +21,11 @@ const MainContent = () => {
         <div className="relative z-10">
           <p className="mb-2 text-sm font-semibold uppercase">Online Course</p>
           <h2 className="mb-4 max-w-sm text-3xl font-bold">Learn Sign Language with Fun Gestures!</h2>
-          <Button variant="secondary" className="bg-white text-primary hover:bg-gray-100">
-            Start Learning <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+          <Link href="/learn">
+            <Button variant="secondary" className="bg-white text-primary hover:bg-gray-100">
+              Start Learning <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
         </div>
       </div>
 
