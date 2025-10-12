@@ -29,13 +29,12 @@ const Logo = () => (
 const NavMenu = () => {
   const pathname = usePathname();
   const modifiedPath = pathname.replace('/(app)/','/');
-  const allMenuItems = [...menuItems, { icon: User, label: 'Profile', href: '/profile' }];
   return (
     <nav className="flex-1 space-y-4">
       <div>
         <p className="mb-2 px-4 text-xs font-semibold uppercase text-muted-foreground">Menu</p>
         <ul className="flex flex-col gap-1">
-          {allMenuItems.map((item) => (
+          {menuItems.map((item) => (
             <li key={item.label}>
               <Link href={item.href}>
                 <Button
