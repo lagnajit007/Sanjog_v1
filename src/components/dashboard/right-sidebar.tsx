@@ -1,7 +1,5 @@
-import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import ProgressCircle from './progress-circle';
@@ -12,7 +10,7 @@ const RightSidebar = () => {
   const userAvatar = PlaceHolderImages.find((img) => img.id === '1');
 
   return (
-    <aside className="hidden w-[320px] flex-col gap-8 border-l bg-card p-6 xl:flex">
+    <aside className="hidden xl:flex w-[320px] flex-col gap-8 border-l bg-card p-6">
       <div className="flex flex-col items-center text-center">
         <Avatar className="h-20 w-20 mb-4">
           {userAvatar && <AvatarImage src={userAvatar.imageUrl} alt="Jenny Wilson" data-ai-hint={userAvatar.imageHint} />}

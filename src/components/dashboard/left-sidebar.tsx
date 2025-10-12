@@ -1,5 +1,4 @@
 import { LogOut } from 'lucide-react';
-import Image from 'next/image';
 import { menuItems } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -11,7 +10,7 @@ const LeftSidebar = () => {
   const userAvatar = PlaceHolderImages.find((img) => img.id === '1');
 
   return (
-    <aside className="hidden w-[260px] flex-col border-r bg-card p-6 shadow-subtle lg:flex">
+    <aside className="hidden lg:flex w-[260px] flex-col border-r bg-card p-6">
       <Link href="/" className="flex items-center gap-2">
         <div className="p-2 bg-primary rounded-lg">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
