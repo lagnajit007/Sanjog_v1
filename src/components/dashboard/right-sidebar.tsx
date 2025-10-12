@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import ProgressCircle from './progress-circle';
 import { badges, leaderboard } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { User } from 'lucide-react';
 
 const RightSidebarContent = () => {
@@ -85,6 +85,9 @@ const RightSidebar = () => {
                 </Button>
             </SheetTrigger>
             <SheetContent side="right" className="flex flex-col w-[320px] p-6 gap-8 overflow-auto">
+              <SheetHeader>
+                <SheetTitle className="sr-only">User Profile and Stats</SheetTitle>
+              </SheetHeader>
               <RightSidebarContent />
             </SheetContent>
         </Sheet>

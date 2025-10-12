@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
 const LeftSidebarContent = () => {
   const userAvatar = PlaceHolderImages.find((img) => img.id === '1');
@@ -81,6 +81,9 @@ const LeftSidebar = () => {
                 </Button>
             </SheetTrigger>
             <SheetContent side="left" className="flex flex-col w-[260px] p-6">
+              <SheetHeader>
+                <SheetTitle className="sr-only">Main Menu</SheetTitle>
+              </SheetHeader>
               <LeftSidebarContent />
             </SheetContent>
         </Sheet>
