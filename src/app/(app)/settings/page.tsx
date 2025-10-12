@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,13 +47,26 @@ const AccountTab = () => {
     const { user, isUserLoading } = useUser();
     const [name, setName] = useState('');
     const [avatar, setAvatar] = useState('');
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (user) {
             setName(user.displayName || '');
-            setAvatar(user.photoURL || '');
+            setAvatar(user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || 'New+User'}&background=random&color=fff`);
         }
     }, [user]);
+
+    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                if (event.target?.result) {
+                    setAvatar(event.target.result as string);
+                }
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        }
+    };
 
     if (isUserLoading) {
         return (
@@ -88,7 +101,16 @@ const AccountTab = () => {
                             <AvatarImage src={avatar} />
                             <AvatarFallback>{getInitials(name)}</AvatarFallback>
                         </Avatar>
-                        <Button variant="outline"><Upload className="w-4 h-4 mr-2" /> Change Avatar</Button>
+                        <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+                            <Upload className="w-4 h-4 mr-2" /> Change Avatar
+                        </Button>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            className="hidden"
+                            accept="image/*"
+                            onChange={handleAvatarChange}
+                        />
                     </div>
                 </FormField>
                  <FormField label="Email">
