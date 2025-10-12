@@ -1,17 +1,18 @@
-import { LogOut } from 'lucide-react';
+import { LogOut, Menu } from 'lucide-react';
 import { menuItems } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
-const LeftSidebar = () => {
+const LeftSidebarContent = () => {
   const userAvatar = PlaceHolderImages.find((img) => img.id === '1');
 
   return (
-    <aside className="hidden lg:flex w-[260px] flex-col border-r bg-card p-6">
-      <Link href="/dashboard" className="flex items-center gap-2">
+    <>
+      <Link href="/dashboard" className="flex items-center gap-2 mb-8">
         <div className="p-2 bg-primary rounded-lg">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M7 17.5V6.5C7 5.11929 8.11929 4 9.5 4H14.5C15.8807 4 17 5.11929 17 6.5V12.5C17 13.8807 15.8807 15 14.5 15H10.5L7 17.5Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -21,7 +22,7 @@ const LeftSidebar = () => {
         <h1 className="text-2xl font-bold text-foreground">sanjog</h1>
       </Link>
 
-      <nav className="mt-8 flex flex-1 flex-col">
+      <nav className="flex-1">
         <p className="mb-2 text-xs font-semibold uppercase text-muted-foreground">Menu</p>
         <ul className="flex flex-col gap-2">
           {menuItems.map((item) => (
@@ -59,7 +60,30 @@ const LeftSidebar = () => {
           </Button>
         </div>
       </div>
-    </aside>
+    </>
+  );
+};
+
+
+const LeftSidebar = () => {
+  return (
+    <>
+      <aside className="hidden lg:flex w-[260px] flex-col border-r bg-card p-6">
+        <LeftSidebarContent />
+      </aside>
+      <div className="lg:hidden p-4 border-b">
+        <Sheet>
+            <SheetTrigger asChild>
+                <Button variant="outline" size="icon">
+                    <Menu className="h-5 w-5" />
+                </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="flex flex-col w-[260px] p-6">
+              <LeftSidebarContent />
+            </SheetContent>
+        </Sheet>
+      </div>
+    </>
   );
 };
 

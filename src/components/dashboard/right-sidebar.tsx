@@ -5,12 +5,13 @@ import { Badge } from '@/components/ui/badge';
 import ProgressCircle from './progress-circle';
 import { badges, leaderboard } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
+import { User } from 'lucide-react';
 
-const RightSidebar = () => {
+const RightSidebarContent = () => {
   const userAvatar = PlaceHolderImages.find((img) => img.id === '1');
-
   return (
-    <aside className="hidden xl:flex w-[320px] flex-col gap-8 border-l bg-card p-6">
+    <>
       <div className="flex flex-col items-center text-center">
         <Avatar className="h-20 w-20 mb-4">
           {userAvatar && <AvatarImage src={userAvatar.imageUrl} alt="Jenny Wilson" data-ai-hint={userAvatar.imageHint} />}
@@ -66,7 +67,29 @@ const RightSidebar = () => {
           })}
         </ul>
       </div>
-    </aside>
+    </>
+  )
+}
+
+const RightSidebar = () => {
+  return (
+    <>
+      <aside className="hidden xl:flex w-[320px] flex-col gap-8 border-l bg-card p-6">
+        <RightSidebarContent />
+      </aside>
+       <div className="xl:hidden p-4 border-b">
+        <Sheet>
+            <SheetTrigger asChild>
+                <Button variant="outline" size="icon">
+                    <User className="h-5 w-5" />
+                </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="flex flex-col w-[320px] p-6 gap-8 overflow-auto">
+              <RightSidebarContent />
+            </SheetContent>
+        </Sheet>
+      </div>
+    </>
   );
 };
 
