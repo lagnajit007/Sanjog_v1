@@ -479,29 +479,39 @@ const LandingPage = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="bg-[#1E1E2F] py-16 md:py-24">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid items-center gap-12 md:grid-cols-2">
-              <div>
-                <h2 className="text-3xl font-headline font-bold md:text-4xl text-white">Get involved with us</h2>
+        <section className="py-16 md:py-24">
+          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8 rounded-2xl bg-[#1C1C35] p-8 md:p-12">
+              <div className="md:order-2">
+                <h2 className="text-3xl font-headline font-bold text-white">
+                  Get involved <span className="text-white/70">with us</span>
+                </h2>
                 <p className="mt-4 text-white/80">
-                  We’re seeking forward-thinking partners to help expand access to sign language learning globally.
+                  We are seeking <span className="text-primary">forward-thinking</span> clients that aim to build the next generation of access for sign language users. We value working with those who want to be part of the future of equality and are keen to improve operational efficiency. If you would like to transform accessibility for sign language users at your business, please book a demo with us.
                 </p>
                 <div className="mt-6">
-                  <Button onClick={() => openAuthModal('signup')}>Sign Up</Button>
+                    <Button 
+                        onClick={() => openAuthModal('signup')}
+                        className="rounded-full bg-primary text-primary-foreground group"
+                    >
+                        Sign Up
+                        <span className="ml-2 h-6 w-6 rounded-full bg-white/20 flex items-center justify-center transition-transform group-hover:translate-x-1">
+                            <ArrowRight className="h-4 w-4 text-white" />
+                        </span>
+                    </Button>
                 </div>
               </div>
-              <div>
-              {ctaHandsImage && (
-                <Image
-                  src={ctaHandsImage.imageUrl}
-                  alt={ctaHandsImage.description}
-                  width={600}
-                  height={400}
-                  className="rounded-lg"
-                  data-ai-hint={ctaHandsImage.imageHint}
-                />
-              )}
+              <div className="md:order-1">
+                {ctaHandsImage && (
+                  <Image
+                    src={ctaHandsImage.imageUrl}
+                    alt={ctaHandsImage.description}
+                    width={400}
+                    height={400}
+                    className="rounded-lg object-cover"
+                    data-ai-hint={ctaHandsImage.imageHint}
+                  />
+                )}
               </div>
             </div>
           </div>
