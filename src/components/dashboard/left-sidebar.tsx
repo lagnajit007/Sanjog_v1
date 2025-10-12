@@ -55,7 +55,7 @@ const UserProfile = ({ onLogoutClick }: { onLogoutClick: () => void }) => {
 
   return (
     <div className="mt-auto space-y-4">
-       <Link href="/profile" className="block rounded-lg transition-colors hover:bg-secondary">
+       <Link href="/profile" className="block rounded-lg transition-colors hover:bg-accent">
         <div className="flex w-full items-center gap-3 p-2">
           <Avatar className="cursor-pointer h-12 w-12">
             {userAvatar && <AvatarImage src={userAvatar.imageUrl} alt="Jenny Wilson" data-ai-hint={userAvatar.imageHint} />}
