@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Award, ArrowRight, BookOpen, Check, CheckCircle, Crown, Gamepad2, GraduationCap, Lightbulb, PenTool, User, Users, Video } from 'lucide-react';
+import { Award, ArrowRight, BookOpen, Check, CheckCircle, Crown, Gamepad2, GraduationCap, Lightbulb, PenTool, User, Users, Video, Bot, MessageCircle, Share2, BrainCircuit } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -346,40 +346,58 @@ const LandingPage = () => {
         </section>
 
         {/* Process Section */}
-        <section className="py-16 md:py-24 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid items-center gap-12 md:grid-cols-2">
-            <div className="order-2 md:order-1">
-              <h2 className="text-3xl font-headline font-bold text-textPrimary md:text-4xl">The Process</h2>
-              <ul className="mt-8 space-y-6">
-                <li className="flex items-start">
-                  <div className="mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary text-onPrimary">1</div>
-                  <p className="text-textSecondary">Large dataset of sign language</p>
-                </li>
-                <li className="flex items-start">
-                  <div className="mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary text-onPrimary">2</div>
-                  <p className="text-textSecondary">AI-powered branding</p>
-                </li>
-                <li className="flex items-start">
-                  <div className="mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary text-onPrimary">3</div>
-                  <p className="text-textSecondary">24/7 chatbot support</p>
-                </li>
-                <li className="flex items-start">
-                  <div className="mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary text-onPrimary">4</div>
-                  <p className="text-textSecondary">Real-time learning</p>
-                </li>
-              </ul>
-            </div>
-            <div className="order-1 md:order-2">
-            {processImage && (
-              <Image
-                src={processImage.imageUrl}
-                alt={processImage.description}
-                width={600}
-                height={600}
-                className="rounded-lg shadow-lg"
-                data-ai-hint={processImage.imageHint}
-              />
-            )}
+        <section className="bg-[#0F0434] text-white py-16 md:py-24">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid items-center gap-12 md:grid-cols-2">
+              <div>
+                <h2 className="text-lg font-bold text-primary uppercase mb-8">process</h2>
+                <ul className="space-y-8">
+                  <li className="flex items-start gap-4">
+                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-white">
+                      <Share2 className="h-6 w-6 text-black" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold">Large dataset of sign language</h3>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-4">
+                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-white">
+                      <BrainCircuit className="h-6 w-6 text-black" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold">AI-powered blending</h3>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-4">
+                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-white">
+                      <MessageCircle className="h-6 w-6 text-black" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold">24*7 chatbot support</h3>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-4">
+                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-white">
+                      <Video className="h-6 w-6 text-black" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold">Real time learning</h3>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              <div >
+              {processImage && (
+                <Image
+                  src={processImage.imageUrl}
+                  alt={processImage.description}
+                  width={600}
+                  height={600}
+                  className="rounded-lg shadow-lg"
+                  data-ai-hint={processImage.imageHint}
+                />
+              )}
+              </div>
             </div>
           </div>
         </section>
