@@ -1,3 +1,8 @@
+
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { ArrowRight, Crown, Lightbulb, Gamepad2, PenTool } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -5,8 +10,15 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
+import AuthModal from '@/components/auth/auth-modal';
+import { useUser } from '@/firebase';
 
 const LandingPage = () => {
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [initialAuthTab, setInitialAuthTab] = useState<'login' | 'signup'>('login');
+  
   const heroAvatars = [
     PlaceHolderImages.find((img) => img.id === '1'),
     PlaceHolderImages.find((img) => img.id === '2'),
@@ -19,6 +31,16 @@ const LandingPage = () => {
   const videoPreviewImage = PlaceHolderImages.find((img) => img.id === 'video-preview');
   const heroImage = PlaceHolderImages.find(img => img.id === 'hero');
 
+  useEffect(() => {
+    if (!isUserLoading && user) {
+      router.push('/dashboard');
+    }
+  }, [user, isUserLoading, router]);
+
+  const openAuthModal = (tab: 'login' | 'signup') => {
+    setInitialAuthTab(tab);
+    setIsAuthModalOpen(true);
+  };
 
   return (
     <div className="bg-background text-textPrimary font-body">
@@ -36,12 +58,8 @@ const LandingPage = () => {
               <Link href="#about" className="text-sm font-medium text-textSecondary hover:text-primary">About</Link>
             </nav>
             <div className="flex items-center gap-4">
-              <Link href="/login">
-                  <Button variant="ghost">Sign in</Button>
-              </Link>
-              <Link href="/signup">
-              <Button>Sign up</Button>
-              </Link>
+              <Button variant="ghost" onClick={() => openAuthModal('login')}>Log in</Button>
+              <Button onClick={() => openAuthModal('signup')}>Sign up</Button>
             </div>
           </div>
         </div>
@@ -58,11 +76,9 @@ const LandingPage = () => {
               Discover thousands of fun and interactive learning activities to support learning progress.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link href="/signup">
-                <Button size="lg">
+                <Button size="lg" onClick={() => openAuthModal('signup')}>
                   Get Started <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-              </Link>
             </div>
             <div className="mt-8 flex items-center justify-center">
               <div className="flex -space-x-2">
@@ -101,9 +117,7 @@ const LandingPage = () => {
                 Instantly translate your videos to sign language with AI. Sanjog bridges accessibility gaps for the deaf and hard-of-hearing community.
               </p>
               <div className="mt-6">
-                <Link href="/signup">
-                  <Button>Sign Up</Button>
-                </Link>
+                <Button onClick={() => openAuthModal('signup')}>Sign Up</Button>
               </div>
             </div>
             <div className="order-1 md:order-2">
@@ -189,9 +203,7 @@ const LandingPage = () => {
               </div>
             </div>
             <div className="mt-12">
-                <Link href="/signup">
-                    <Button size="lg">Explore Courses</Button>
-                </Link>
+                <Button size="lg" onClick={() => openAuthModal('signup')}>Explore Courses</Button>
             </div>
           </div>
         </section>
@@ -293,7 +305,7 @@ const LandingPage = () => {
                     <li className="flex items-center"><Crown className="mr-2 h-4 w-4 text-primary" /> Interactive activities</li>
                     <li className="flex items-center"><Crown className="mr-2 h-4 w-4 text-primary" /> Community events</li>
                   </ul>
-                  <Button variant="outline" className="mt-6 w-full border-primary text-primary">Get Started</Button>
+                  <Button variant="outline" className="mt-6 w-full border-primary text-primary" onClick={() => openAuthModal('signup')}>Get Started</Button>
                 </CardContent>
               </Card>
               <Card className="border-primary ring-2 ring-primary">
@@ -308,7 +320,7 @@ const LandingPage = () => {
                     <li className="flex items-center"><Crown className="mr-2 h-4 w-4 text-primary" /> Progress insights</li>
                     <li className="flex items-center"><Crown className="mr-2 h-4 w-4 text-primary" /> Priority support</li>
                   </ul>
-                  <Button className="mt-6 w-full">Get Started</Button>
+                  <Button className="mt-6 w-full" onClick={() => openAuthModal('signup')}>Get Started</Button>
                 </CardContent>
               </Card>
               <Card>
@@ -322,7 +334,7 @@ const LandingPage = () => {
                     <li className="flex items-center"><Crown className="mr-2 h-4 w-4 text-primary" /> Dedicated mentor support</li>
                     <li className="flex items-center"><Crown className="mr-2 h-4 w-4 text-primary" /> Training sessions</li>
                   </ul>
-                  <Button variant="outline" className="mt-6 w-full border-primary text-primary">Start Now</Button>
+                  <Button variant="outline" className="mt-6 w-full border-primary text-primary" onClick={() => openAuthModal('signup')}>Start Now</Button>
                 </CardContent>
               </Card>
             </div>
@@ -339,7 +351,7 @@ const LandingPage = () => {
                   We’re seeking forward-thinking partners to help expand access to sign language learning globally.
                 </p>
                 <div className="mt-6">
-                  <Button>Sign Up</Button>
+                  <Button onClick={() => openAuthModal('signup')}>Sign Up</Button>
                 </div>
               </div>
               <div>
@@ -392,6 +404,11 @@ const LandingPage = () => {
           </div>
         </div>
       </footer>
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        initialTab={initialAuthTab}
+      />
     </div>
   );
 };
