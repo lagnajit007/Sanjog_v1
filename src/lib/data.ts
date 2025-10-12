@@ -15,7 +15,6 @@ export const menuItems: MenuItem[] = [
   { icon: Gamepad2, label: 'Play', href: '/play' },
   { icon: BarChart, label: 'Progress', href: '/progress' },
   { icon: Users, label: 'Community', href: '/community' },
-  { icon: User, label: 'Profile', href: '/profile' },
 ];
 
 export type ProgressCardData = {
