@@ -1,7 +1,7 @@
 
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserCog, BookOpen, Settings as SettingsIcon, Upload, Bell, Palette, Bot, Shield, Trash2 } from "lucide-react";
+import { useUser } from '@/firebase';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Section: React.FC<{ title: string; description: string; children: React.ReactNode; className?: string }> = ({ title, description, children, className }) => (
   <Card className={className}>
@@ -32,47 +34,90 @@ const FormField: React.FC<{ label: string; children: React.ReactNode; className?
   </div>
 );
 
-const AccountTab = () => (
-    <div className="space-y-6">
-        <Section title="Profile" description="This information will be displayed publicly.">
-            <FormField label="Username">
-                <Input defaultValue="Jenny Wilson" />
-            </FormField>
-             <FormField label="Avatar">
-                <div className="flex items-center gap-4">
-                    <Avatar className="h-16 w-16">
-                        <AvatarImage src="https://picsum.photos/seed/1/100/100" />
-                        <AvatarFallback>JW</AvatarFallback>
-                    </Avatar>
-                    <Button variant="outline"><Upload className="w-4 h-4 mr-2" /> Change Avatar</Button>
-                </div>
-            </FormField>
-             <FormField label="Email">
-                <Input defaultValue="jen.wilson@example.com" disabled />
-            </FormField>
-        </Section>
-        <Section title="Security" description="Manage your account security settings.">
-             <FormField label="Password">
-                <Button variant="outline">Reset Password</Button>
-            </FormField>
-            <FormField label="Two-Factor Authentication">
-                <div className="flex items-center gap-4">
-                    <Switch id="2fa-switch" />
-                    <Label htmlFor="2fa-switch">Enable 2FA</Label>
-                </div>
-            </FormField>
-        </Section>
-        <Section title="Danger Zone" description="These actions are permanent and cannot be undone." className="border-destructive">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg bg-destructive/5">
-                <div>
-                    <p className="font-semibold text-destructive">Delete Account</p>
-                    <p className="text-sm text-muted-foreground">Permanently remove your account and all associated data.</p>
-                </div>
-                <Button variant="destructive" className="mt-2 sm:mt-0"><Trash2 className="w-4 h-4 mr-2" /> Delete</Button>
+const getInitials = (name: string | null | undefined) => {
+    if (!name) return 'U';
+    const names = name.split(' ');
+    if (names.length > 1) {
+      return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
+    }
+    return name.charAt(0).toUpperCase();
+};
+
+const AccountTab = () => {
+    const { user, isUserLoading } = useUser();
+    const [name, setName] = useState('');
+    const [avatar, setAvatar] = useState('');
+
+    useEffect(() => {
+        if (user) {
+            setName(user.displayName || '');
+            setAvatar(user.photoURL || '');
+        }
+    }, [user]);
+
+    if (isUserLoading) {
+        return (
+            <div className="space-y-6">
+                <Section title="Profile" description="This information will be displayed publicly.">
+                    <FormField label="Username">
+                        <Skeleton className="h-10 w-full" />
+                    </FormField>
+                    <FormField label="Avatar">
+                        <div className="flex items-center gap-4">
+                            <Skeleton className="h-16 w-16 rounded-full" />
+                            <Skeleton className="h-10 w-36" />
+                        </div>
+                    </FormField>
+                    <FormField label="Email">
+                        <Skeleton className="h-10 w-full" />
+                    </FormField>
+                </Section>
             </div>
-        </Section>
-    </div>
-);
+        );
+    }
+
+    return (
+        <div className="space-y-6">
+            <Section title="Profile" description="This information will be displayed publicly.">
+                <FormField label="Username">
+                    <Input value={name} onChange={(e) => setName(e.target.value)} />
+                </FormField>
+                 <FormField label="Avatar">
+                    <div className="flex items-center gap-4">
+                        <Avatar className="h-16 w-16">
+                            <AvatarImage src={avatar} />
+                            <AvatarFallback>{getInitials(name)}</AvatarFallback>
+                        </Avatar>
+                        <Button variant="outline"><Upload className="w-4 h-4 mr-2" /> Change Avatar</Button>
+                    </div>
+                </FormField>
+                 <FormField label="Email">
+                    <Input defaultValue={user?.email || ''} disabled />
+                </FormField>
+            </Section>
+            <Section title="Security" description="Manage your account security settings.">
+                 <FormField label="Password">
+                    <Button variant="outline">Reset Password</Button>
+                </FormField>
+                <FormField label="Two-Factor Authentication">
+                    <div className="flex items-center gap-4">
+                        <Switch id="2fa-switch" />
+                        <Label htmlFor="2fa-switch">Enable 2FA</Label>
+                    </div>
+                </FormField>
+            </Section>
+            <Section title="Danger Zone" description="These actions are permanent and cannot be undone." className="border-destructive">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg bg-destructive/5">
+                    <div>
+                        <p className="font-semibold text-destructive">Delete Account</p>
+                        <p className="text-sm text-muted-foreground">Permanently remove your account and all associated data.</p>
+                    </div>
+                    <Button variant="destructive" className="mt-2 sm:mt-0"><Trash2 className="w-4 h-4 mr-2" /> Delete</Button>
+                </div>
+            </Section>
+        </div>
+    );
+};
 
 const PreferencesTab = () => (
   <div className="space-y-6">
