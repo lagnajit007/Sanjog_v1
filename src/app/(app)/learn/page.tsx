@@ -1,7 +1,7 @@
 
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ import LessonCard from '@/components/lessons/lesson-card';
 import { Camera, CheckCircle, XCircle, ArrowRight, Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { HandLandmarker, FilesetResolver } from "@mediapipe/tasks-vision";
 
 
 // Mock Data
@@ -59,8 +60,32 @@ export default function LearnPage() {
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const [isWebcamOn, setIsWebcamOn] = React.useState(true);
   const [hasCameraPermission, setHasCameraPermission] = React.useState<boolean | null>(null);
+  const [handLandmarker, setHandLandmarker] = useState<HandLandmarker | null>(null);
+  const animationFrameId = useRef<number | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    const createHandLandmarker = async () => {
+      try {
+        const vision = await FilesetResolver.forVisionTasks(
+          "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
+        );
+        const landmarker = await HandLandmarker.createFromOptions(vision, {
+          baseOptions: {
+            modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
+            delegate: "GPU",
+          },
+          runningMode: "VIDEO",
+          numHands: 1,
+        });
+        setHandLandmarker(landmarker);
+      } catch (error) {
+        console.error("Error creating HandLandmarker:", error);
+      }
+    };
+    createHandLandmarker();
+  }, []);
+
+  useEffect(() => {
     const getCameraPermission = async () => {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         setHasCameraPermission(false);
@@ -89,6 +114,43 @@ export default function LearnPage() {
     };
     getCameraPermission();
   }, [toast]);
+  
+  const predictWebcam = () => {
+    if (!handLandmarker || !videoRef.current || !isWebcamOn) {
+      if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
+      return;
+    }
+
+    if (videoRef.current.readyState < 3) {
+      animationFrameId.current = requestAnimationFrame(predictWebcam);
+      return;
+    }
+    
+    const startTimeMs = performance.now();
+    const results = handLandmarker.detectForVideo(videoRef.current, startTimeMs);
+
+    if (results.landmarks && results.landmarks.length > 0) {
+      console.log(results.landmarks);
+      // Here you would process the landmarks and send to your model
+    }
+
+    animationFrameId.current = requestAnimationFrame(predictWebcam);
+  };
+  
+  useEffect(() => {
+    if (handLandmarker && isWebcamOn && hasCameraPermission) {
+      animationFrameId.current = requestAnimationFrame(predictWebcam);
+    } else {
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
+    }
+    return () => {
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
+    }
+  }, [handLandmarker, isWebcamOn, hasCameraPermission]);
 
 
   const cameraStatusText = hasCameraPermission === false ? "Camera access denied." : (isWebcamOn ? "Analyzing your sign..." : "Webcam is off.");
