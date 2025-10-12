@@ -48,6 +48,9 @@ export default {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
+        'accent-orange': '#FF8C66',
+        'accent-green': '#66D49D',
+        'accent-blue': '#6CA6FF',
         chart: {
           '1': 'hsl(var(--chart-1))',
           '2': 'hsl(var(--chart-2))',
@@ -70,6 +73,9 @@ export default {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+      },
+      boxShadow: {
+        subtle: '0px 4px 12px rgba(0, 0, 0, 0.05)',
       },
       keyframes: {
         'accordion-down': {

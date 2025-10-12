@@ -1,0 +1,75 @@
+import type { LucideIcon } from 'lucide-react';
+import { Grid, BookOpen, Trophy, Target, BarChart, Users, Crown } from 'lucide-react';
+
+export type MenuItem = {
+  icon: LucideIcon;
+  label: string;
+  active?: boolean;
+  badge?: string;
+};
+
+export const menuItems: MenuItem[] = [
+  { icon: Grid, label: 'Dashboard', active: true },
+  { icon: BookOpen, label: 'Lessons' },
+  { icon: Trophy, label: 'Achievements', badge: '+1' },
+  { icon: Target, label: 'Challenges' },
+  { icon: BarChart, label: 'Progress' },
+  { icon: Users, label: 'Community', badge: '32' },
+];
+
+export type ProgressCardData = {
+  title: string;
+  value: string;
+  progress: number;
+  color: string;
+};
+
+export const progressCards: ProgressCardData[] = [
+  { title: 'Daily Streak', value: '7 Days', progress: 86, color: 'bg-[#6CA6FF]' },
+  { title: 'Lessons Completed', value: '12/48', progress: 25, color: 'bg-[#FF8C66]' },
+  { title: 'Skills Mastered', value: '3/10', progress: 30, color: 'bg-[#66D49D]' },
+];
+
+export type LearningCardData = {
+  background: string;
+  title: string;
+  subtitle: string;
+  category: string;
+};
+
+export const learningCards: LearningCardData[] = [
+  { background: 'bg-[#FFD66B]', title: 'A-Z', subtitle: "Beginner’s Guide to Learn Alphabets (A-Z).", category: 'Alphabets' },
+  { background: 'bg-[#C9D8FF]', title: '0-9', subtitle: "Beginner’s Guide to Learn Numbers (0-9).", category: 'Numbers' },
+  { background: 'bg-[#D2C5FF]', title: 'Greetings', subtitle: "Learn common greetings and introductions.", category: 'Social' },
+  { background: 'bg-pink-200', title: 'Family', subtitle: "Learn signs for family members.", category: 'People' },
+];
+
+export type BadgeData = {
+  label: string;
+  color: string;
+};
+
+export const badges: BadgeData[] = [
+  { label: 'Alphabet Ace', color: 'bg-[#FF8C66]' },
+  { label: 'Number Ninja', color: 'bg-primary' },
+  { label: 'Streak Keeper', color: 'bg-[#6CA6FF]' },
+  { label: 'Quick Learner', color: 'bg-[#FFD66B]' },
+  { label: 'Weekend Warrior', color: 'bg-[#66D49D]' },
+  { label: 'Perfect Score', color: 'bg-destructive' },
+];
+
+export type LeaderboardEntry = {
+  name: string;
+  points: string;
+  level: string;
+  avatar: string;
+  avatarId: string;
+  icon?: LucideIcon;
+};
+
+export const leaderboard: LeaderboardEntry[] = [
+  { name: 'Jenny Wilson', points: '118,487 pts', level: 'Lvl 10', avatar: '1', avatarId: '1', icon: Crown },
+  { name: 'Alex Rivera', points: '105,231 pts', level: 'Lvl 9', avatar: '2', avatarId: '2' },
+  { name: 'Ben Carter', points: '98,765 pts', level: 'Lvl 9', avatar: '3', avatarId: '3' },
+  { name: 'Chloe Garcia', points: '95,112 pts', level: 'Lvl 8', avatar: '4', avatarId: '4' },
+];
