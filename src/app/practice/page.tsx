@@ -3,10 +3,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { Camera, CheckCircle, XCircle } from 'lucide-react';
 import DashboardLayout from '@/components/dashboard/dashboard-layout';
+import { HandLandmarker, FilesetResolver } from '@mediapipe/tasks-vision';
 
 const lessons = [
   { sign: 'A', video: '/videos/asl_A.mp4' },
@@ -19,6 +19,54 @@ export default function PracticePage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const { toast } = useToast();
   const [currentLesson, setCurrentLesson] = useState(0);
+  const [handLandmarker, setHandLandmarker] = useState<HandLandmarker | null>(null);
+  const lastVideoTimeRef = useRef(-1);
+  const requestRef = useRef(0);
+
+  useEffect(() => {
+    async function createHandLandmarker() {
+      try {
+        const vision = await FilesetResolver.forVisionTasks(
+          'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm'
+        );
+        const landmarker = await HandLandmarker.createFromOptions(vision, {
+          baseOptions: {
+            modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
+            delegate: 'GPU',
+          },
+          runningMode: 'VIDEO',
+          numHands: 1,
+        });
+        setHandLandmarker(landmarker);
+      } catch (error) {
+        console.error('Error creating HandLandmarker:', error);
+        toast({
+          variant: 'destructive',
+          title: 'Hand Tracking Error',
+          description: 'Could not initialize hand tracking model.',
+        });
+      }
+    }
+    createHandLandmarker();
+  }, [toast]);
+
+  const predictWebcam = () => {
+    if (!videoRef.current || !handLandmarker) {
+      return;
+    }
+
+    const video = videoRef.current;
+    if (video.currentTime !== lastVideoTimeRef.current) {
+      lastVideoTimeRef.current = video.currentTime;
+      const results = handLandmarker.detectForVideo(video, Date.now());
+      // For now, we'll just log the results. We will use this data for feedback later.
+      if (results.landmarks && results.landmarks.length > 0) {
+        console.log(results.landmarks[0]);
+      }
+    }
+
+    requestRef.current = requestAnimationFrame(predictWebcam);
+  };
 
   useEffect(() => {
     const getCameraPermission = async () => {
@@ -37,6 +85,9 @@ export default function PracticePage() {
         setHasCameraPermission(true);
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
+          videoRef.current.addEventListener('loadeddata', () => {
+             requestRef.current = requestAnimationFrame(predictWebcam);
+          });
         }
       } catch (error) {
         console.error('Error accessing camera:', error);
@@ -49,15 +100,18 @@ export default function PracticePage() {
       }
     };
 
-    getCameraPermission();
+    if (handLandmarker) {
+      getCameraPermission();
+    }
 
     return () => {
+      cancelAnimationFrame(requestRef.current);
       if (videoRef.current && videoRef.current.srcObject) {
         const stream = videoRef.current.srcObject as MediaStream;
         stream.getTracks().forEach(track => track.stop());
       }
     };
-  }, [toast]);
+  }, [toast, handLandmarker]);
 
   const handleNextLesson = () => {
     setCurrentLesson((prev) => (prev + 1) % lessons.length);
@@ -73,7 +127,7 @@ export default function PracticePage() {
             </CardHeader>
             <CardContent>
               <div className="relative aspect-video w-full overflow-hidden rounded-lg border bg-muted">
-                <video ref={videoRef} className="h-full w-full object-cover" autoPlay muted playsInline />
+                <video ref={videoRef} className="h-full w-full object-cover" autoPlay muted playsInline style={{ transform: 'scaleX(-1)' }} />
                 {hasCameraPermission === false && (
                   <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 text-white">
                     <Camera className="h-12 w-12 mb-4" />
