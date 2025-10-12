@@ -64,7 +64,7 @@ export default function LearnPage() {
   const [handLandmarker, setHandLandmarker] = useState<HandLandmarker | null>(null);
   const animationFrameId = useRef<number | null>(null);
   const lastPredictionTime = useRef(0);
-  const PREDICTION_INTERVAL = 500; // 500ms between predictions
+  const PREDICTION_INTERVAL = 250; // 250ms between predictions
 
   useEffect(() => {
     const createHandLandmarker = async () => {
