@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react';
-import { Grid, BookOpen, Trophy, Target, BarChart, Users, Crown, Hand } from 'lucide-react';
+import { Grid, BookOpen, Trophy, Target, BarChart, Users, Crown, Hand, User } from 'lucide-react';
 
 export type MenuItem = {
   icon: LucideIcon;
@@ -13,10 +13,11 @@ export const menuItems: MenuItem[] = [
   { icon: Grid, label: 'Dashboard', href: '/dashboard', active: true },
   { icon: Hand, label: 'Practice', href: '/practice' },
   { icon: BookOpen, label: 'Lessons', href: '#' },
-  { icon: Trophy, label: 'Achievements', href: '#', badge: '+1' },
+  { icon: Trophy, label: 'Achievements', href: '#' },
   { icon: Target, label: 'Challenges', href: '#' },
   { icon: BarChart, label: 'Progress', href: '#' },
   { icon: Users, label: 'Community', href: '#', badge: '32' },
+  { icon: User, label: 'Profile', href: '/profile' },
 ];
 
 export type ProgressCardData = {

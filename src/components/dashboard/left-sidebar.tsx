@@ -69,7 +69,7 @@ const UserProfile = () => {
       <div className="flex items-center gap-3 mb-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Avatar className="cursor-pointer">
+              <Avatar className="cursor-pointer h-12 w-12">
                 {userAvatar && <AvatarImage src={userAvatar.imageUrl} alt="Jenny Wilson" data-ai-hint={userAvatar.imageHint} />}
                 <AvatarFallback>JW</AvatarFallback>
               </Avatar>
@@ -77,7 +77,9 @@ const UserProfile = () => {
             <DropdownMenuContent>
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/profile">Profile</Link>
+              </DropdownMenuItem>
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="text-red-500">Logout</DropdownMenuItem>
