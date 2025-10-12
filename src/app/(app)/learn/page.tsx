@@ -12,7 +12,7 @@ import LessonCard from '@/components/lessons/lesson-card';
 import { Camera, CheckCircle, XCircle, ArrowRight, Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { HandLandmarker, FilesetResolver } from "@mediapipe/tasks-vision";
+import { HandLandmarker, FilesetResolver, DrawingUtils } from "@mediapipe/tasks-vision";
 import { recognizeGesture } from '@/ai/flows/gesture-recognition';
 
 
@@ -59,12 +59,13 @@ export default function LearnPage() {
   const [sessionProgress, setSessionProgress] = React.useState(20);
   const [accuracy, setAccuracy] = React.useState(0);
   const videoRef = React.useRef<HTMLVideoElement>(null);
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const [isWebcamOn, setIsWebcamOn] = React.useState(true);
   const [hasCameraPermission, setHasCameraPermission] = React.useState<boolean | null>(null);
   const [handLandmarker, setHandLandmarker] = useState<HandLandmarker | null>(null);
   const animationFrameId = useRef<number | null>(null);
   const lastPredictionTime = useRef(0);
-  const PREDICTION_INTERVAL = 250; // 250ms between predictions
+  const PREDICTION_INTERVAL = 100; // 100ms between predictions
 
   useEffect(() => {
     const createHandLandmarker = async () => {
@@ -119,35 +120,53 @@ export default function LearnPage() {
   }, [toast]);
   
   const predictWebcam = async () => {
-    if (!handLandmarker || !videoRef.current || !isWebcamOn || videoRef.current.readyState < 3) {
+    if (!handLandmarker || !videoRef.current || !canvasRef.current || !isWebcamOn || videoRef.current.readyState < 3) {
       if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
       animationFrameId.current = requestAnimationFrame(predictWebcam);
       return;
     }
 
-    const now = performance.now();
-    if (now - lastPredictionTime.current > PREDICTION_INTERVAL) {
-      lastPredictionTime.current = now;
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const canvasCtx = canvas.getContext('2d');
+
+    if (canvasCtx) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const now = performance.now();
+      const results = handLandmarker.detectForVideo(video, now);
       
-      const results = handLandmarker.detectForVideo(videoRef.current, now);
+      const drawingUtils = new DrawingUtils(canvasCtx);
+      if (results.landmarks) {
+        for (const landmarks of results.landmarks) {
+          drawingUtils.drawConnectors(landmarks, HandLandmarker.HAND_CONNECTIONS, { color: '#FFFFFF', lineWidth: 5 });
+          drawingUtils.drawLandmarks(landmarks, { color: '#6C4CF1', lineWidth: 2 });
+        }
+      }
 
-      if (results.landmarks && results.landmarks.length > 0) {
-        const landmarks = results.landmarks[0].flatMap(lm => [lm.x, lm.y]);
-        try {
-          const response = await recognizeGesture({ landmarks });
-          const { prediction, confidence } = response;
-          const targetSign = 'A'; 
-          setIsCorrect(prediction === targetSign);
-          setAccuracy(Math.round(confidence * 100));
+      if (now - lastPredictionTime.current > PREDICTION_INTERVAL) {
+        lastPredictionTime.current = now;
+        
+        if (results.landmarks && results.landmarks.length > 0) {
+          const landmarks = results.landmarks[0].flatMap(lm => [lm.x, lm.y]);
+          try {
+            const response = await recognizeGesture({ landmarks });
+            const { prediction, confidence } = response;
+            const targetSign = 'A';
+            setIsCorrect(prediction === targetSign);
+            setAccuracy(Math.round(confidence * 100));
 
-        } catch (error) {
-          console.error("Prediction error:", error);
+          } catch (error) {
+            console.error("Prediction error:", error);
+            setIsCorrect(null);
+            setAccuracy(0);
+          }
+        } else {
           setIsCorrect(null);
           setAccuracy(0);
         }
-      } else {
-        setIsCorrect(null);
-        setAccuracy(0);
       }
     }
 
@@ -222,6 +241,7 @@ export default function LearnPage() {
           onClick={toggleWebcam}
         >
           <video ref={videoRef} className="h-full w-full object-cover scale-x-[-1]" autoPlay muted playsInline />
+          <canvas ref={canvasRef} className="absolute inset-0 h-full w-full object-cover scale-x-[-1]" />
           
           { (!isWebcamOn || hasCameraPermission === false) && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 text-white p-4">
