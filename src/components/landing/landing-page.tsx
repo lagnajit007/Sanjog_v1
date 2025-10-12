@@ -407,7 +407,7 @@ const LandingPage = () => {
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-        view={authView}
+        initialView={authView}
       />
     </div>
   );

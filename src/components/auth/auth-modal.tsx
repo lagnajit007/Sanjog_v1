@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,6 +13,8 @@ import {
   initiateGoogleSignIn,
   initiateEmailSignUp,
 } from '@/firebase/non-blocking-login';
+import { Switch } from '@/components/ui/switch';
+import Link from 'next/link';
 
 const GoogleIcon = () => (
     <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
@@ -25,7 +27,7 @@ const GoogleIcon = () => (
 );
 
 
-const LoginForm = () => {
+const LoginForm = ({ onSwitchToSignup }: { onSwitchToSignup: () => void }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const auth = useAuth();
@@ -80,6 +82,13 @@ const LoginForm = () => {
           required
         />
       </div>
+       <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-2">
+              <Switch id="remember-me" />
+              <Label htmlFor="remember-me">Remember me</Label>
+          </div>
+          <Link href="#" className="text-primary hover:underline">Forgot password?</Link>
+      </div>
       <div className="space-y-3 pt-2">
         <Button type="submit" className="w-full rounded-full">
           Login
@@ -89,11 +98,17 @@ const LoginForm = () => {
           Login with Google
         </Button>
       </div>
+       <p className="text-center text-sm text-muted-foreground">
+        Don't have an account?{' '}
+        <Button variant="link" type="button" onClick={onSwitchToSignup} className="p-0 h-auto text-primary">
+          Sign Up
+        </Button>
+      </p>
     </form>
   );
 };
 
-const SignupForm = () => {
+const SignupForm = ({ onSwitchToLogin }: { onSwitchToLogin: () => void }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -178,6 +193,12 @@ const SignupForm = () => {
           Sign Up with Google
         </Button>
       </div>
+        <p className="text-center text-sm text-muted-foreground">
+        Already have an account?{' '}
+        <Button variant="link" type="button" onClick={onSwitchToLogin} className="p-0 h-auto text-primary">
+          Log In
+        </Button>
+      </p>
     </form>
   );
 };
@@ -185,10 +206,19 @@ const SignupForm = () => {
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  view: 'login' | 'signup';
+  initialView: 'login' | 'signup';
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, view }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialView }) => {
+  const [view, setView] = useState(initialView);
+
+  React.useEffect(() => {
+    setView(initialView);
+  }, [initialView]);
+
+  const switchToSignup = () => setView('signup');
+  const switchToLogin = () => setView('login');
+
   const isLoginView = view === 'login';
   
   return (
@@ -206,7 +236,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, view }) => {
         </DialogHeader>
 
         <div className="mt-6">
-          {isLoginView ? <LoginForm /> : <SignupForm />}
+          {isLoginView ? (
+            <LoginForm onSwitchToSignup={switchToSignup} />
+          ) : (
+            <SignupForm onSwitchToLogin={switchToLogin} />
+          )}
         </div>
         
         <DialogFooter className="pt-4">
