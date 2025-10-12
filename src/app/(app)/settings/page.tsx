@@ -12,9 +12,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserCog, BookOpen, Settings as SettingsIcon, Upload, Bell, Palette, Bot, Shield, Trash2 } from "lucide-react";
-import { useUser } from '@/firebase';
+import { useAuth, useUser } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTheme } from 'next-themes';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { useToast } from '@/hooks/use-toast';
 
 const Section: React.FC<{ title: string; description: string; children: React.ReactNode; className?: string }> = ({ title, description, children, className }) => (
   <Card className={className}>
@@ -46,6 +48,8 @@ const getInitials = (name: string | null | undefined) => {
 
 const AccountTab = () => {
     const { user, isUserLoading } = useUser();
+    const auth = useAuth();
+    const { toast } = useToast();
     const [name, setName] = useState('');
     const [avatar, setAvatar] = useState('');
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -66,6 +70,31 @@ const AccountTab = () => {
                 }
             };
             reader.readAsDataURL(e.target.files[0]);
+        }
+    };
+    
+    const handleResetPassword = () => {
+        if (user && user.email) {
+            sendPasswordResetEmail(auth, user.email)
+                .then(() => {
+                    toast({
+                        title: 'Password Reset Email Sent',
+                        description: 'Check your inbox to reset your password.',
+                    });
+                })
+                .catch((error) => {
+                    toast({
+                        variant: 'destructive',
+                        title: 'Error',
+                        description: error.message,
+                    });
+                });
+        } else {
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'No email address associated with this account.',
+            });
         }
     };
 
@@ -120,7 +149,7 @@ const AccountTab = () => {
             </Section>
             <Section title="Security" description="Manage your account security settings.">
                  <FormField label="Password">
-                    <Button variant="outline">Reset Password</Button>
+                    <Button variant="outline" onClick={handleResetPassword}>Reset Password</Button>
                 </FormField>
                 <FormField label="Two-Factor Authentication">
                     <div className="flex items-center gap-4">
