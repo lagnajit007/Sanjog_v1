@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
-import { initiateEmailSignUp } from '@/firebase/non-blocking-login';
+import { initiateEmailSignUp, initiateGoogleSignIn } from '@/firebase/non-blocking-login';
 import { useAuth, useUser } from '@/firebase';
 import Image from 'next/image';
 
@@ -54,7 +54,7 @@ export default function SignupPage() {
         return null;
     }
 
-    const handleSignup = async (e: React.FormEvent) => {
+    const handleSignup = (e: React.FormEvent) => {
         e.preventDefault();
         if (password.length < 6) {
             toast({
@@ -66,6 +66,18 @@ export default function SignupPage() {
         }
         try {
             initiateEmailSignUp(auth, email, password);
+        } catch (error: any) {
+            toast({
+                variant: 'destructive',
+                title: 'Signup Failed',
+                description: error.message,
+            });
+        }
+    };
+    
+    const handleGoogleSignup = () => {
+        try {
+            initiateGoogleSignIn(auth);
         } catch (error: any) {
             toast({
                 variant: 'destructive',
@@ -163,7 +175,7 @@ export default function SignupPage() {
                                 <Button type="submit" className="w-full rounded-full bg-primary font-semibold text-white">
                                     Get started
                                 </Button>
-                                <Button variant="outline" className="w-full rounded-full" type="button">
+                                <Button variant="outline" className="w-full rounded-full" type="button" onClick={handleGoogleSignup}>
                                     <GoogleIcon />
                                     Sign up with Google
                                 </Button>

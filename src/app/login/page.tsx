@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { initiateEmailSignIn } from '@/firebase/non-blocking-login';
+import { initiateEmailSignIn, initiateGoogleSignIn } from '@/firebase/non-blocking-login';
 import { useAuth, useUser } from '@/firebase';
 import Image from 'next/image';
 
@@ -51,10 +51,22 @@ export default function LoginPage() {
     }
 
 
-    const handleLogin = async (e: React.FormEvent) => {
+    const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
         try {
             initiateEmailSignIn(auth, email, password);
+        } catch (error: any) {
+            toast({
+                variant: 'destructive',
+                title: 'Login Failed',
+                description: error.message,
+            });
+        }
+    };
+
+    const handleGoogleLogin = () => {
+        try {
+            initiateGoogleSignIn(auth);
         } catch (error: any) {
             toast({
                 variant: 'destructive',
@@ -117,7 +129,7 @@ export default function LoginPage() {
                                 <Button type="submit" className="w-full rounded-full bg-primary font-semibold text-white">
                                     Login
                                 </Button>
-                                <Button variant="outline" className="w-full rounded-full" type="button">
+                                <Button variant="outline" className="w-full rounded-full" type="button" onClick={handleGoogleLogin}>
                                     <GoogleIcon />
                                     Login with Google
                                 </Button>
