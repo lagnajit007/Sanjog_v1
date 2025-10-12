@@ -1,4 +1,7 @@
 
+'use client';
+
+import React, { useState } from 'react';
 import LeftSidebar from '@/components/dashboard/left-sidebar';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -16,8 +19,11 @@ import { Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import Link from 'next/link';
+import { useAuth } from '@/firebase';
+import { useRouter } from 'next/navigation';
+import LogoutConfirmationModal from '@/components/logout-confirmation-modal';
 
-const HeaderRightContent = () => {
+const HeaderRightContent = ({ onLogoutClick }: { onLogoutClick: () => void }) => {
   const userAvatar = PlaceHolderImages.find((img) => img.id === '1');
   return (
     <>
@@ -55,7 +61,9 @@ const HeaderRightContent = () => {
                 <Link href="/settings">Settings</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-red-500">Logout</DropdownMenuItem>
+              <DropdownMenuItem onClick={onLogoutClick} className="text-red-500 cursor-pointer">
+                Logout
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -70,9 +78,24 @@ export default function AppLayout({
 }: {
     children: React.ReactNode;
 }) {
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const auth = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    if (auth) {
+      auth.signOut();
+    }
+    router.push('/');
+    setIsLogoutModalOpen(false);
+  };
+
+  const openLogoutModal = () => setIsLogoutModalOpen(true);
+  const closeLogoutModal = () => setIsLogoutModalOpen(false);
+
   return (
     <div className="flex min-h-screen w-full bg-background text-foreground">
-      <LeftSidebar />
+      <LeftSidebar onLogoutClick={openLogoutModal} />
       <div className="flex flex-1 flex-col lg:ml-[260px]">
         <header className="sticky top-0 z-40 flex h-[70px] shrink-0 items-center justify-between gap-4 border-b bg-surface p-4 shadow-sm">
             <div className="flex-1">
@@ -83,13 +106,18 @@ export default function AppLayout({
             </div>
 
             <div className="flex items-center gap-4">
-              <HeaderRightContent />
+              <HeaderRightContent onLogoutClick={openLogoutModal} />
             </div>
         </header>
         <main className="flex-1 overflow-y-auto p-6 lg:p-8">
           {children}
         </main>
       </div>
+      <LogoutConfirmationModal
+        isOpen={isLogoutModalOpen}
+        onClose={closeLogoutModal}
+        onConfirm={handleLogout}
+      />
     </div>
   );
 }

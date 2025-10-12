@@ -1,7 +1,7 @@
 
 'use client';
 
-import { LogOut, Menu, User } from 'lucide-react';
+import { LogOut, Menu } from 'lucide-react';
 import { menuItems } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -10,9 +10,6 @@ import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { usePathname } from 'next/navigation';
-import { useAuth } from '@/firebase';
-import { useRouter } from 'next/navigation';
-
 
 const Logo = () => (
   <Link href="/dashboard" className="flex items-center gap-2 mb-8">
@@ -59,17 +56,8 @@ const NavMenu = () => {
   )
 }
 
-const UserProfile = () => {
+const UserProfile = ({ onLogoutClick }: { onLogoutClick: () => void }) => {
   const userAvatar = PlaceHolderImages.find((img) => img.id === '1');
-  const auth = useAuth();
-  const router = useRouter();
-
-  const handleLogout = () => {
-    if (auth) {
-      auth.signOut();
-    }
-    router.push('/');
-  }
 
   return (
     <div className="mt-auto space-y-4">
@@ -86,7 +74,7 @@ const UserProfile = () => {
         </div>
       </Link>
       
-      <Button variant="ghost" className="w-full justify-center items-center rounded-full bg-red-100/40 text-red-500 hover:bg-red-200/60 hover:text-red-600" onClick={handleLogout}>
+      <Button variant="ghost" className="w-full justify-center items-center rounded-full bg-red-100/40 text-red-500 hover:bg-red-200/60 hover:text-red-600" onClick={onLogoutClick}>
         <LogOut className="mr-2 h-5 w-5" />
         Log out
       </Button>
@@ -95,22 +83,22 @@ const UserProfile = () => {
 }
 
 
-const LeftSidebarContent = () => {
+const LeftSidebarContent = ({ onLogoutClick }: { onLogoutClick: () => void }) => {
   return (
     <>
       <Logo />
       <NavMenu />
-      <UserProfile />
+      <UserProfile onLogoutClick={onLogoutClick} />
     </>
   );
 };
 
 
-const LeftSidebar = () => {
+const LeftSidebar = ({ onLogoutClick }: { onLogoutClick: () => void }) => {
   return (
     <>
       <aside className="fixed left-0 top-0 z-50 hidden h-screen w-[260px] flex-col border-r bg-card p-6 lg:flex">
-        <LeftSidebarContent />
+        <LeftSidebarContent onLogoutClick={onLogoutClick} />
       </aside>
       <div className="lg:hidden absolute top-4 left-4 z-50">
         <Sheet>
@@ -123,7 +111,7 @@ const LeftSidebar = () => {
               <SheetHeader>
                 <SheetTitle className="sr-only">Main Menu</SheetTitle>
               </SheetHeader>
-              <LeftSidebarContent />
+              <LeftSidebarContent onLogoutClick={onLogoutClick} />
             </SheetContent>
         </Sheet>
       </div>
