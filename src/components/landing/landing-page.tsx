@@ -1,4 +1,4 @@
-import { ArrowRight, Crown, Lightbulb, Gamepad2, PenTool, Bot, BrainCircuit, Hand } from 'lucide-react';
+import { ArrowRight, Crown, Lightbulb, Gamepad2, PenTool } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -13,10 +13,11 @@ const LandingPage = () => {
     PlaceHolderImages.find((img) => img.id === '3'),
   ];
   
-  const missionImage = "https://picsum.photos/seed/mission/600/400";
-  const processImage = "https://picsum.photos/seed/process/600/600";
-  const ctaHandsImage = "https://picsum.photos/seed/hands/600/400";
-  const videoPreviewImage = "https://picsum.photos/seed/video/600/400";
+  const missionImage = PlaceHolderImages.find((img) => img.id === 'mission');
+  const processImage = PlaceHolderImages.find((img) => img.id === 'process');
+  const ctaHandsImage = PlaceHolderImages.find((img) => img.id === 'cta-hands');
+  const videoPreviewImage = PlaceHolderImages.find((img) => img.id === 'video-preview');
+  const heroImage = PlaceHolderImages.find(img => img.id === 'hero');
 
 
   return (
@@ -35,10 +36,10 @@ const LandingPage = () => {
               <Link href="#about" className="text-sm font-medium text-textSecondary hover:text-primary">About</Link>
             </nav>
             <div className="flex items-center gap-4">
-              <Link href="/dashboard">
+              <Link href="/login">
                   <Button variant="ghost">Sign in</Button>
               </Link>
-              <Link href="/dashboard">
+              <Link href="/signup">
               <Button>Sign up</Button>
               </Link>
             </div>
@@ -47,76 +48,78 @@ const LandingPage = () => {
       </header>
 
       <main>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          {/* Hero Section */}
-          <section id="home" className="py-16 text-center md:py-24">
-            <div className="mx-auto max-w-3xl">
-              <h1 className="text-4xl font-headline font-bold tracking-tight text-textPrimary md:text-6xl">
-                The best place to learn and play for all
-              </h1>
-              <p className="mt-6 text-lg text-textSecondary">
-                Discover thousands of fun and interactive learning activities to support learning progress.
-              </p>
-              <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-                <Link href="/dashboard">
-                  <Button size="lg">
-                    Get Started <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-              </div>
-              <div className="mt-8 flex items-center justify-center">
-                <div className="flex -space-x-2">
-                  {heroAvatars.map((avatar, index) => avatar && (
-                    <Avatar key={index} className="h-10 w-10 border-2 border-white">
-                      <AvatarImage src={avatar.imageUrl} alt={`Learner ${index + 1}`} data-ai-hint={avatar.imageHint} />
-                      <AvatarFallback>{`L${index + 1}`}</AvatarFallback>
-                    </Avatar>
-                  ))}
-                </div>
-                <p className="ml-4 text-sm font-medium text-textSecondary">+10k Learners</p>
-              </div>
+        {/* Hero Section */}
+        <section id="home" className="py-16 text-center md:py-24 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-3xl">
+            <h1 className="text-4xl font-headline font-bold tracking-tight text-textPrimary md:text-6xl">
+              The best place to learn and play for all
+            </h1>
+            <p className="mt-6 text-lg text-textSecondary">
+              Discover thousands of fun and interactive learning activities to support learning progress.
+            </p>
+            <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <Link href="/signup">
+                <Button size="lg">
+                  Get Started <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
             </div>
-            <div className="mt-12">
+            <div className="mt-8 flex items-center justify-center">
+              <div className="flex -space-x-2">
+                {heroAvatars.map((avatar, index) => avatar && (
+                  <Avatar key={index} className="h-10 w-10 border-2 border-white">
+                    <AvatarImage src={avatar.imageUrl} alt={`Learner ${index + 1}`} data-ai-hint={avatar.imageHint} />
+                    <AvatarFallback>{`L${index + 1}`}</AvatarFallback>
+                  </Avatar>
+                ))}
+              </div>
+              <p className="ml-4 text-sm font-medium text-textSecondary">+10k Learners</p>
+            </div>
+          </div>
+          <div className="mt-12">
+            {heroImage && 
               <Image
-                src="https://picsum.photos/seed/hero/1200/600"
-                alt="Hero image of diverse people learning"
+                src={heroImage.imageUrl}
+                alt={heroImage.description}
                 width={1200}
                 height={600}
                 className="rounded-lg shadow-lg"
-                data-ai-hint="people learning diverse"
+                data-ai-hint={heroImage.imageHint}
               />
-            </div>
-          </section>
+            }
+          </div>
+        </section>
 
-          {/* Feature Video Section */}
-          <section id="features" className="py-16 md:py-24">
-            <div className="grid items-center gap-12 md:grid-cols-2">
-              <div className="order-2 md:order-1">
-                <h2 className="text-3xl font-headline font-bold text-textPrimary md:text-4xl">
-                  Simplify Your Video Translation Today
-                </h2>
-                <p className="mt-4 text-textSecondary">
-                  Instantly translate your videos to sign language with AI. Sanjog bridges accessibility gaps for the deaf and hard-of-hearing community.
-                </p>
-                <div className="mt-6">
-                  <Link href="/dashboard">
-                    <Button>Sign Up</Button>
-                  </Link>
-                </div>
+        {/* Feature Video Section */}
+        <section id="features" className="py-16 md:py-24 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid items-center gap-12 md:grid-cols-2">
+            <div className="order-2 md:order-1">
+              <h2 className="text-3xl font-headline font-bold text-textPrimary md:text-4xl">
+                Simplify Your Video Translation Today
+              </h2>
+              <p className="mt-4 text-textSecondary">
+                Instantly translate your videos to sign language with AI. Sanjog bridges accessibility gaps for the deaf and hard-of-hearing community.
+              </p>
+              <div className="mt-6">
+                <Link href="/signup">
+                  <Button>Sign Up</Button>
+                </Link>
               </div>
-              <div className="order-1 md:order-2">
+            </div>
+            <div className="order-1 md:order-2">
+              {videoPreviewImage && 
                 <Image
-                  src={videoPreviewImage}
-                  alt="Video translation preview"
+                  src={videoPreviewImage.imageUrl}
+                  alt={videoPreviewImage.description}
                   width={600}
                   height={400}
                   className="rounded-lg shadow-lg"
-                  data-ai-hint="video player interface"
+                  data-ai-hint={videoPreviewImage.imageHint}
                 />
-              </div>
+              }
             </div>
-          </section>
-        </div>
+          </div>
+        </section>
 
         {/* Interactive Features Section */}
         <section className="bg-surface py-16 md:py-24">
@@ -186,86 +189,88 @@ const LandingPage = () => {
               </div>
             </div>
             <div className="mt-12">
-                <Link href="/dashboard">
+                <Link href="/signup">
                     <Button size="lg">Explore Courses</Button>
                 </Link>
             </div>
           </div>
         </section>
 
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          {/* Mission Section */}
-          <section id="about" className="py-16 md:py-24">
-            <div className="grid items-center gap-12 md:grid-cols-2">
-              <div>
-                <h2 className="text-3xl font-headline font-bold text-textPrimary md:text-4xl">The Mission</h2>
-                <p className="mt-4 text-textSecondary">
-                  Our real-time sign language translation platform aims to break down communication barriers globally, powered by advanced AI technology.
-                </p>
-                <div className="mt-8 grid grid-cols-2 gap-8">
-                  <div>
-                    <p className="text-3xl font-bold text-primary">5,000+</p>
-                    <p className="mt-1 text-textSecondary">Deaf People Served</p>
-                  </div>
-                  <div>
-                    <p className="text-3xl font-bold text-primary">7M+</p>
-                    <p className="mt-1 text-textSecondary">Lives Impacted</p>
-                  </div>
+        {/* Mission Section */}
+        <section id="about" className="py-16 md:py-24 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid items-center gap-12 md:grid-cols-2">
+            <div>
+              <h2 className="text-3xl font-headline font-bold text-textPrimary md:text-4xl">The Mission</h2>
+              <p className="mt-4 text-textSecondary">
+                Our real-time sign language translation platform aims to break down communication barriers globally, powered by advanced AI technology.
+              </p>
+              <div className="mt-8 grid grid-cols-2 gap-8">
+                <div>
+                  <p className="text-3xl font-bold text-primary">5,000+</p>
+                  <p className="mt-1 text-textSecondary">Deaf People Served</p>
                 </div>
-                <div className="mt-8">
-                  <Button variant="outline" className="border-primary text-primary">More About Us</Button>
+                <div>
+                  <p className="text-3xl font-bold text-primary">7M+</p>
+                  <p className="mt-1 text-textSecondary">Lives Impacted</p>
                 </div>
               </div>
-              <div>
+              <div className="mt-8">
+                <Button variant="outline" className="border-primary text-primary">More About Us</Button>
+              </div>
+            </div>
+            <div>
+            {missionImage && (
                 <Image
-                  src={missionImage}
-                  alt="Diverse group of people communicating"
+                  src={missionImage.imageUrl}
+                  alt={missionImage.description}
                   width={600}
                   height={400}
                   className="rounded-lg shadow-lg"
-                  data-ai-hint="diverse people communication"
+                  data-ai-hint={missionImage.imageHint}
                 />
-              </div>
+            )}
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* Process Section */}
-          <section className="py-16 md:py-24">
-            <div className="grid items-center gap-12 md:grid-cols-2">
-              <div className="order-2 md:order-1">
-                <h2 className="text-3xl font-headline font-bold text-textPrimary md:text-4xl">The Process</h2>
-                <ul className="mt-8 space-y-6">
-                  <li className="flex items-start">
-                    <div className="mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary text-onPrimary">1</div>
-                    <p className="text-textSecondary">Large dataset of sign language</p>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary text-onPrimary">2</div>
-                    <p className="text-textSecondary">AI-powered branding</p>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary text-onPrimary">3</div>
-                    <p className="text-textSecondary">24/7 chatbot support</p>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary text-onPrimary">4</div>
-                    <p className="text-textSecondary">Real-time learning</p>
-                  </li>
-                </ul>
-              </div>
-              <div className="order-1 md:order-2">
-                <Image
-                  src={processImage}
-                  alt="Diagram showing the AI learning process"
-                  width={600}
-                  height={600}
-                  className="rounded-lg shadow-lg"
-                  data-ai-hint="ai process diagram"
-                />
-              </div>
+        {/* Process Section */}
+        <section className="py-16 md:py-24 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid items-center gap-12 md:grid-cols-2">
+            <div className="order-2 md:order-1">
+              <h2 className="text-3xl font-headline font-bold text-textPrimary md:text-4xl">The Process</h2>
+              <ul className="mt-8 space-y-6">
+                <li className="flex items-start">
+                  <div className="mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary text-onPrimary">1</div>
+                  <p className="text-textSecondary">Large dataset of sign language</p>
+                </li>
+                <li className="flex items-start">
+                  <div className="mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary text-onPrimary">2</div>
+                  <p className="text-textSecondary">AI-powered branding</p>
+                </li>
+                <li className="flex items-start">
+                  <div className="mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary text-onPrimary">3</div>
+                  <p className="text-textSecondary">24/7 chatbot support</p>
+                </li>
+                <li className="flex items-start">
+                  <div className="mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary text-onPrimary">4</div>
+                  <p className="text-textSecondary">Real-time learning</p>
+                </li>
+              </ul>
             </div>
-          </section>
-        </div>
+            <div className="order-1 md:order-2">
+            {processImage && (
+              <Image
+                src={processImage.imageUrl}
+                alt={processImage.description}
+                width={600}
+                height={600}
+                className="rounded-lg shadow-lg"
+                data-ai-hint={processImage.imageHint}
+              />
+            )}
+            </div>
+          </div>
+        </section>
 
         {/* Pricing Section */}
         <section id="pricing" className="bg-surface py-16 md:py-24">
@@ -325,12 +330,12 @@ const LandingPage = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="bg-[#1E1E2F] py-16 md:py-24 text-white">
+        <section className="bg-[#1E1E2F] py-16 md:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid items-center gap-12 md:grid-cols-2">
               <div>
-                <h2 className="text-3xl font-headline font-bold md:text-4xl">Get involved with us</h2>
-                <p className="mt-4 opacity-80">
+                <h2 className="text-3xl font-headline font-bold md:text-4xl text-white">Get involved with us</h2>
+                <p className="mt-4 text-white/80">
                   We’re seeking forward-thinking partners to help expand access to sign language learning globally.
                 </p>
                 <div className="mt-6">
@@ -338,14 +343,16 @@ const LandingPage = () => {
                 </div>
               </div>
               <div>
+              {ctaHandsImage && (
                 <Image
-                  src={ctaHandsImage}
-                  alt="Hands coming together"
+                  src={ctaHandsImage.imageUrl}
+                  alt={ctaHandsImage.description}
                   width={600}
                   height={400}
                   className="rounded-lg"
-                  data-ai-hint="hands together"
+                  data-ai-hint={ctaHandsImage.imageHint}
                 />
+              )}
               </div>
             </div>
           </div>
@@ -390,5 +397,3 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
-
-    

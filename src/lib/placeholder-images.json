@@ -53,6 +53,18 @@
       "description": "Image for the call to action section",
       "imageUrl": "https://picsum.photos/seed/hands/600/400",
       "imageHint": "hands together"
+    },
+    {
+      "id": "signup-hero",
+      "description": "Hero for signup page",
+      "imageUrl": "https://picsum.photos/seed/signup/800/1200",
+      "imageHint": "person using sign language"
+    },
+    {
+      "id": "login-hero",
+      "description": "Hero for login page",
+      "imageUrl": "https://picsum.photos/seed/login/800/1200",
+      "imageHint": "person signing language"
     }
   ]
 }
