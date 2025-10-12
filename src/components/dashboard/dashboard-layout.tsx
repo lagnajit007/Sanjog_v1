@@ -1,7 +1,7 @@
 import LeftSidebar from '@/components/dashboard/left-sidebar';
-import RightSidebar from '@/components/dashboard/right-sidebar';
 import { Search } from 'lucide-react';
 import { Input } from '../ui/input';
+import RightSidebar from './right-sidebar';
 
 export default function DashboardLayout({
     children,
