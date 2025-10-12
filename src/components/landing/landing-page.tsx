@@ -225,7 +225,7 @@ const LandingPage = () => {
         <section className="bg-background py-16 md:py-24">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12">
-                    <h2 className="text-lg font-bold text-primary">INTERACTIVE FEATURES</h2>
+                    <span className="inline-block bg-secondary text-primary text-sm font-semibold px-4 py-1.5 rounded-full">INTERACTIVE FEATURES</span>
                     <p className="mt-2 text-3xl md:text-4xl font-headline font-bold text-textPrimary max-w-2xl mx-auto">
                         Features That Make Learning Fun
                     </p>
@@ -345,7 +345,7 @@ const LandingPage = () => {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid items-center gap-12 md:grid-cols-2">
               <div>
-                <h2 className="text-lg font-bold text-primary uppercase mb-2">Our Process</h2>
+                <span className="inline-block bg-secondary text-primary text-sm font-semibold px-4 py-1.5 rounded-full uppercase mb-2">Our Process</span>
                  <p className="text-3xl md:text-4xl font-headline font-bold text-textPrimary max-w-md">How Our AI Works Its Magic</p>
                 <ul className="space-y-8 mt-8">
                   <li className="flex items-start gap-4">
