@@ -24,6 +24,7 @@ import {
   PolarRadiusAxis,
   Radar,
 } from 'recharts';
+import Link from 'next/link';
 
 // Mock Data based on the provided Firebase Data Model
 const userProgress = {
@@ -85,7 +86,7 @@ const MetricCard = ({ label, value, icon: Icon, color, suffix }: { label: string
 
 const ProgressPage = () => {
   return (
-    <div className="flex flex-col gap-4 p-4 sm:p-6 bg-background font-body">
+    <div className="flex flex-col gap-4">
       <Card>
         <CardHeader>
           <CardTitle>Progress Overview</CardTitle>
@@ -221,7 +222,9 @@ const ProgressPage = () => {
               <Progress value={userProgress.streakProgress} indicatorClassName="bg-primary" />
               <p className="mt-2 text-sm text-muted-foreground">{userProgress.streakMessage}</p>
             </div>
-            <Button className="w-full">View All Achievements</Button>
+            <Link href="/play">
+                <Button className="w-full">View All Achievements</Button>
+            </Link>
           </CardContent>
         </Card>
       </div>

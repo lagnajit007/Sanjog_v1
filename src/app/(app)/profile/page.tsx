@@ -46,7 +46,7 @@ const ProfilePage = () => {
   const progressPercent = (currentLevelXP / xpToNextLevel) * 100;
 
   return (
-    <div className="mx-auto max-w-5xl p-4 sm:p-6 lg:p-8 bg-background">
+    <div className="mx-auto max-w-5xl">
       <Card className="w-full overflow-hidden rounded-2xl border-none shadow-lg bg-card mb-8">
         <CardContent className="p-8 text-center">
           <div className="relative mx-auto w-fit">

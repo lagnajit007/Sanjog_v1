@@ -8,10 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Award, Star } from 'lucide-react';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import LessonCard from '@/components/lessons/lesson-card';
 import { Camera, CheckCircle, XCircle, ArrowRight, Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 
 // Mock Data
@@ -52,13 +52,45 @@ export default function LearnPage() {
   const intermediateLessons = allLessons.filter(l => l.category === 'Intermediate');
   const advancedLessons = allLessons.filter(l => l.category === 'Advanced');
   const specialLessons = allLessons.filter(l => l.category === 'Special Topics');
-
+  const { toast } = useToast();
   const [isCorrect, setIsCorrect] = React.useState<boolean | null>(null);
   const [sessionProgress, setSessionProgress] = React.useState(20);
   const [accuracy, setAccuracy] = React.useState(87);
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const [isWebcamOn, setIsWebcamOn] = React.useState(true);
   const [hasCameraPermission, setHasCameraPermission] = React.useState<boolean | null>(null);
+
+  React.useEffect(() => {
+    const getCameraPermission = async () => {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        setHasCameraPermission(false);
+        toast({
+          variant: "destructive",
+          title: "Camera Not Supported",
+          description: "Your browser does not support camera access.",
+        });
+        return;
+      }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        setHasCameraPermission(true);
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      } catch (error) {
+        console.error("Error accessing camera:", error);
+        setHasCameraPermission(false);
+        toast({
+          variant: "destructive",
+          title: "Camera Access Denied",
+          description: "Please enable camera permissions in your browser settings to use this feature.",
+        });
+      }
+    };
+    getCameraPermission();
+  }, [toast]);
+
+
   const cameraStatusText = hasCameraPermission === false ? "Camera access denied." : (isWebcamOn ? "Analyzing your sign..." : "Webcam is off.");
   const toggleWebcam = () => setIsWebcamOn(prev => !prev);
 
@@ -70,23 +102,23 @@ export default function LearnPage() {
         <CardTitle>Practice</CardTitle>
       </CardHeader>
       <CardContent>
-    <div className="grid w-full grid-cols-1 lg:grid-cols-2 lg:grid-rows-1 bg-[#F9F8FF] font-sans p-4 gap-6" style={{ gridTemplateColumns: '1.1fr 1.3fr' }}>
+    <div className="grid w-full grid-cols-1 lg:grid-cols-2 lg:grid-rows-1 font-sans p-4 gap-6" style={{ gridTemplateColumns: '1.1fr 1.3fr' }}>
       {/* Left Panel */}
       <Card className="flex flex-col gap-4 rounded-2xl p-6 shadow-lg border-none bg-white">
-          <h1 className="text-2xl font-bold text-[#6C4CF1]">HELLO 👋</h1>
+          <h1 className="text-2xl font-bold text-primary">HELLO 👋</h1>
           
           <div className="flex justify-center items-center h-[200px] bg-secondary rounded-lg">
              {/* Replace with actual sign image */}
             <Image src="https://picsum.photos/seed/hello-sign/300/200" alt="Hello sign illustration" width={300} height={200} className="rounded-lg object-cover" data-ai-hint="sign language hello" />
           </div>
 
-          <p className="text-base text-[#555]">Make the 'Hello' sign: place your flat hand to your forehead, then move it outwards and away.</p>
+          <p className="text-base text-text-secondary">Make the 'Hello' sign: place your flat hand to your forehead, then move it outwards and away.</p>
           
           <div className='flex-grow' />
 
           <div>
-              <label htmlFor="session-progress" className="text-sm font-medium text-[#333]">Session Progress</label>
-              <Progress value={sessionProgress} indicatorClassName="bg-[#6C4CF1]" className="h-2.5 mt-1" />
+              <label htmlFor="session-progress" className="text-sm font-medium text-text-primary">Session Progress</label>
+              <Progress value={sessionProgress} indicatorClassName="bg-primary" className="h-2.5 mt-1" />
           </div>
 
           <div className="flex items-center justify-between gap-4">
@@ -103,20 +135,20 @@ export default function LearnPage() {
       <div className="flex flex-col items-center justify-center gap-4">
         <div
           className={cn(
-            "relative h-full w-full max-h-[70vh] cursor-pointer overflow-hidden rounded-2xl border-4 object-cover shadow-lg transition-all duration-300 bg-[#F3F2FF]",
+            "relative h-full w-full max-h-[70vh] cursor-pointer overflow-hidden rounded-2xl border-4 object-cover shadow-lg transition-all duration-300 bg-secondary",
             isCorrect === true && "border-success shadow-green-300",
             isCorrect === false && "border-destructive shadow-red-300",
             isCorrect === null && "border-primary"
           )}
           onClick={toggleWebcam}
         >
-          <video ref={videoRef} className="h-full w-full scale-x-[-1]" autoPlay muted playsInline />
+          <video ref={videoRef} className="h-full w-full object-cover scale-x-[-1]" autoPlay muted playsInline />
           
           { (!isWebcamOn || hasCameraPermission === false) && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 text-white p-4">
               <Camera className="mb-4 h-16 w-16" />
-              <p className="text-lg font-semibold">{isWebcamOn ? "Camera permission needed" : "Webcam is off"}</p>
-              <p className="text-center">{isWebcamOn ? "Please allow camera access in your browser." : "Click to turn on"}</p>
+              <p className="text-lg font-semibold">{hasCameraPermission === false ? "Camera access denied" : "Webcam is off"}</p>
+              <p className="text-center">{hasCameraPermission === false ? "Please allow camera access in your browser." : "Click to turn on"}</p>
             </div>
           )}
 
@@ -158,7 +190,7 @@ export default function LearnPage() {
       </footer>
       </CardContent>
     </Card>
-    <div className="p-4 sm:p-6 bg-background space-y-6">
+    <div className="space-y-6">
       <Card>
         <CardHeader>
           <div className="flex flex-wrap items-center justify-between gap-4">

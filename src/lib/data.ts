@@ -14,7 +14,7 @@ export const menuItems: MenuItem[] = [
   { icon: BookOpen, label: 'Learn', href: '/learn' },
   { icon: Gamepad2, label: 'Play', href: '/play' },
   { icon: BarChart, label: 'Progress', href: '/progress' },
-  { icon: Users, label: 'Community', href: '/community', badge: '32' },
+  { icon: Users, label: 'Community', href: '/community' },
   { icon: User, label: 'Profile', href: '/profile' },
 ];
 

@@ -17,6 +17,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from '@/firebase';
+import { useRouter } from 'next/navigation';
 
 
 const Logo = () => (
@@ -33,6 +35,7 @@ const Logo = () => (
 
 const NavMenu = () => {
   const pathname = usePathname();
+  const modifiedPath = pathname.replace('/(app)/','/');
   return (
     <nav className="flex-1">
       <p className="mb-2 text-xs font-semibold uppercase text-muted-foreground">Menu</p>
@@ -41,14 +44,14 @@ const NavMenu = () => {
           <li key={item.label}>
             <Link href={item.href}>
               <Button
-                variant={pathname === item.href ? 'secondary' : 'ghost'}
+                variant={modifiedPath === item.href ? 'secondary' : 'ghost'}
                 className="w-full justify-start text-base"
-                aria-current={pathname === item.href ? 'page' : undefined}
+                aria-current={modifiedPath === item.href ? 'page' : undefined}
               >
                 <item.icon className="mr-3 h-5 w-5" />
                 <span>{item.label}</span>
                 {item.badge && (
-                  <Badge variant={pathname === item.href ? 'default' : 'secondary'} className="ml-auto">
+                  <Badge variant={modifiedPath === item.href ? 'default' : 'secondary'} className="ml-auto">
                     {item.badge}
                   </Badge>
                 )}
@@ -63,6 +66,13 @@ const NavMenu = () => {
 
 const UserProfile = () => {
   const userAvatar = PlaceHolderImages.find((img) => img.id === '1');
+  const auth = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    auth.signOut();
+    router.push('/');
+  }
 
   return (
     <div className="mt-auto">
@@ -82,7 +92,7 @@ const UserProfile = () => {
               </DropdownMenuItem>
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-red-500">Logout</DropdownMenuItem>
+              <DropdownMenuItem className="text-red-500" onClick={handleLogout}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         <div className="flex flex-col">
@@ -90,8 +100,8 @@ const UserProfile = () => {
           <span className="text-sm text-muted-foreground">jen.wilson@example.com</span>
         </div>
       </div>
-      <Button variant="ghost" className="w-full justify-center bg-red-100/40 text-red-500 hover:text-red-600 hover:bg-red-100/80 items-center">
-        <LogOut className="mr-3 h-5 w-5" />
+      <Button variant="ghost" className="w-full justify-center items-center rounded-full bg-red-100/40 text-red-500 hover:bg-red-200/60 hover:text-red-600" onClick={handleLogout}>
+        <LogOut className="mr-2 h-5 w-5" />
         Log out
       </Button>
     </div>
@@ -113,10 +123,10 @@ const LeftSidebarContent = () => {
 const LeftSidebar = () => {
   return (
     <>
-      <aside className="hidden lg:flex w-[260px] flex-col border-r bg-card p-6">
+      <aside className="hidden lg:flex w-[260px] flex-col shrink-0 border-r bg-card p-6">
         <LeftSidebarContent />
       </aside>
-      <div className="lg:hidden">
+      <div className="lg:hidden absolute top-4 left-4 z-10">
         <Sheet>
             <SheetTrigger asChild>
                 <Button variant="outline" size="icon">

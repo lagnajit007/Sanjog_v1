@@ -197,7 +197,7 @@ export default function PlayPage() {
 
   return (
     <div className="space-y-6">
-    <div className="p-4 sm:p-6 lg:p-8 bg-background font-body space-y-6">
+    <div className="space-y-6">
       <Card>
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -244,7 +244,7 @@ export default function PlayPage() {
 
       <ActiveChallengeModal challenge={activeChallenge} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
-    <div className="p-4 sm:p-6 lg:p-8 bg-background font-body">
+    <div className="">
       <div className="flex flex-col gap-6">
         <Card>
           <CardContent className="p-6">
@@ -272,7 +272,7 @@ export default function PlayPage() {
               <TabsList className="grid w-full grid-cols-4 rounded-none border-b bg-card p-0">
                 <TabsTrigger value="all" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none">All Badges</TabsTrigger>
                 <TabsTrigger value="skill" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none">Skill</TabsTrigger>
-                <TabsTrigger value="streak" className="rounded-none data-[state-active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none">Streak</TabsTrigger>
+                <TabsTrigger value="streak" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none">Streak</TabsTrigger>
                 <TabsTrigger value="challenge" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none">Challenge</TabsTrigger>
               </TabsList>
               <div className="p-6">
