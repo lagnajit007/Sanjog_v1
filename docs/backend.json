@@ -4,7 +4,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "UserProfile",
       "type": "object",
-      "description": "Represents a user's profile in the Sanjog application.",
+      "description": "Represents a user's profile within the Sanjog application.",
       "properties": {
         "id": {
           "type": "string",
@@ -19,10 +19,20 @@
           "type": "string",
           "description": "User's full name."
         },
-        "avatarUrl": {
+        "avatar": {
           "type": "string",
           "description": "URL of the user's avatar image.",
           "format": "uri"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp of when the user profile was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp of when the user profile was last updated.",
+          "format": "date-time"
         }
       },
       "required": [
@@ -49,57 +59,68 @@
           "type": "string",
           "description": "Description of the lesson content."
         },
+        "contentUrl": {
+          "type": "string",
+          "description": "URL of the lesson content (video, document, etc.).",
+          "format": "uri"
+        },
         "category": {
           "type": "string",
           "description": "Category of the lesson (e.g., Alphabets, Numbers)."
         },
-        "contentUrl": {
+        "createdAt": {
           "type": "string",
-          "description": "URL to the lesson content (e.g., video, interactive exercise).",
-          "format": "uri"
+          "description": "Timestamp of when the lesson was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp of when the lesson was last updated.",
+          "format": "date-time"
         }
       },
       "required": [
         "id",
         "title",
-        "description",
         "contentUrl"
       ]
     },
-    "UserProgress": {
+    "UserLessonProgress": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "UserProgress",
+      "title": "UserLessonProgress",
       "type": "object",
-      "description": "Represents a user's progress in a specific lesson.",
+      "description": "Represents a user's progress on a specific lesson.",
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier for the UserProgress entity."
+          "description": "Unique identifier for the UserLessonProgress entity."
         },
         "userId": {
           "type": "string",
-          "description": "Reference to UserProfile. (Relationship: UserProfile 1:N UserProgress)"
+          "description": "Reference to UserProfile. (Relationship: UserProfile 1:N UserLessonProgress)"
         },
         "lessonId": {
           "type": "string",
-          "description": "Reference to Lesson. (Relationship: Lesson 1:N UserProgress)"
+          "description": "Reference to Lesson. (Relationship: Lesson 1:N UserLessonProgress)"
         },
-        "completionDate": {
-          "type": "string",
-          "description": "Date when the lesson was completed.",
-          "format": "date-time"
-        },
-        "score": {
+        "progress": {
           "type": "number",
-          "description": "User's score on the lesson (e.g., percentage correct)."
+          "description": "Percentage of the lesson completed (0-100)."
+        },
+        "isCompleted": {
+          "type": "boolean",
+          "description": "Indicates if the lesson is completed."
+        },
+        "lastAccessed": {
+          "type": "string",
+          "description": "Timestamp of when the lesson was last accessed by the user.",
+          "format": "date-time"
         }
       },
       "required": [
         "id",
         "userId",
-        "lessonId",
-        "completionDate",
-        "score"
+        "lessonId"
       ]
     },
     "Achievement": {
@@ -114,16 +135,20 @@
         },
         "name": {
           "type": "string",
-          "description": "Name of the achievement (e.g., Confident Reader)."
+          "description": "Name of the achievement."
         },
         "description": {
           "type": "string",
-          "description": "Description of how to earn the achievement."
+          "description": "Description of the achievement and how to earn it."
         },
         "imageUrl": {
           "type": "string",
           "description": "URL of the achievement badge image.",
           "format": "uri"
+        },
+        "points": {
+          "type": "number",
+          "description": "Points awarded for earning the achievement."
         }
       },
       "required": [
@@ -137,7 +162,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "UserAchievement",
       "type": "object",
-      "description": "Represents a user's earned achievements.",
+      "description": "Represents a user's earned achievement.",
       "properties": {
         "id": {
           "type": "string",
@@ -151,24 +176,23 @@
           "type": "string",
           "description": "Reference to Achievement. (Relationship: Achievement 1:N UserAchievement)"
         },
-        "dateEarned": {
+        "earnedAt": {
           "type": "string",
-          "description": "Date when the achievement was earned.",
+          "description": "Timestamp of when the achievement was earned.",
           "format": "date-time"
         }
       },
       "required": [
         "id",
         "userId",
-        "achievementId",
-        "dateEarned"
+        "achievementId"
       ]
     },
     "LeaderboardEntry": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "LeaderboardEntry",
       "type": "object",
-      "description": "Represents a user's entry on the community leaderboard.",
+      "description": "Represents a single entry in the community leaderboard.",
       "properties": {
         "id": {
           "type": "string",
@@ -180,31 +204,29 @@
         },
         "points": {
           "type": "number",
-          "description": "User's total points on the leaderboard."
+          "description": "Total points earned by the user."
         },
         "level": {
-          "type": "string",
-          "description": "User's current level on the leaderboard."
+          "type": "number",
+          "description": "The current skill level of the user."
         },
         "rank": {
           "type": "number",
-          "description": "User's rank on the leaderboard."
+          "description": "The current rank of the user."
         }
       },
       "required": [
         "id",
         "userId",
         "points",
-        "level",
-        "rank"
+        "level"
       ]
     }
   },
   "auth": {
     "providers": [
       "password",
-      "anonymous",
-      "google.com"
+      "anonymous"
     ]
   },
   "firestore": {
@@ -216,11 +238,11 @@
           "schema": {
             "$ref": "#/backend/entities/UserProfile"
           },
-          "description": "Stores user profile information. Path-based ownership ensures only the user can access their profile.",
+          "description": "Stores user profile information. Path-based ownership enables simple security rules. Includes denormalized data as needed.",
           "params": [
             {
               "name": "userId",
-              "description": "The unique identifier of the user."
+              "description": "The unique identifier for the user."
             }
           ]
         }
@@ -232,31 +254,31 @@
           "schema": {
             "$ref": "#/backend/entities/Lesson"
           },
-          "description": "Stores lesson data. Publicly readable.",
+          "description": "Stores lesson information. Lessons share the same security posture.",
           "params": [
             {
               "name": "lessonId",
-              "description": "The unique identifier of the lesson."
+              "description": "The unique identifier for the lesson."
             }
           ]
         }
       },
       {
-        "path": "/users/{userId}/progress/{progressId}",
+        "path": "/users/{userId}/lessons/{lessonId}/progress",
         "definition": {
-          "entityName": "UserProgress",
+          "entityName": "UserLessonProgress",
           "schema": {
-            "$ref": "#/backend/entities/UserProgress"
+            "$ref": "#/backend/entities/UserLessonProgress"
           },
-          "description": "Stores user progress for each lesson. Path-based ownership ensures only the user can access their progress data.",
+          "description": "Stores user's progress for a specific lesson. Nested under the user to ensure path-based ownership.",
           "params": [
             {
               "name": "userId",
-              "description": "The unique identifier of the user."
+              "description": "The unique identifier for the user."
             },
             {
-              "name": "progressId",
-              "description": "The unique identifier of the progress entry."
+              "name": "lessonId",
+              "description": "The unique identifier for the lesson."
             }
           ]
         }
@@ -268,31 +290,31 @@
           "schema": {
             "$ref": "#/backend/entities/Achievement"
           },
-          "description": "Stores achievement definitions. Publicly readable.",
+          "description": "Stores achievement information. Achievements share the same security posture.",
           "params": [
             {
               "name": "achievementId",
-              "description": "The unique identifier of the achievement."
+              "description": "The unique identifier for the achievement."
             }
           ]
         }
       },
       {
-        "path": "/users/{userId}/achievements/{userAchievementId}",
+        "path": "/users/{userId}/achievements/{achievementId}",
         "definition": {
           "entityName": "UserAchievement",
           "schema": {
             "$ref": "#/backend/entities/UserAchievement"
           },
-          "description": "Stores user's earned achievements. Path-based ownership ensures only the user can access their achievement data.",
+          "description": "Stores user's earned achievements. Nested under the user to ensure path-based ownership.",
           "params": [
             {
               "name": "userId",
-              "description": "The unique identifier of the user."
+              "description": "The unique identifier for the user."
             },
             {
-              "name": "userAchievementId",
-              "description": "The unique identifier of the user achievement entry."
+              "name": "achievementId",
+              "description": "The unique identifier for the achievement."
             }
           ]
         }
@@ -304,16 +326,16 @@
           "schema": {
             "$ref": "#/backend/entities/LeaderboardEntry"
           },
-          "description": "Stores leaderboard entries. The owner id is denormalized to enable listing and single reads.",
+          "description": "Stores leaderboard entries for ranking users.",
           "params": [
             {
               "name": "leaderboardEntryId",
-              "description": "The unique identifier of the leaderboard entry."
+              "description": "The unique identifier for the leaderboard entry."
             }
           ]
         }
       }
     ],
-    "reasoning": "The Firestore structure is designed to optimize for security, scalability, and query performance, adhering to the principles of Authorization Independence, Structural Segregation, and Access Modeling.  The error message `Firebase: Error (auth/operation-not-allowed)` indicates the Firebase Authentication method might not be enabled. However, this config is external to the Firestore structure, the structure must still support easy debuggability if access is correctly enabled and access is still failing.\n\n1.  **Authorization Independence:**\n\n    *   UserProgress: Access is controlled by the user's ID.  There is no dependence on any parent document to establish authorization.\n    *   UserAchievement:  Similar to UserProgress, access is managed through the user's ID within a path, eliminating the need for authorization `get()` calls.\n    *   LeaderboardEntry: Access is controlled by user ID.\n\n2.  **Structural Segregation:**\n\n    *   UserProfile: Stored in a dedicated collection, providing a clear separation of user-specific data. This separation simplifies the definition and enforcement of security rules.\n    *   Lessons: Lessons are stored globally, available to all users. This segregation allows for a straightforward access control configuration.\n    *   UserProgress, UserAchievement, and LeaderboardEntry are all stored in user-specific subcollections, further isolating user-related data.\n\n3.  **Access Modeling:**\n\n    *   Private Data: UserProfile, UserProgress, UserAchievement, and LeaderboardEntry are secured using path-based ownership (`/users/{userId}/...`). This pattern ensures that only the authenticated user can access their respective data.\n\n4.  **QAPs Support:**\n\n    *   List Operations:  The structure supports secure `list` operations. The user-specific subcollections enable listing only the data associated with a particular user without exposing data from other users.\n\nThis structure avoids hierarchical authorization dependencies, enabling atomic operations and simplifying security rule design. It clearly defines access patterns and promotes easy debuggability. The separation of data into distinct collections based on access requirements enhances security and enables efficient query execution."
+    "reasoning": "The Firestore structure is designed to be secure, scalable, and debuggable, adhering to the principles of Authorization Independence, Clarity of Intent, DBAC (Database Based Access Control), and QAPs (Rules are not Filters). It leverages denormalization to avoid hierarchical authorization dependencies and structural segregation to simplify security rules.\n\n1.  **UserProfile**: User profiles are stored under `/users/{userId}`. This path-based ownership provides clear authorization and simplifies rules for accessing user-specific data.\n2.  **Lessons**: Lessons are stored in the `/lessons` collection. All lessons share the same security posture, enabling simple list operations and management.\n3.  **UserLessonProgress**: User lesson progress is stored under `/users/{userId}/lessons/{lessonId}/progress`.  This nested path reflects the `User 1:N Lesson` relationship. This structure enables simple, secure access to a user's progress on specific lessons.\n4.  **Achievements**: Achievements are stored in the `/achievements` collection.  Like lessons, all achievements share the same security requirements.\n5.  **UserAchievement**: User achievements are stored under `/users/{userId}/achievements/{achievementId}`. This nested structure mirrors the `User 1:N Achievement` relationship.\n6.  **LeaderboardEntry**: Leaderboard entries are stored in the `/leaderboard` collection. Each entry contains user-specific data for ranking.  The `userId` field enables filtering and display of user-specific leaderboard information.\n\nThis structure achieves Authorization Independence by avoiding `get()` calls in security rules. Path-based ownership (`/users/{userId}/...`) clearly defines access rights based on the authenticated user. Structural segregation ensures that each collection has a homogeneous security posture, simplifying rule creation and maintenance. The membership map pattern is not directly used in this design as there isn't an explicit collaborative data model defined in the requirements."
   }
 }

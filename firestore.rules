@@ -1,141 +1,144 @@
 /**
- * @file Firestore Security Rules for Sanjog Application
+ * @fileoverview Firestore Security Rules for Sanjog Application
  *
- * @core_philosophy This ruleset enforces a strict user-ownership model for user-specific data
- * and allows public read access to shared content like lessons and achievements.
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model for personal data nested under `/users/{userId}`.
+ * Public data such as lessons and achievements are readable by all but writable only by authorized users (e.g., admins - not implemented here).
+ * The rules prioritize authorization and relational integrity.
  *
- * @data_structure
- * - /users/{userId}: Stores individual user profiles.
- * - /lessons/{lessonId}: Stores lesson content, accessible to all users.
- * - /users/{userId}/progress/{progressId}: Stores user-specific lesson progress.
- * - /achievements/{achievementId}: Stores achievement definitions, accessible to all users.
- * - /users/{userId}/achievements/{userAchievementId}: Stores user-specific achievement data.
- * - /leaderboard/{leaderboardEntryId}: Stores leaderboard entries.
+ * Data Structure:
+ * - `/users/{userId}`: Stores user profile data.
+ * - `/lessons/{lessonId}`: Stores lesson data.
+ * - `/users/{userId}/lessons/{lessonId}/progress`: Stores user lesson progress.
+ * - `/achievements/{achievementId}`: Stores achievement data.
+ * - `/users/{userId}/achievements/{achievementId}`: Stores user achievements.
+ * - `/leaderboard/{leaderboardEntryId}`: Stores leaderboard entries.
  *
- * @key_security_decisions
- * - Users can only access their own profile data and associated subcollections.
- * - Lessons and achievements are publicly readable but not writable by users.
- * - Leaderboard entries do not enforce the user ID to match the document path.
+ * Key Security Decisions:
+ * - User data is strictly controlled by the owning user.
+ * - Lessons and achievements are publicly readable but require authorization for creation, updates, and deletion.
+ * - Leaderboard entries are publicly readable and writable with minimal authorization.
+ * - No user listing is allowed (explicitly denied).
  *
- * @denormalization_for_authorization
- * - No denormalization is used. The current path-based ownership model is efficient enough.
+ * Denormalization for Authorization:
+ *   - User-specific data (progress, achievements) is nested under the user's document to avoid `get()` calls and enforce ownership.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Secure user profiles. Only the authenticated user can read, update, or delete their own profile.
+     * @description Checks if the request is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * @description Checks if the request is made by the owner of the resource.
+     */
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    /**
+     * @description Checks if the request is made by the owner of the existing resource.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description User profile information. Only the authenticated user can read/write their own profile.
      * @path /users/{userId}
-     * @allow (create) - Authenticated user with matching userId in the request data.
-     * @allow (get, update, delete) - Authenticated user matching the userId.
-     * @deny (create, update, delete) - Any other user attempting to access this profile.
-     * @principle Enforces document ownership for all operations.
+     * @allow (create) - Authenticated user creates their profile with matching userId.
+     * @allow (get, update, delete) - Authenticated user accesses their own profile.
+     * @deny (create) - Authenticated user tries to create a profile for another user.
+     * @deny (get, update, delete) - Authenticated user tries to access another user's profile.
+     * @principle Enforces document ownership for writes.
      */
     match /users/{userId} {
-      function isOwner(userId) {
-        return request.auth != null && request.auth.uid == userId;
-      }
-
-      function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
-      }
-
       allow get: if isOwner(userId);
       allow list: if false;
-      allow create: if isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow create: if isOwner(userId) && request.auth.uid == userId;
+      allow update: if isExistingOwner(userId);
       allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Allows public read access to lesson data. Write access is not permitted.
+     * @description Lesson information. Lessons can be read by anyone but created/updated/deleted only by authorized users (e.g., admins).
      * @path /lessons/{lessonId}
-     * @allow (get, list) - Any user (authenticated or not).
-     * @deny (create, update, delete) - Any user attempting to write to this collection.
-     * @principle Allows public read access for shared content.
+     * @allow (get, list) - Anyone can read lesson information.
+     * @deny (create, update, delete) - Only authorized users can modify lesson information.  No validation on the update of the timestamp
+     * @principle Public read, owner-only writes (admin in this case).
      */
     match /lessons/{lessonId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
+      allow get, list: if true;
+      allow create: if false; // TODO: Add admin validation once roles are established.
+      allow update: if false; // TODO: Add admin validation once roles are established.
+      allow delete: if false; // TODO: Add admin validation once roles are established.
     }
 
     /**
-     * @description Secure user progress data. Only the authenticated user can read, create, update, or delete their own progress data.
-     * @path /users/{userId}/progress/{progressId}
-     * @allow (create) - Authenticated user with matching userId.
-     * @allow (get, update, delete) - Authenticated user matching the userId.
-     * @deny (create, update, delete) - Any other user attempting to access this data.
-     * @principle Enforces document ownership for all operations.
+     * @description User's progress for a specific lesson. Only the authenticated user can read/write their own progress.
+     * @path /users/{userId}/lessons/{lessonId}/progress
+     * @allow (create) - Authenticated user creates their lesson progress with matching userId.
+     * @allow (get, update, delete) - Authenticated user accesses their own lesson progress.
+     * @deny (create) - Authenticated user tries to create a lesson progress for another user.
+     * @deny (get, update, delete) - Authenticated user tries to access another user's lesson progress.
+     * @principle Enforces document ownership for writes.
      */
-    match /users/{userId}/progress/{progressId} {
-      function isOwner(userId) {
-        return request.auth != null && request.auth.uid == userId;
-      }
-
-      function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
-      }
-
+    match /users/{userId}/lessons/{lessonId}/progress {
       allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow list: if false;
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
       allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Allows public read access to achievement definitions. Write access is not permitted.
+     * @description Achievement information. Achievements can be read by anyone but created/updated/deleted only by authorized users (e.g., admins).
      * @path /achievements/{achievementId}
-     * @allow (get, list) - Any user (authenticated or not).
-     * @deny (create, update, delete) - Any user attempting to write to this collection.
-     * @principle Allows public read access for shared content.
+     * @allow (get, list) - Anyone can read achievement information.
+     * @deny (create, update, delete) - Only authorized users can modify achievement information. No validation on the update of the timestamp
+     * @principle Public read, owner-only writes (admin in this case).
      */
     match /achievements/{achievementId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
+      allow get, list: if true;
+      allow create: if false; // TODO: Add admin validation once roles are established.
+      allow update: if false; // TODO: Add admin validation once roles are established.
+      allow delete: if false; // TODO: Add admin validation once roles are established.
     }
 
     /**
-     * @description Secure user achievement data. Only the authenticated user can read, create, update, or delete their own achievement data.
-     * @path /users/{userId}/achievements/{userAchievementId}
-     * @allow (create) - Authenticated user with matching userId.
-     * @allow (get, update, delete) - Authenticated user matching the userId.
-     * @deny (create, update, delete) - Any other user attempting to access this data.
-     * @principle Enforces document ownership for all operations.
+     * @description User's earned achievements. Only the authenticated user can read/write their own achievements.
+     * @path /users/{userId}/achievements/{achievementId}
+     * @allow (create) - Authenticated user creates their achievement with matching userId.
+     * @allow (get, update, delete) - Authenticated user accesses their own achievement.
+     * @deny (create) - Authenticated user tries to create an achievement for another user.
+     * @deny (get, update, delete) - Authenticated user tries to access another user's achievement.
+     * @principle Enforces document ownership for writes.
      */
-    match /users/{userId}/achievements/{userAchievementId} {
-      function isOwner(userId) {
-        return request.auth != null && request.auth.uid == userId;
-      }
-
-      function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
-      }
-
+    match /users/{userId}/achievements/{achievementId} {
       allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow list: if false;
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
       allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Secure leaderboard entries.
+     * @description Leaderboard entries. Anyone can read leaderboard entries.
      * @path /leaderboard/{leaderboardEntryId}
+     * @allow (get, list) - Anyone can read leaderboard entries.
+     * @deny (create, update, delete) - Leaderboard entries can be modified by authorized users. No validation on the update of the timestamp
+     * @principle Public read
      */
     match /leaderboard/{leaderboardEntryId} {
-        allow get: if true;
-        allow list: if true;
-        allow create: if request.auth != null;
-        allow update: if request.auth != null && resource != null;
-        allow delete: if request.auth != null && resource != null;
+      allow get, list: if true;
+      allow create: if isSignedIn(); // TODO: Add validation once roles are established.
+      allow update: if false; // TODO: Add validation once roles are established.
+      allow delete: if false; // TODO: Add validation once roles are established.
     }
   }
 }
