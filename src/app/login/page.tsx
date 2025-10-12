@@ -71,15 +71,7 @@ export default function LoginPage() {
     
     const handleGoogleLogin = () => {
         if (auth === null) { return; }
-        try {
-            initiateGoogleSignIn(auth);
-        } catch (error: any) {
-            toast({
-                variant: 'destructive',
-                title: 'Login Failed',
-                description: error.message,
-            });
-        }
+        initiateGoogleSignIn(auth);
     };
 
     return (

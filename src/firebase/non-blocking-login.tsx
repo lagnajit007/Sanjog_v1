@@ -8,6 +8,7 @@ import {
   GoogleAuthProvider,
   // Assume getAuth and app are initialized elsewhere
 } from 'firebase/auth';
+import { toast } from '@/hooks/use-toast';
 
 /** Initiate anonymous sign-in (non-blocking). */
 export function initiateAnonymousSignIn(authInstance: Auth): void {
@@ -34,6 +35,19 @@ export function initiateEmailSignIn(authInstance: Auth, email: string, password:
 export function initiateGoogleSignIn(authInstance: Auth): void {
   const provider = new GoogleAuthProvider();
   // CRITICAL: Call signInWithPopup directly. Do NOT use 'await signInWithPopup(...)'.
-  signInWithPopup(authInstance, provider);
+  signInWithPopup(authInstance, provider).catch((error) => {
+    if (error.code === 'auth/popup-closed-by-user') {
+      toast({
+        title: 'Sign-In Cancelled',
+        description: 'You closed the sign-in window before completing the process.',
+      });
+    } else {
+        toast({
+            variant: 'destructive',
+            title: 'Google Sign-In Failed',
+            description: error.message,
+        });
+    }
+  });
   // Code continues immediately. Auth state change is handled by onAuthStateChanged listener.
 }

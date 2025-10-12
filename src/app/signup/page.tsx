@@ -83,15 +83,7 @@ export default function SignupPage() {
     
     const handleGoogleSignup = () => {
         if (auth === null) { return; }
-        try {
-            initiateGoogleSignIn(auth);
-        } catch (error: any) {
-            toast({
-                variant: 'destructive',
-                title: 'Signup Failed',
-                description: error.message,
-            });
-        }
+        initiateGoogleSignIn(auth);
     };
 
     return (
