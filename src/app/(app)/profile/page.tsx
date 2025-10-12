@@ -25,15 +25,26 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 // Mock Data
 const achievements = [
-  { icon: Award, title: 'First 10 Signs', description: 'Learned your first 10 signs', locked: false },
-  { icon: Flame, title: '7-Day Streak', description: 'Logged in for 7 days in a row', locked: false },
-  { icon: Star, title: 'Perfect Lesson', description: 'Scored 100% on a lesson', locked: false },
-  { icon: TrendingUp, title: 'Level 5', description: 'Reached level 5', locked: false },
-  { icon: CheckCircle, title: 'Alphabet Ace', description: 'Mastered the full alphabet', locked: true },
-  { icon: Award, title: 'Challenge Champ', description: 'Won 5 challenges', locked: true },
-  { icon: Users, title: 'Community Helper', description: 'Helped 10 users in the community', locked: true },
-  { icon: Star, title: 'Speed Signer', description: 'Completed a speed challenge', locked: true },
+    { title: 'First 10 Signs', description: 'Learned your first 10 signs', locked: false, gradientId: 'gradient-1' },
+    { title: '7-Day Streak', description: 'Logged in for 7 days in a row', locked: false, gradientId: 'gradient-2' },
+    { title: 'Perfect Lesson', description: 'Scored 100% on a lesson', locked: false, gradientId: 'gradient-3' },
+    { title: 'Level 5', description: 'Reached level 5', locked: false, gradientId: 'gradient-4' },
+    { title: 'Alphabet Ace', description: 'Mastered the full alphabet', locked: true, gradientId: 'gradient-5' },
+    { title: 'Challenge Champ', description: 'Won 5 challenges', locked: true, gradientId: 'gradient-6' },
+    { title: 'Community Helper', description: 'Helped 10 users in the community', locked: true, gradientId: 'gradient-7' },
+    { title: 'Speed Signer', description: 'Completed a speed challenge', locked: true, gradientId: 'gradient-8' },
 ];
+
+const badgeGradients = {
+    'gradient-1': { from: '#FFD35E', to: '#FF8C00' },
+    'gradient-2': { from: '#82F4B1', to: '#2E8B57' },
+    'gradient-3': { from: '#A7B2FF', to: '#7B61FF' },
+    'gradient-4': { from: '#FF954D', to: '#FF4500' },
+    'gradient-5': { from: '#E0E0E0', to: '#A0A0A0' },
+    'gradient-6': { from: '#E0E0E0', to: '#A0A0A0' },
+    'gradient-7': { from: '#E0E0E0', to: '#A0A0A0' },
+    'gradient-8': { from: '#E0E0E0', to: '#A0A0A0' },
+};
 
 const learningStats = {
   signsLearned: 154,
@@ -65,6 +76,31 @@ const friends = [
   { avatar: 'https://picsum.photos/seed/6/40/40' },
 ];
 
+const BadgeIcon = ({ gradientId }: { gradientId: string }) => {
+    const gradient = badgeGradients[gradientId as keyof typeof badgeGradients] || { from: '#E0E0E0', to: '#A0A0A0' };
+    return (
+        <svg width="63" height="64" viewBox="0 0 63 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto mb-2">
+            <defs>
+                <linearGradient id={gradientId} x1="31.5" y1=".5" x2="31.5" y2="63.5" gradientUnits="userSpaceOnUse">
+                    <stop stopColor={gradient.from} />
+                    <stop offset="1" stopColor={gradient.to} />
+                </linearGradient>
+            </defs>
+            <path d="M26.5 3.387a10 10 0 0 1 10 0l17.28 9.976a10 10 0 0 1 5 8.66v19.954a10 10 0 0 1-5 8.66L36.5 60.613a10 10 0 0 1-10 0L9.22 50.637a10 10 0 0 1-5-8.66V22.024a10 10 0 0 1 5-8.66z" fill={`url(#${gradientId})`} />
+            <g clipPath="url(#badge-clip)">
+                <path d="M45.178 19.386a.28.28 0 0 0-.213-.22c-3.505-.856-11.603 2.198-15.99 6.583a19 19 0 0 0-2.133 2.52c-1.352-.12-2.705-.02-3.859.483-3.253 1.431-4.2 5.168-4.464 6.775a.576.576 0 0 0 .631.67l5.225-.576q.005.591.07 1.18c.027.271.148.525.342.717l2.023 2.019c.192.194.447.314.718.34q.584.066 1.173.072l-.574 5.218a.577.577 0 0 0 .67.631c1.605-.257 5.348-1.204 6.771-4.458.503-1.153.606-2.5.49-3.846a19 19 0 0 0 2.526-2.133c4.401-4.379 7.437-12.296 6.594-15.975M34.193 30.137a2.872 2.872 0 1 1 4.06-4.063 2.872 2.872 0 0 1-4.06 4.063" fill="#fff" />
+                <path d="M26.673 40.999c-.328.328-.854.456-1.487.566-1.423.242-2.679-.987-2.423-2.425.097-.545.386-1.31.565-1.489a.262.262 0 0 0-.218-.446 3.6 3.6 0 0 0-2.102 1.025c-1.407 1.408-1.54 6.633-1.54 6.633s5.228-.133 6.634-1.541a3.57 3.57 0 0 0 1.026-2.104c.022-.25-.283-.4-.455-.22" fill="#fff" />
+            </g>
+            <defs>
+                <clipPath id="badge-clip">
+                    <path fill="#fff" d="M18.237 18.737h27.355v27.355H18.237z" />
+                </clipPath>
+            </defs>
+        </svg>
+    );
+};
+
+
 const StatCard = ({ label, value }: { label: string; value: string | number }) => (
   <Card>
     <CardContent className="pt-6 text-center">
@@ -74,9 +110,9 @@ const StatCard = ({ label, value }: { label: string; value: string | number }) =
   </Card>
 );
 
-const AchievementCard = ({ icon: Icon, title, locked }: { icon: React.ElementType, title: string, locked: boolean }) => (
+const AchievementCard = ({ gradientId, title, locked }: { gradientId: string, title: string, locked: boolean }) => (
   <Card className={`text-center p-4 transition-all hover:shadow-md hover:-translate-y-1 ${locked ? 'bg-secondary/50 opacity-60' : ''}`}>
-    <Icon className="h-10 w-10 text-primary mx-auto mb-2" />
+    <BadgeIcon gradientId={gradientId} />
     <p className="font-semibold text-sm">{title}</p>
   </Card>
 );
@@ -242,7 +278,7 @@ export default function ProfilePage() {
         <CardContent>
           <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4">
             {achievements.map((ach, index) => (
-              <AchievementCard key={index} icon={ach.icon} title={ach.title} locked={ach.locked} />
+              <AchievementCard key={index} gradientId={ach.gradientId} title={ach.title} locked={ach.locked} />
             ))}
           </div>
         </CardContent>
