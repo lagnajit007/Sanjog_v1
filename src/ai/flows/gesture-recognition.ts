@@ -8,7 +8,6 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { defineTool } from 'genkit/tool';
 import { exec } from 'child_process';
 import path from 'path';
 
@@ -26,12 +25,12 @@ const GestureRecognitionOutputSchema = z.object({
 export type GestureRecognitionOutput = z.infer<typeof GestureRecognitionOutputSchema>;
 
 // Define the tool to run the Python prediction server
-const pythonPredictionTool = defineTool(
+const pythonPredictionTool = ai.defineTool(
   {
     name: 'gesturePredictor',
     description: 'Runs a Python script to predict a sign language gesture from hand landmarks.',
-    input: { schema: GestureRecognitionInputSchema },
-    output: { schema: GestureRecognitionOutputSchema },
+    inputSchema: GestureRecognitionInputSchema,
+    outputSchema: GestureRecognitionOutputSchema,
   },
   async (input) => {
     // This is a simplified example of invoking a Python script.
