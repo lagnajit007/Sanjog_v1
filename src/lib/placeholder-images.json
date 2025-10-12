@@ -23,6 +23,36 @@
       "description": "Avatar for Chloe Garcia",
       "imageUrl": "https://picsum.photos/seed/4/100/100",
       "imageHint": "woman smiling"
+    },
+    {
+      "id": "hero",
+      "description": "Hero image showing diverse people learning",
+      "imageUrl": "https://picsum.photos/seed/hero/1200/600",
+      "imageHint": "people learning diverse"
+    },
+    {
+      "id": "video-preview",
+      "description": "Preview of video translation feature",
+      "imageUrl": "https://picsum.photos/seed/video/600/400",
+      "imageHint": "video player interface"
+    },
+    {
+      "id": "mission",
+      "description": "Image for the mission section",
+      "imageUrl": "https://picsum.photos/seed/mission/600/400",
+      "imageHint": "diverse people communication"
+    },
+    {
+      "id": "process",
+      "description": "Image for the process section",
+      "imageUrl": "https://picsum.photos/seed/process/600/600",
+      "imageHint": "ai process diagram"
+    },
+    {
+      "id": "cta-hands",
+      "description": "Image for the call to action section",
+      "imageUrl": "https://picsum.photos/seed/hands/600/400",
+      "imageHint": "hands together"
     }
   ]
 }

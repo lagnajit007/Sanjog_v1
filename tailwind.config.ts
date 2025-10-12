@@ -22,6 +22,9 @@ export default {
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+        surface: 'hsl(var(--surface))',
+        textPrimary: 'hsl(var(--text-primary))',
+        textSecondary: 'hsl(var(--text-secondary))',
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
@@ -34,9 +37,15 @@ export default {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
         },
+        onPrimary: {
+          DEFAULT: 'hsl(var(--on-primary))',
+        },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))',
+        },
+        onSecondary: {
+          DEFAULT: 'hsl(var(--on-secondary))',
         },
         muted: {
           DEFAULT: 'hsl(var(--muted))',
@@ -53,9 +62,9 @@ export default {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
-        'accent-orange': 'hsl(var(--accent))',
-        'accent-green': '#66D49D',
-        'accent-blue': '#6CA6FF',
+        'accent-orange': 'hsl(var(--accent-orange))',
+        'accent-green': 'hsl(var(--accent-green))',
+        'accent-blue': 'hsl(var(--accent-blue))',
         chart: {
           '1': 'hsl(var(--chart-1))',
           '2': 'hsl(var(--chart-2))',
@@ -81,6 +90,7 @@ export default {
       },
       boxShadow: {
         sm: '0px 4px 12px rgba(0, 0, 0, 0.05)',
+        lg: '0 8px 30px rgba(0,0,0,0.12)',
       },
       keyframes: {
         'accordion-down': {
