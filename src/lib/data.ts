@@ -13,10 +13,10 @@ export const menuItems: MenuItem[] = [
   { icon: Grid, label: 'Dashboard', href: '/dashboard', active: true },
   { icon: Hand, label: 'Practice', href: '/practice' },
   { icon: BookOpen, label: 'Lessons', href: '#' },
-  { icon: Trophy, label: 'Achievements', href: '#' },
+  { icon: Trophy, label: 'Achievements', href: '/achievements' },
   { icon: Target, label: 'Challenges', href: '#' },
-  { icon: BarChart, label: 'Progress', href: '#' },
-  { icon: Users, label: 'Community', href: '#', badge: '32' },
+  { icon: BarChart, label: 'Progress', href: '/progress' },
+  { icon: Users, label: 'Community', href: '/community', badge: '32' },
   { icon: User, label: 'Profile', href: '/profile' },
 ];
 
