@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react';
-import { Grid, BookOpen, Trophy, Target, BarChart, Users, Crown, Hand, User } from 'lucide-react';
+import { Grid, BookOpen, Gamepad2, BarChart, Users, Crown, Hand, User } from 'lucide-react';
 
 export type MenuItem = {
   icon: LucideIcon;
@@ -11,10 +11,8 @@ export type MenuItem = {
 
 export const menuItems: MenuItem[] = [
   { icon: Grid, label: 'Dashboard', href: '/dashboard', active: true },
-  { icon: Hand, label: 'Practice', href: '/practice' },
-  { icon: BookOpen, label: 'Lessons', href: '/lessons' },
-  { icon: Trophy, label: 'Achievements', href: '/achievements' },
-  { icon: Target, label: 'Challenges', href: '/challenges' },
+  { icon: BookOpen, label: 'Learn', href: '/learn' },
+  { icon: Gamepad2, label: 'Play', href: '/play' },
   { icon: BarChart, label: 'Progress', href: '/progress' },
   { icon: Users, label: 'Community', href: '/community', badge: '32' },
   { icon: User, label: 'Profile', href: '/profile' },
