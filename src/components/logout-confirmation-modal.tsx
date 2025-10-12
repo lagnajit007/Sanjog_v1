@@ -29,7 +29,7 @@ const LogoutConfirmationModal: React.FC<LogoutConfirmationModalProps> = ({
 
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
-      <AlertDialogContent>
+      <AlertDialogContent className="bg-card">
         <AlertDialogHeader>
           <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
           <AlertDialogDescription>
@@ -41,7 +41,7 @@ const LogoutConfirmationModal: React.FC<LogoutConfirmationModalProps> = ({
             <Button variant="ghost" onClick={onClose}>Cancel</Button>
           </AlertDialogCancel>
           <AlertDialogAction asChild>
-            <Button variant="destructive" onClick={onConfirm}>Logout</Button>
+            <Button variant="destructive" type="button" onClick={onConfirm}>Logout</Button>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
