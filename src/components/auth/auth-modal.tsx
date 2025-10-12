@@ -35,6 +35,7 @@ const LoginForm = ({ onSwitchToSignup }: { onSwitchToSignup: () => void }) => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    if (auth === null) { return; }
     try {
       initiateEmailSignIn(auth, email, password);
     } catch (error: any) {
@@ -47,6 +48,7 @@ const LoginForm = ({ onSwitchToSignup }: { onSwitchToSignup: () => void }) => {
   };
 
   const handleGoogleLogin = () => {
+    if (auth === null) { return; }
     try {
       initiateGoogleSignIn(auth);
     } catch (error: any) {
@@ -117,6 +119,7 @@ const SignupForm = ({ onSwitchToLogin }: { onSwitchToLogin: () => void }) => {
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
+    if (auth === null) { return; }
     if (password.length < 6) {
       toast({
         variant: 'destructive',
@@ -138,6 +141,7 @@ const SignupForm = ({ onSwitchToLogin }: { onSwitchToLogin: () => void }) => {
   };
 
   const handleGoogleSignup = () => {
+    if (auth === null) { return; }
     try {
         initiateGoogleSignIn(auth);
     } catch (error: any) {

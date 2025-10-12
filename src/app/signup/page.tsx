@@ -61,6 +61,7 @@ export default function SignupPage() {
 
     const handleSignup = (e: React.FormEvent) => {
         e.preventDefault();
+        if (auth === null) { return; }
         if (password.length < 6) {
             toast({
                 variant: 'destructive',
@@ -81,6 +82,7 @@ export default function SignupPage() {
     };
     
     const handleGoogleSignup = () => {
+        if (auth === null) { return; }
         try {
             initiateGoogleSignIn(auth);
         } catch (error: any) {

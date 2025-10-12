@@ -226,7 +226,7 @@
   "auth": {
     "providers": [
       "password",
-      "anonymous"
+      "google.com"
     ]
   },
   "firestore": {
@@ -339,3 +339,4 @@
     "reasoning": "The Firestore structure is designed to be secure, scalable, and debuggable, adhering to the principles of Authorization Independence, Clarity of Intent, DBAC (Database Based Access Control), and QAPs (Rules are not Filters). It leverages denormalization to avoid hierarchical authorization dependencies and structural segregation to simplify security rules.\n\n1.  **UserProfile**: User profiles are stored under `/users/{userId}`. This path-based ownership provides clear authorization and simplifies rules for accessing user-specific data.\n2.  **Lessons**: Lessons are stored in the `/lessons` collection. All lessons share the same security posture, enabling simple list operations and management.\n3.  **UserLessonProgress**: User lesson progress is stored under `/users/{userId}/lessons/{lessonId}/progress`.  This nested path reflects the `User 1:N Lesson` relationship. This structure enables simple, secure access to a user's progress on specific lessons.\n4.  **Achievements**: Achievements are stored in the `/achievements` collection.  Like lessons, all achievements share the same security requirements.\n5.  **UserAchievement**: User achievements are stored under `/users/{userId}/achievements/{achievementId}`. This nested structure mirrors the `User 1:N Achievement` relationship.\n6.  **LeaderboardEntry**: Leaderboard entries are stored in the `/leaderboard` collection. Each entry contains user-specific data for ranking.  The `userId` field enables filtering and display of user-specific leaderboard information.\n\nThis structure achieves Authorization Independence by avoiding `get()` calls in security rules. Path-based ownership (`/users/{userId}/...`) clearly defines access rights based on the authenticated user. Structural segregation ensures that each collection has a homogeneous security posture, simplifying rule creation and maintenance. The membership map pattern is not directly used in this design as there isn't an explicit collaborative data model defined in the requirements."
   }
 }
+    
