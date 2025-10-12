@@ -65,6 +65,12 @@
       "description": "Hero for login page",
       "imageUrl": "https://picsum.photos/seed/login/800/1200",
       "imageHint": "person signing language"
+    },
+    {
+      "id": "ai-buddy",
+      "description": "AI assistant character",
+      "imageUrl": "https://picsum.photos/seed/buddy/100/100",
+      "imageHint": "cute robot mascot"
     }
   ]
 }

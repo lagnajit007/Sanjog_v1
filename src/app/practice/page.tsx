@@ -2,33 +2,27 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
-import { Camera, CheckCircle, XCircle } from 'lucide-react';
-import DashboardLayout from '@/components/dashboard/dashboard-layout';
+import { Camera, CheckCircle, XCircle, Flame, Trophy, RefreshCw, Pause, Play, ArrowRight } from 'lucide-react';
+import Image from 'next/image';
+import { cn } from '@/lib/utils';
 import { HandLandmarker, FilesetResolver } from '@mediapipe/tasks-vision';
 
-const lessons = [
-  { sign: 'A', video: '/videos/asl_A.mp4' },
-  { sign: 'B', video: '/videos/asl_B.mp4' },
-  { sign: 'C', video: '/videos/asl_C.mp4' },
-];
-
-export default function PracticePage() {
-  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+const PracticePage = () => {
+  const [hasCameraPermission, setHasCameraPermission] = useState(true);
+  const [isWebcamOn, setIsWebcamOn] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { toast } = useToast();
-  const [currentLesson, setCurrentLesson] = useState(0);
   const [handLandmarker, setHandLandmarker] = useState<HandLandmarker | null>(null);
-  const lastVideoTimeRef = useRef(-1);
-  const requestRef = useRef(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
   useEffect(() => {
     async function createHandLandmarker() {
       try {
-        const vision = await FilesetResolver.forVisionTasks(
-          'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm'
-        );
+        const vision = await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');
         const landmarker = await HandLandmarker.createFromOptions(vision, {
           baseOptions: {
             modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
@@ -40,137 +34,143 @@ export default function PracticePage() {
         setHandLandmarker(landmarker);
       } catch (error) {
         console.error('Error creating HandLandmarker:', error);
-        toast({
-          variant: 'destructive',
-          title: 'Hand Tracking Error',
-          description: 'Could not initialize hand tracking model.',
-        });
+        toast({ variant: 'destructive', title: 'Hand Tracking Error', description: 'Could not initialize hand tracking model.' });
       }
     }
     createHandLandmarker();
   }, [toast]);
 
-  const predictWebcam = () => {
-    if (!videoRef.current || !handLandmarker) {
+  useEffect(() => {
+    if (!isWebcamOn || !handLandmarker) {
+      if (videoRef.current && videoRef.current.srcObject) {
+        (videoRef.current.srcObject as MediaStream).getTracks().forEach(track => track.stop());
+        videoRef.current.srcObject = null;
+      }
       return;
     }
 
-    const video = videoRef.current;
-    if (video.currentTime !== lastVideoTimeRef.current) {
-      lastVideoTimeRef.current = video.currentTime;
-      const results = handLandmarker.detectForVideo(video, Date.now());
-      // For now, we'll just log the results. We will use this data for feedback later.
-      if (results.landmarks && results.landmarks.length > 0) {
-        console.log(results.landmarks[0]);
-      }
-    }
-
-    requestRef.current = requestAnimationFrame(predictWebcam);
-  };
-
-  useEffect(() => {
     const getCameraPermission = async () => {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        toast({
-          variant: 'destructive',
-          title: 'Camera Not Supported',
-          description: 'Your browser does not support camera access.',
-        });
-        setHasCameraPermission(false);
-        return;
-      }
-
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         setHasCameraPermission(true);
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
-          videoRef.current.addEventListener('loadeddata', () => {
-             requestRef.current = requestAnimationFrame(predictWebcam);
-          });
         }
       } catch (error) {
         console.error('Error accessing camera:', error);
         setHasCameraPermission(false);
-        toast({
-          variant: 'destructive',
-          title: 'Camera Access Denied',
-          description: 'Please enable camera permissions in your browser settings to use this feature.',
-        });
+        toast({ variant: 'destructive', title: 'Camera Access Denied', description: 'Please enable camera permissions in your browser settings.' });
       }
     };
 
-    if (handLandmarker) {
-      getCameraPermission();
-    }
+    getCameraPermission();
 
     return () => {
-      cancelAnimationFrame(requestRef.current);
       if (videoRef.current && videoRef.current.srcObject) {
-        const stream = videoRef.current.srcObject as MediaStream;
-        stream.getTracks().forEach(track => track.stop());
+        (videoRef.current.srcObject as MediaStream).getTracks().forEach(track => track.stop());
       }
     };
-  }, [toast, handLandmarker]);
+  }, [isWebcamOn, handLandmarker, toast]);
 
-  const handleNextLesson = () => {
-    setCurrentLesson((prev) => (prev + 1) % lessons.length);
-  };
+  const toggleWebcam = () => setIsWebcamOn(prev => !prev);
+  const togglePause = () => setIsPaused(prev => !prev);
+
+  // Mock feedback based on timer
+  useEffect(() => {
+    if (isPaused || !isWebcamOn) {
+      setIsCorrect(null);
+      return;
+    }
+    const interval = setInterval(() => {
+      const randomResult = Math.random() > 0.5;
+      setIsCorrect(randomResult);
+      setTimeout(() => setIsCorrect(null), 1000);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [isPaused, isWebcamOn]);
 
   return (
-    <DashboardLayout>
-      <div className="flex h-full flex-col lg:flex-row gap-8 p-4 md:p-8">
-        <div className="flex-1 flex flex-col gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold">Live Practice</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="relative aspect-video w-full overflow-hidden rounded-lg border bg-muted">
-                <video ref={videoRef} className="h-full w-full object-cover" autoPlay muted playsInline style={{ transform: 'scaleX(-1)' }} />
-                {hasCameraPermission === false && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 text-white">
-                    <Camera className="h-12 w-12 mb-4" />
-                    <p className="text-lg font-semibold">Camera access is required</p>
-                    <p>Please allow camera access in your browser settings.</p>
-                  </div>
-                )}
+    <div className="flex h-screen w-full flex-col bg-[#F9F8FF] p-4 font-sans">
+      <main className="grid flex-1 grid-cols-1 gap-6 lg:grid-cols-2 lg:grid-rows-1">
+        {/* Left Panel */}
+        <div className="flex flex-col gap-4 rounded-lg p-4">
+          <h1 className="text-2xl font-bold text-[#1E1E1E]">Today's Practice: Greetings & Basics</h1>
+          <p className="text-base text-[#555]">Follow the instructions and show the correct sign on your webcam.</p>
+          
+          <Card className="border-none bg-[#E7E1FF] p-4 text-center shadow-md">
+            <p className="text-sm font-semibold text-[#6C4CF1]/80">Active Sign</p>
+            <p className="text-2xl font-bold text-[#6C4CF1]">HELLO 👋</p>
+          </Card>
+
+          <Card className="border-none bg-[#FFF7E0] p-4 text-center shadow-md">
+            <p className="text-sm font-semibold text-[#F1A200]/80">Next Sign</p>
+            <p className="text-xl font-bold text-[#F1A200]">THANK YOU 🙏</p>
+          </Card>
+          
+          <div className="mt-auto space-y-4">
+            <div>
+              <label htmlFor="accuracy" className="text-sm font-medium text-[#333]">Accuracy</label>
+              <Progress value={75} indicatorClassName="bg-[#6C4CF1]" className="h-2.5" />
+              <p className="mt-1 text-right text-sm font-semibold text-[#333]">75%</p>
+            </div>
+            <hr className="border-t border-gray-200" />
+            <div className="flex items-center justify-around">
+              <div className="flex items-center gap-2">
+                <Flame className="h-6 w-6 text-[#FF6C3E]" />
+                <span className="font-bold text-[#FF6C3E]">Streak: 7 Days</span>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-        <div className="lg:w-96 flex flex-col gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Lesson: Sign "{lessons[currentLesson].sign}"</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Watch the example and try to replicate the sign. Our AI will give you live feedback.
-              </p>
-              <div className="aspect-video w-full overflow-hidden rounded-lg border bg-muted">
-                {/* Example video will go here */}
-                <div className="flex h-full items-center justify-center">
-                  <p>Example Video Placeholder</p>
-                </div>
+              <div className="flex items-center gap-2">
+                <Trophy className="h-6 w-6 text-[#6C4CF1]" />
+                <span className="font-bold text-[#6C4CF1]">XP: 1250</span>
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Live Feedback</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col items-center justify-center gap-4">
-              <XCircle className="h-16 w-16 text-destructive" />
-              <p className="font-semibold text-lg">Keep Trying!</p>
-              <p className="text-center text-muted-foreground text-sm">
-                Make sure your thumb is pointing straight up.
-              </p>
-            </CardContent>
-          </Card>
-          <Button onClick={handleNextLesson} size="lg">Next Lesson</Button>
+            </div>
+          </div>
         </div>
-      </div>
-    </DashboardLayout>
+
+        {/* Right Panel */}
+        <div className="flex flex-col items-center justify-center gap-4">
+          <div
+            className={cn(
+              "relative h-full w-full cursor-pointer overflow-hidden rounded-2xl border-4 object-cover shadow-lg transition-all duration-300",
+              isCorrect === true && "border-success shadow-green-300",
+              isCorrect === false && "border-destructive shadow-red-300"
+            )}
+            onClick={toggleWebcam}
+          >
+            <video ref={videoRef} className="h-full w-full scale-x-[-1]" autoPlay muted playsInline />
+            {!isWebcamOn && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 text-white">
+                <Camera className="mb-4 h-16 w-16" />
+                <p className="text-lg font-semibold">Webcam is off</p>
+                <p>Click to turn on</p>
+              </div>
+            )}
+            {isCorrect === true && <CheckCircle className="absolute top-4 right-4 h-10 w-10 text-success animate-subtle-bounce" />}
+            {isCorrect === false && <XCircle className="absolute top-4 right-4 h-10 w-10 text-destructive animate-subtle-bounce" />}
+          </div>
+          <div className="flex items-center gap-3">
+             <Image src="/ai-buddy.png" alt="AI Buddy" width={60} height={60} className="animate-subtle-bounce" />
+             <p className="rounded-full bg-white px-4 py-2 font-semibold text-[#333] shadow-md">
+                {isCorrect === true ? "Great job! Try the next one!" : "Nice try! Let's do it again."}
+            </p>
+          </div>
+        </div>
+      </main>
+
+      {/* Bottom Panel */}
+      <footer className="mt-4 flex items-center justify-between rounded-full bg-white p-3 shadow-lg">
+        <Button variant="secondary" className="rounded-full font-bold" style={{ backgroundColor: '#E7E1FF', color: '#6C4CF1' }}>
+          <RefreshCw className="mr-2 h-5 w-5" /> Repeat Sign
+        </Button>
+        <Button onClick={togglePause} variant="secondary" className="rounded-full font-bold" style={{ backgroundColor: '#FFF7E0', color: '#F1A200' }}>
+          {isPaused ? <Play className="mr-2 h-5 w-5" /> : <Pause className="mr-2 h-5 w-5" />} {isPaused ? 'Resume' : 'Pause'}
+        </Button>
+        <Button className="rounded-full font-bold text-white" style={{ backgroundColor: '#6C4CF1' }}>
+          Next Step <ArrowRight className="ml-2 h-5 w-5" />
+        </Button>
+      </footer>
+    </div>
   );
-}
+};
+
+export default PracticePage;
