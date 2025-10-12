@@ -12,7 +12,7 @@ export type MenuItem = {
 export const menuItems: MenuItem[] = [
   { icon: Grid, label: 'Dashboard', href: '/dashboard', active: true },
   { icon: Hand, label: 'Practice', href: '/practice' },
-  { icon: BookOpen, label: 'Lessons', href: '#' },
+  { icon: BookOpen, label: 'Lessons', href: '/lessons' },
   { icon: Trophy, label: 'Achievements', href: '/achievements' },
   { icon: Target, label: 'Challenges', href: '#' },
   { icon: BarChart, label: 'Progress', href: '/progress' },
