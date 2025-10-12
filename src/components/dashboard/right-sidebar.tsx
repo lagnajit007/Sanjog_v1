@@ -1,3 +1,4 @@
+'use client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -6,7 +7,7 @@ import ProgressCircle from './progress-circle';
 import { badges, leaderboard } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { User } from 'lucide-react';
+import { User, Flame, Trophy, Crown, Bell } from 'lucide-react';
 
 const RightSidebarContent = () => {
   const userAvatar = PlaceHolderImages.find((img) => img.id === '1');
@@ -72,28 +73,72 @@ const RightSidebarContent = () => {
 }
 
 const RightSidebar = () => {
+  const userAvatar = PlaceHolderImages.find((img) => img.id === '1');
   return (
     <>
+      {/* Desktop */}
       <aside className="hidden xl:flex w-[320px] flex-col gap-8 border-l bg-card p-6">
         <RightSidebarContent />
       </aside>
-       <div className="xl:hidden p-4 border-b">
-        <Sheet>
+
+      {/* Mobile top bar items */}
+      <div className="xl:hidden flex items-center gap-4">
+          <div className="hidden sm:flex items-center gap-2">
+            <Flame className="h-6 w-6 text-[#FF6C3E]" />
+            <span className="font-bold text-sm">7 Days</span>
+          </div>
+          <div className="hidden sm:flex items-center gap-2">
+            <Trophy className="h-6 w-6 text-primary" />
+            <span className="font-bold text-sm">1250 XP</span>
+          </div>
+
+          <Sheet>
             <SheetTrigger asChild>
-                <Button variant="outline" size="icon">
-                    <User className="h-5 w-5" />
+                <Button variant="ghost" size="icon">
+                    <Bell className="h-5 w-5" />
                 </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="flex flex-col w-[320px] p-6 gap-8 overflow-auto">
+            <SheetContent side="right" className="flex flex-col w-[320px] p-6 gap-8 overflow-auto bg-white">
               <SheetHeader>
-                <SheetTitle className="sr-only">User Profile and Stats</SheetTitle>
+                <SheetTitle>Notifications</SheetTitle>
               </SheetHeader>
-              <RightSidebarContent />
+              <div className="text-center text-muted-foreground py-12">
+                <p>No new notifications</p>
+              </div>
             </SheetContent>
         </Sheet>
+        
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Avatar className="h-9 w-9 cursor-pointer">
+                {userAvatar && <AvatarImage src={userAvatar.imageUrl} alt="Jenny Wilson" data-ai-hint={userAvatar.imageHint} />}
+                <AvatarFallback>JW</AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-red-500">Logout</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
       </div>
     </>
   );
 };
+
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 
 export default RightSidebar;

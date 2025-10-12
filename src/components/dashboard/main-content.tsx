@@ -1,7 +1,5 @@
-import { Search, ArrowRight } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import {
   Carousel,
   CarouselContent,
@@ -16,20 +14,13 @@ import { progressCards, learningCards } from '@/lib/data';
 const MainContent = () => {
   return (
     <div className="flex flex-col gap-8">
-      <header className="flex items-center justify-between">
-        <div className="relative w-full max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-          <Input placeholder="Search something" className="pl-10" />
-        </div>
-      </header>
-
       <div className="relative rounded-lg bg-primary p-8 text-primary-foreground shadow-lg overflow-hidden">
         <div className="absolute -right-10 -bottom-16 h-48 w-48 rounded-full bg-white/10"></div>
         <div className="absolute right-20 top-0 h-32 w-32 rounded-full bg-white/10"></div>
         <div className="relative z-10">
           <p className="mb-2 text-sm font-semibold uppercase">Online Course</p>
           <h2 className="mb-4 max-w-sm text-3xl font-bold">Learn Sign Language with Fun Gestures!</h2>
-          <Button variant="secondary" className="bg-white text-primary-foreground hover:bg-gray-100">
+          <Button variant="secondary" className="bg-white text-primary hover:bg-gray-100">
             Start Learning <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
