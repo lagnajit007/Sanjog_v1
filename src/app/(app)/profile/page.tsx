@@ -210,7 +210,7 @@ export default function ProfilePage() {
             setProfileData(prev => ({
                 ...prev,
                 name: user.displayName || 'New User',
-                avatar: user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=random`,
+                avatar: user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || 'New+User'}&background=random&color=fff`,
                 tagline: prev.tagline, // Keep mock tagline for now
             }));
         }
@@ -218,6 +218,7 @@ export default function ProfilePage() {
 
     const handleSaveProfile = (updatedUser: {name: string, tagline: string, avatar: string}) => {
         setProfileData(prevUser => ({...prevUser, ...updatedUser}));
+        // Here you would typically also update the user profile in Firebase
     };
 
     if (isUserLoading) {
