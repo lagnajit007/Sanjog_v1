@@ -90,7 +90,7 @@ const UserProfile = () => {
           <span className="text-sm text-muted-foreground">jen.wilson@example.com</span>
         </div>
       </div>
-      <Button variant="ghost" className="w-full justify-center bg-red-100/40 text-red-500 hover:text-red-600 hover:bg-red-100/80">
+      <Button variant="ghost" className="w-full justify-center bg-red-100/40 text-red-500 hover:text-red-600 hover:bg-red-100/80 items-center">
         <LogOut className="mr-3 h-5 w-5" />
         Log out
       </Button>
@@ -112,28 +112,27 @@ const LeftSidebarContent = () => {
 
 const LeftSidebar = () => {
   return (
-    <aside className="hidden lg:flex w-[260px] flex-col border-r bg-card p-6">
-      <LeftSidebarContent />
-    </aside>
+    <>
+      <aside className="hidden lg:flex w-[260px] flex-col border-r bg-card p-6">
+        <LeftSidebarContent />
+      </aside>
+      <div className="lg:hidden">
+        <Sheet>
+            <SheetTrigger asChild>
+                <Button variant="outline" size="icon">
+                    <Menu className="h-5 w-5" />
+                </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="flex flex-col w-[260px] bg-white p-6">
+              <SheetHeader>
+                <SheetTitle className="sr-only">Main Menu</SheetTitle>
+              </SheetHeader>
+              <LeftSidebarContent />
+            </SheetContent>
+        </Sheet>
+      </div>
+    </>
   );
 };
-
-const MobileSidebar = () => (
-  <Sheet>
-      <SheetTrigger asChild>
-          <Button variant="outline" size="icon">
-              <Menu className="h-5 w-5" />
-          </Button>
-      </SheetTrigger>
-      <SheetContent side="left" className="flex flex-col w-[260px] bg-white p-6">
-        <SheetHeader>
-          <SheetTitle className="sr-only">Main Menu</SheetTitle>
-        </SheetHeader>
-        <LeftSidebarContent />
-      </SheetContent>
-  </Sheet>
-)
-
-LeftSidebar.Mobile = MobileSidebar;
 
 export default LeftSidebar;

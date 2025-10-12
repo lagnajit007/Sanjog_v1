@@ -14,7 +14,7 @@ export default function DashboardLayout({
       <div className="flex flex-1 flex-col overflow-hidden">
         <header className="flex h-[70px] items-center justify-between gap-4 border-b bg-white p-4 shadow-sm">
             <div className="lg:hidden">
-              <LeftSidebar.Mobile />
+              {/* This component is rendered inside LeftSidebar for mobile */}
             </div>
             <h1 className="text-2xl font-bold text-textPrimary hidden lg:block">Dashboard</h1>
 
