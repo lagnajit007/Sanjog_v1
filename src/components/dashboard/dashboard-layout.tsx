@@ -2,7 +2,11 @@ import LeftSidebar from '@/components/dashboard/left-sidebar';
 import RightSidebar from '@/components/dashboard/right-sidebar';
 import MainContent from '@/components/dashboard/main-content';
 
-export default function DashboardLayout() {
+export default function DashboardLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
   return (
     <div className="flex h-screen w-full bg-background text-foreground flex-col lg:flex-row">
       <LeftSidebar />
@@ -20,7 +24,7 @@ export default function DashboardLayout() {
             <RightSidebar />
         </header>
         <main className="flex-1 overflow-y-auto p-6 lg:p-8">
-          <MainContent />
+          {children}
         </main>
       </div>
     </div>

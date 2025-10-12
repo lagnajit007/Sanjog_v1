@@ -1,20 +1,22 @@
 import type { LucideIcon } from 'lucide-react';
-import { Grid, BookOpen, Trophy, Target, BarChart, Users, Crown } from 'lucide-react';
+import { Grid, BookOpen, Trophy, Target, BarChart, Users, Crown, Hand } from 'lucide-react';
 
 export type MenuItem = {
   icon: LucideIcon;
   label: string;
+  href: string;
   active?: boolean;
   badge?: string;
 };
 
 export const menuItems: MenuItem[] = [
-  { icon: Grid, label: 'Dashboard', active: true },
-  { icon: BookOpen, label: 'Lessons' },
-  { icon: Trophy, label: 'Achievements', badge: '+1' },
-  { icon: Target, label: 'Challenges' },
-  { icon: BarChart, label: 'Progress' },
-  { icon: Users, label: 'Community', badge: '32' },
+  { icon: Grid, label: 'Dashboard', href: '/dashboard', active: true },
+  { icon: Hand, label: 'Practice', href: '/practice' },
+  { icon: BookOpen, label: 'Lessons', href: '#' },
+  { icon: Trophy, label: 'Achievements', href: '#', badge: '+1' },
+  { icon: Target, label: 'Challenges', href: '#' },
+  { icon: BarChart, label: 'Progress', href: '#' },
+  { icon: Users, label: 'Community', href: '#', badge: '32' },
 ];
 
 export type ProgressCardData = {

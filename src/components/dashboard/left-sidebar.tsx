@@ -27,19 +27,21 @@ const LeftSidebarContent = () => {
         <ul className="flex flex-col gap-2">
           {menuItems.map((item) => (
             <li key={item.label}>
-              <Button
-                variant={item.active ? 'secondary' : 'ghost'}
-                className="w-full justify-start text-base"
-                aria-current={item.active ? 'page' : undefined}
-              >
-                <item.icon className="mr-3 h-5 w-5" />
-                <span>{item.label}</span>
-                {item.badge && (
-                  <Badge variant={item.active ? 'default' : 'secondary'} className="ml-auto">
-                    {item.badge}
-                  </Badge>
-                )}
-              </Button>
+              <Link href={item.href}>
+                <Button
+                  variant={item.active ? 'secondary' : 'ghost'}
+                  className="w-full justify-start text-base"
+                  aria-current={item.active ? 'page' : undefined}
+                >
+                  <item.icon className="mr-3 h-5 w-5" />
+                  <span>{item.label}</span>
+                  {item.badge && (
+                    <Badge variant={item.active ? 'default' : 'secondary'} className="ml-auto">
+                      {item.badge}
+                    </Badge>
+                  )}
+                </Button>
+              </Link>
             </li>
           ))}
         </ul>
