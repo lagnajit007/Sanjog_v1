@@ -8,6 +8,14 @@ import { badges, leaderboard } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { User, Flame, Trophy, Crown, Bell } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const RightSidebarContent = () => {
   const userAvatar = PlaceHolderImages.find((img) => img.id === '1');
@@ -129,16 +137,5 @@ const RightSidebar = () => {
     </>
   );
 };
-
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
 
 export default RightSidebar;

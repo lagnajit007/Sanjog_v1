@@ -1,6 +1,6 @@
 'use client';
 
-import { LogOut, Menu, Settings } from 'lucide-react';
+import { LogOut, Menu } from 'lucide-react';
 import { menuItems } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
