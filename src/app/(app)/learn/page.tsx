@@ -15,7 +15,6 @@ import { useToast } from '@/hooks/use-toast';
 import { HandLandmarker, FilesetResolver, DrawingUtils } from "@mediapipe/tasks-vision";
 import { recognizeGesture } from '@/ai/flows/gesture-recognition';
 
-
 // Mock Data
 const userProgress = {
   overallProgress: 45,
@@ -48,8 +47,29 @@ const recommendedNext = {
   thumbnail: 'https://picsum.photos/seed/lesson4/300/180',
 };
 
+const signsData = {
+  letters: {
+    A: { description: "Make the 'A' sign: form a fist with your thumb resting on the side.", image: 'https://picsum.photos/seed/sign-a/300/200', hint: 'sign language A' },
+    B: { description: "Make the 'B' sign: hold up your hand with your four fingers extended and your thumb tucked in.", image: 'https://picsum.photos/seed/sign-b/300/200', hint: 'sign language B' },
+    // Add more letters
+  },
+  numbers: {
+    '0': { description: "Make the '0' sign: form an 'O' shape with your hand.", image: 'https://picsum.photos/seed/sign-0/300/200', hint: 'sign language 0' },
+    '1': { description: "Make the '1' sign: hold up your index finger.", image: 'https://picsum.photos/seed/sign-1/300/200', hint: 'sign language 1' },
+    // Add more numbers
+  },
+};
+
 
 export default function LearnPage() {
+  const [practiceMode, setPracticeMode] = useState<'letters' | 'numbers'>('letters');
+  const [currentSignIndex, setCurrentSignIndex] = useState(0);
+
+  const signs = practiceMode === 'letters' ? Object.keys(signsData.letters) : Object.keys(signsData.numbers);
+  const currentSign = signs[currentSignIndex];
+  const currentSignData = practiceMode === 'letters' ? signsData.letters[currentSign as keyof typeof signsData.letters] : signsData.numbers[currentSign as keyof typeof signsData.numbers];
+  const nextSign = signs[(currentSignIndex + 1) % signs.length];
+  
   const beginnerLessons = allLessons.filter(l => l.category === 'Beginner');
   const intermediateLessons = allLessons.filter(l => l.category === 'Intermediate');
   const advancedLessons = allLessons.filter(l => l.category === 'Advanced');
@@ -66,6 +86,14 @@ export default function LearnPage() {
   const animationFrameId = useRef<number | null>(null);
   const lastPredictionTime = useRef(0);
   const PREDICTION_INTERVAL = 100; // 100ms between predictions
+
+  const handleNextSign = () => {
+    setCurrentSignIndex((prev) => (prev + 1) % signs.length);
+  };
+
+  useEffect(() => {
+    setCurrentSignIndex(0); // Reset to first sign when mode changes
+  }, [practiceMode]);
 
   useEffect(() => {
     const createHandLandmarker = async () => {
@@ -154,7 +182,7 @@ export default function LearnPage() {
           try {
             const response = await recognizeGesture({ landmarks });
             const { prediction, confidence } = response;
-            const targetSign = 'A';
+            const targetSign = currentSign;
             setIsCorrect(prediction === targetSign);
             setAccuracy(Math.round(confidence * 100));
 
@@ -186,7 +214,7 @@ export default function LearnPage() {
         cancelAnimationFrame(animationFrameId.current);
       }
     }
-  }, [handLandmarker, isWebcamOn, hasCameraPermission]);
+  }, [handLandmarker, isWebcamOn, hasCameraPermission, currentSign]);
 
 
   const cameraStatusText = hasCameraPermission === false ? "Camera access denied." : (isWebcamOn ? "Analyzing your sign..." : "Webcam is off.");
@@ -197,20 +225,25 @@ export default function LearnPage() {
     <div className='space-y-6'>
     <Card>
       <CardHeader>
-        <CardTitle>Practice</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle>Practice</CardTitle>
+          <div className='flex items-center gap-2'>
+            <Button variant={practiceMode === 'letters' ? 'default' : 'outline'} onClick={() => setPracticeMode('letters')}>A-Z</Button>
+            <Button variant={practiceMode === 'numbers' ? 'default' : 'outline'} onClick={() => setPracticeMode('numbers')}>0-9</Button>
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
     <div className="grid w-full grid-cols-1 lg:grid-cols-2 lg:grid-rows-1 font-sans p-4 gap-6" style={{ gridTemplateColumns: '1.1fr 1.3fr' }}>
       {/* Left Panel */}
       <Card className="flex flex-col gap-4 rounded-2xl p-6 shadow-lg border-none bg-white">
-          <h1 className="text-2xl font-bold text-primary">LETTER 'A'</h1>
+          <h1 className="text-2xl font-bold text-primary">SIGN FOR '{currentSign}'</h1>
           
           <div className="flex justify-center items-center h-[200px] bg-secondary rounded-lg">
-             {/* Replace with actual sign image */}
-            <Image src="https://picsum.photos/seed/sign-a/300/200" alt="Letter A sign illustration" width={300} height={200} className="rounded-lg object-cover" data-ai-hint="sign language A" />
+            <Image src={currentSignData.image} alt={`Sign for ${currentSign}`} width={300} height={200} className="rounded-lg object-cover" data-ai-hint={currentSignData.hint} />
           </div>
 
-          <p className="text-base text-text-secondary">Make the 'A' sign: form a fist with your thumb resting on the side.</p>
+          <p className="text-base text-text-secondary">{currentSignData.description}</p>
           
           <div className='flex-grow' />
 
@@ -221,7 +254,7 @@ export default function LearnPage() {
 
           <div className="flex items-center justify-between gap-4">
               <Button variant="outline" className="w-full">Show Hint</Button>
-              <Button className="w-full bg-primary text-white">Next Step <ArrowRight className="ml-2 h-4 w-4" /></Button>
+              <Button className="w-full bg-primary text-white" onClick={handleNextSign}>Next Step <ArrowRight className="ml-2 h-4 w-4" /></Button>
           </div>
           
           <p className="text-center font-semibold text-accent-green h-6">
@@ -270,12 +303,12 @@ export default function LearnPage() {
 
         <div className="text-center">
             <p className="text-sm text-muted-foreground">Active Sign</p>
-            <p className="text-lg font-bold">A</p>
+            <p className="text-lg font-bold">{currentSign}</p>
         </div>
 
         <div className="text-center">
             <p className="text-sm text-muted-foreground">Next Sign</p>
-            <p className="text-lg font-bold">B</p>
+            <p className="text-lg font-bold">{nextSign}</p>
         </div>
         
         <div className="w-48">
@@ -283,7 +316,7 @@ export default function LearnPage() {
             <Progress value={sessionProgress} indicatorClassName="bg-accent-green" className="h-2" />
         </div>
         
-        <Button className="rounded-full font-bold text-white bg-primary px-8 py-6 text-lg">
+        <Button className="rounded-full font-bold text-white bg-primary px-8 py-6 text-lg" onClick={handleNextSign}>
           Next <ArrowRight className="ml-2 h-5 w-5" />
         </Button>
       </footer>
@@ -406,3 +439,4 @@ export default function LearnPage() {
     </div>
   );
 }
+
