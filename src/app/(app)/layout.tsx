@@ -82,14 +82,14 @@ export default function AppLayout({
       <LeftSidebar />
       <div className="flex flex-1 flex-col lg:ml-[260px]">
         <header className="sticky top-0 z-40 flex h-[70px] shrink-0 items-center justify-between gap-4 border-b bg-surface p-4 shadow-sm">
-            <div className="lg:hidden" />
-            <h1 className="text-2xl font-bold text-textPrimary hidden lg:block">Dashboard</h1>
-            <div className="relative w-full max-w-sm hidden md:block ml-auto">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input placeholder="Search lessons, challenges, or friends" className="pl-10" />
+            <div className="flex-1">
+              <div className="relative w-full max-w-sm hidden md:block">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <Input placeholder="Search lessons, challenges, or friends" className="pl-10" />
+              </div>
             </div>
 
-            <div className="flex items-center gap-4 ml-4">
+            <div className="flex items-center gap-4">
               <HeaderRightContent />
             </div>
         </header>
