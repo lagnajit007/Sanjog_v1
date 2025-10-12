@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, Crown, Lightbulb, Gamepad2, PenTool } from 'lucide-react';
+import { ArrowRight, Check, CheckCircle, Crown, Gamepad2, Lightbulb, PenTool, User, Users, Video } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -12,12 +12,16 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
 import AuthModal from '@/components/auth/auth-modal';
 import { useUser } from '@/firebase';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
 
 const LandingPage = () => {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authView, setAuthView] = useState<'login' | 'signup'>('login');
+  const [isAnnual, setIsAnnual] = useState(false);
   
   const heroAvatars = [
     PlaceHolderImages.find((img) => img.id === '1'),
@@ -41,6 +45,72 @@ const LandingPage = () => {
     setAuthView(view);
     setIsAuthModalOpen(true);
   };
+  
+  const pricingPlans = {
+    monthly: [
+      {
+        title: 'Starter',
+        for: 'For Casual Learners',
+        price: 'Free',
+        icon: <User className="h-8 w-8 text-primary" />,
+        description: 'Lorem ipsum dolor sit amet doloroli sitiol conse ctetur adipiscing elit.',
+        features: ['Access to fun quizzes', 'Limited creative activities', 'Community access', '24/7 chatbot support'],
+        isPopular: false,
+      },
+      {
+        title: 'Pro',
+        for: 'For startups',
+        price: '₹499',
+        period: '/monthly',
+        icon: <Video className="h-8 w-8 text-white" />,
+        description: 'Lorem ipsum dolor sit amet doloroli sitiol conse ctetur adipiscing elit.',
+        features: ['Everything in Starter', 'Unlimited access to all activities', 'Progress tracking dashboard', 'Priority support'],
+        isPopular: true,
+      },
+      {
+        title: 'Enterprise',
+        for: 'For big companies',
+        price: 'Custom',
+        icon: <Users className="h-8 w-8 text-primary" />,
+        description: 'Lorem ipsum dolor sit amet doloroli sitiol conse ctetur adipiscing elit.',
+        features: ['All Pro features', 'Unlimited sign translation access', 'Dedicated mentor support', 'Onboarding & training'],
+        isPopular: false,
+      },
+    ],
+    annually: [
+        {
+        title: 'Starter',
+        for: 'For Casual Learners',
+        price: 'Free',
+        icon: <User className="h-8 w-8 text-primary" />,
+        description: 'Lorem ipsum dolor sit amet doloroli sitiol conse ctetur adipiscing elit.',
+        features: ['Access to fun quizzes', 'Limited creative activities', 'Community access', '24/7 chatbot support'],
+        isPopular: false,
+      },
+      {
+        title: 'Pro',
+        for: 'For startups',
+        price: '₹4990',
+        period: '/annually',
+        icon: <Video className="h-8 w-8 text-white" />,
+        description: 'Lorem ipsum dolor sit amet doloroli sitiol conse ctetur adipiscing elit.',
+        features: ['Everything in Starter', 'Unlimited access to all activities', 'Progress tracking dashboard', 'Priority support'],
+        isPopular: true,
+      },
+      {
+        title: 'Enterprise',
+        for: 'For big companies',
+        price: 'Custom',
+        icon: <Users className="h-8 w-8 text-primary" />,
+        description: 'Lorem ipsum dolor sit amet doloroli sitiol conse ctetur adipiscing elit.',
+        features: ['All Pro features', 'Unlimited sign translation access', 'Dedicated mentor support', 'Onboarding & training'],
+        isPopular: false,
+      },
+    ]
+  };
+
+  const plansToShow = isAnnual ? pricingPlans.annually : pricingPlans.monthly;
+
 
   return (
     <div className="bg-background text-textPrimary font-body">
@@ -167,12 +237,12 @@ const LandingPage = () => {
               <Card className="bg-secondary text-center">
                 <CardHeader>
                   <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white">
-                    <Gamepad2 className="h-6 w-6 text-onSecondary" />
+                    <Gamepad2 className="h-6 w-6 text-secondary-foreground" />
                   </div>
-                  <CardTitle className="mt-4 text-onSecondary">Learn with Games</CardTitle>
+                  <CardTitle className="mt-4 text-secondary-foreground">Learn with Games</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-onSecondary">Playful ways to enhance sign language learning.</p>
+                  <p className="text-secondary-foreground">Playful ways to enhance sign language learning.</p>
                 </CardContent>
               </Card>
             </div>
@@ -285,58 +355,76 @@ const LandingPage = () => {
         </section>
 
         {/* Pricing Section */}
-        <section id="pricing" className="bg-surface py-16 md:py-24">
+        <section id="pricing" className="bg-[#0F0434] text-white py-16 md:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-              <h2 className="text-3xl font-headline font-bold text-textPrimary md:text-4xl">Our Pricing Plans</h2>
-              <p className="mx-auto mt-4 max-w-2xl text-textSecondary">
-                Choose a plan that fits your learning goals.
+              <span className="inline-block bg-white/10 text-sm font-semibold px-4 py-1.5 rounded-full">Pricing</span>
+              <h2 className="text-3xl font-headline font-bold mt-4 md:text-4xl">Our pricing plans</h2>
+              <p className="mx-auto mt-4 max-w-2xl text-white/80">
+                Lorem ipsum dolor sit amet consectetur adipiscing elit dolor posuere vel venenatis eu sit massa volutpat.
               </p>
+              <div className="mt-8 flex justify-center items-center gap-4">
+                <Label htmlFor="pricing-toggle" className={cn(!isAnnual && "text-primary")}>Monthly</Label>
+                <Switch id="pricing-toggle" checked={isAnnual} onCheckedChange={setIsAnnual} />
+                <Label htmlFor="pricing-toggle" className={cn(isAnnual && "text-primary")}>Annually</Label>
+              </div>
             </div>
-            <div className="mt-12 grid gap-8 md:grid-cols-3">
-              <Card>
-                <CardHeader className="text-center">
-                  <CardTitle className="text-xl">Starter</CardTitle>
-                  <p className="text-4xl font-bold">Free</p>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-4 text-textSecondary">
-                    <li className="flex items-center"><Crown className="mr-2 h-4 w-4 text-primary" /> Access to fun quizzes</li>
-                    <li className="flex items-center"><Crown className="mr-2 h-4 w-4 text-primary" /> Interactive activities</li>
-                    <li className="flex items-center"><Crown className="mr-2 h-4 w-4 text-primary" /> Community events</li>
-                  </ul>
-                  <Button variant="outline" className="mt-6 w-full border-primary text-primary" onClick={() => openAuthModal('signup')}>Get Started</Button>
-                </CardContent>
-              </Card>
-              <Card className="border-primary ring-2 ring-primary">
-                <CardHeader className="text-center">
-                  <CardTitle className="text-xl">Pro</CardTitle>
-                  <p className="text-4xl font-bold">₹499 <span className="text-sm font-normal text-textSecondary">/ month</span></p>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-4 text-textSecondary">
-                    <li className="flex items-center"><Crown className="mr-2 h-4 w-4 text-primary" /> Everything in Starter</li>
-                    <li className="flex items-center"><Crown className="mr-2 h-4 w-4 text-primary" /> Unlimited access</li>
-                    <li className="flex items-center"><Crown className="mr-2 h-4 w-4 text-primary" /> Progress insights</li>
-                    <li className="flex items-center"><Crown className="mr-2 h-4 w-4 text-primary" /> Priority support</li>
-                  </ul>
-                  <Button className="mt-6 w-full" onClick={() => openAuthModal('signup')}>Get Started</Button>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="text-center">
-                  <CardTitle className="text-xl">Enterprise</CardTitle>
-                  <p className="text-4xl font-bold">Custom</p>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-4 text-textSecondary">
-                    <li className="flex items-center"><Crown className="mr-2 h-4 w-4 text-primary" /> Unlimited organization accounts</li>
-                    <li className="flex items-center"><Crown className="mr-2 h-4 w-4 text-primary" /> Dedicated mentor support</li>
-                    <li className="flex items-center"><Crown className="mr-2 h-4 w-4 text-primary" /> Training sessions</li>
-                  </ul>
-                  <Button variant="outline" className="mt-6 w-full border-primary text-primary" onClick={() => openAuthModal('signup')}>Start Now</Button>
-                </CardContent>
-              </Card>
+            
+            <div className="mt-12 grid grid-cols-1 lg:grid-cols-3 items-center gap-8">
+              {plansToShow.map((plan, index) => (
+                <Card 
+                  key={index}
+                  className={cn(
+                    "rounded-2xl p-8 h-full flex flex-col",
+                    plan.isPopular 
+                      ? 'bg-primary/90 text-white relative shadow-2xl shadow-primary/30 scale-105'
+                      : 'bg-white/5 text-white'
+                  )}
+                >
+                  {plan.isPopular && (
+                    <div className="absolute -top-3 right-8 bg-white text-primary text-sm font-semibold px-4 py-1 rounded-full">Popular</div>
+                  )}
+                  <div className="flex items-center gap-4 mb-4">
+                      <div className={cn("w-16 h-16 rounded-lg flex items-center justify-center", plan.isPopular ? "bg-white/20" : "bg-white/10")}>
+                          {plan.icon}
+                      </div>
+                      <div>
+                          <p className="text-sm text-white/80">{plan.for}</p>
+                          <p className="text-2xl font-bold">{plan.title}</p>
+                      </div>
+                  </div>
+                  <p className="text-white/70 text-sm mb-6">{plan.description}</p>
+                  
+                  <div className="mb-8">
+                    <span className="text-5xl font-bold">{plan.price}</span>
+                    {plan.period && <span className="text-white/70">{plan.period}</span>}
+                  </div>
+
+                  <div className="flex-grow">
+                      <p className="font-semibold mb-4">What's included</p>
+                      <ul className="space-y-3">
+                        {plan.features.map((feature, i) => (
+                          <li key={i} className="flex items-center gap-3">
+                            <div className={cn("w-6 h-6 rounded-full flex items-center justify-center", plan.isPopular ? "bg-white/20" : "bg-white/10")}>
+                                <Check className="h-4 w-4" />
+                            </div>
+                            <span className="text-sm">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                  </div>
+                  
+                  <Button 
+                    className={cn(
+                      "w-full mt-8 rounded-full py-6 text-lg font-semibold",
+                      plan.isPopular ? 'bg-white text-primary hover:bg-gray-100' : 'bg-white/10 hover:bg-white/20'
+                    )}
+                    onClick={() => openAuthModal('signup')}
+                  >
+                    Get started
+                  </Button>
+                </Card>
+              ))}
             </div>
           </div>
         </section>
@@ -414,3 +502,5 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
+
+    
