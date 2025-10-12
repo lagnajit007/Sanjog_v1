@@ -24,6 +24,18 @@ const CreativeActivitiesIcon = () => (
   </svg>
 );
 
+const Logo = () => (
+    <Link href="/" className="flex items-center gap-2">
+        <div className="p-2 bg-primary rounded-lg">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 17.5V6.5C7 5.11929 8.11929 4 9.5 4H14.5C15.8807 4 17 5.11929 17 6.5V12.5C17 13.8807 15.8807 15 14.5 15H10.5L7 17.5Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12 9H12.01" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+        </div>
+        <span className="text-2xl font-bold text-textPrimary">Sanjog</span>
+    </Link>
+);
+
 
 const LandingPage = () => {
   const { user, isUserLoading } = useUser();
@@ -126,9 +138,7 @@ const LandingPage = () => {
       <header className="sticky top-0 z-50 bg-surface border-b">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
-            <Link href="/" className="text-2xl font-bold text-primary">
-              Sanjog
-            </Link>
+            <Logo />
             <nav className="hidden items-center gap-6 md:flex">
               <Link href="#home" className="text-sm font-medium text-textSecondary hover:text-primary">Home</Link>
               <Link href="#features" className="text-sm font-medium text-textSecondary hover:text-primary">Features</Link>
@@ -514,15 +524,7 @@ const LandingPage = () => {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 md:grid-cols-12">
             <div className='md:col-span-4'>
-                <Link href="/" className="flex items-center gap-2">
-                    <div className="p-2 bg-primary rounded-lg">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M7 17.5V6.5C7 5.11929 8.11929 4 9.5 4H14.5C15.8807 4 17 5.11929 17 6.5V12.5C17 13.8807 15.8807 15 14.5 15H10.5L7 17.5Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M12 9H12.01" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                    </div>
-                    <span className="text-2xl font-bold text-textPrimary">sanjog</span>
-                </Link>
+                <Logo />
                 <p className="mt-4 text-textSecondary max-w-xs">An interactive and fun way to learn sign language, backed by AI and a supportive community.</p>
             </div>
             <div className='md:col-span-2'>
