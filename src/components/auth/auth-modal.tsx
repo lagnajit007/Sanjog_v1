@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/firebase';
 import {
@@ -14,7 +13,6 @@ import {
   initiateGoogleSignIn,
   initiateEmailSignUp,
 } from '@/firebase/non-blocking-login';
-import Image from 'next/image';
 
 const GoogleIcon = () => (
     <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
@@ -187,31 +185,32 @@ const SignupForm = () => {
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  initialTab?: 'login' | 'signup';
+  view: 'login' | 'signup';
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialTab = 'login' }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, view }) => {
+  const isLoginView = view === 'login';
+  
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-sm p-8">
         <DialogHeader className="text-center">
-          <DialogTitle className="text-2xl font-bold">Welcome to Sanjog</DialogTitle>
-          <DialogDescription>Let’s get you started on your learning journey.</DialogDescription>
+          <DialogTitle className="text-2xl font-bold">
+            {isLoginView ? 'Welcome Back!' : 'Create Your Account'}
+          </DialogTitle>
+          <DialogDescription>
+            {isLoginView
+              ? "Let's get you signed in."
+              : 'Start your sign language journey today.'}
+          </DialogDescription>
         </DialogHeader>
-        <Tabs defaultValue={initialTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login">Login</TabsTrigger>
-            <TabsTrigger value="signup">Sign Up</TabsTrigger>
-          </TabsList>
-          <TabsContent value="login" className="mt-6">
-            <LoginForm />
-          </TabsContent>
-          <TabsContent value="signup" className="mt-6">
-            <SignupForm />
-          </TabsContent>
-        </Tabs>
+
+        <div className="mt-6">
+          {isLoginView ? <LoginForm /> : <SignupForm />}
+        </div>
+        
         <DialogFooter className="pt-4">
-             <p className="text-xs text-muted-foreground text-center">
+             <p className="text-xs text-muted-foreground text-center w-full">
                 By continuing, you agree to our Terms of Service and Privacy Policy.
             </p>
         </DialogFooter>

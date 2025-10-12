@@ -17,7 +17,7 @@ const LandingPage = () => {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [initialAuthTab, setInitialAuthTab] = useState<'login' | 'signup'>('login');
+  const [authView, setAuthView] = useState<'login' | 'signup'>('login');
   
   const heroAvatars = [
     PlaceHolderImages.find((img) => img.id === '1'),
@@ -37,8 +37,8 @@ const LandingPage = () => {
     }
   }, [user, isUserLoading, router]);
 
-  const openAuthModal = (tab: 'login' | 'signup') => {
-    setInitialAuthTab(tab);
+  const openAuthModal = (view: 'login' | 'signup') => {
+    setAuthView(view);
     setIsAuthModalOpen(true);
   };
 
@@ -407,7 +407,7 @@ const LandingPage = () => {
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-        initialTab={initialAuthTab}
+        view={authView}
       />
     </div>
   );
