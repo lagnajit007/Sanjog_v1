@@ -14,6 +14,11 @@ export default {
         headline: ['Inter', 'sans-serif'],
         code: ['monospace'],
       },
+      fontWeight: {
+        normal: '400',
+        semibold: '600',
+        bold: '700',
+      },
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
@@ -48,7 +53,7 @@ export default {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
-        'accent-orange': '#FF8C66',
+        'accent-orange': 'hsl(var(--accent))',
         'accent-green': '#66D49D',
         'accent-blue': '#6CA6FF',
         chart: {
@@ -75,7 +80,7 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       boxShadow: {
-        subtle: '0px 4px 12px rgba(0, 0, 0, 0.05)',
+        sm: '0px 4px 12px rgba(0, 0, 0, 0.05)',
       },
       keyframes: {
         'accordion-down': {

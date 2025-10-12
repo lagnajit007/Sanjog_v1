@@ -28,15 +28,15 @@ const MainContent = () => {
         <div className="absolute right-20 top-0 h-32 w-32 rounded-full bg-white/10"></div>
         <div className="relative z-10">
           <p className="mb-2 text-sm font-semibold uppercase">Online Course</p>
-          <h2 className="mb-4 max-w-sm text-3xl font-bold font-headline">Learn Sign Language with Fun Gestures!</h2>
-          <Button variant="secondary" className="bg-white text-foreground hover:bg-gray-100">
+          <h2 className="mb-4 max-w-sm text-3xl font-bold">Learn Sign Language with Fun Gestures!</h2>
+          <Button variant="secondary" className="bg-white text-primary-foreground hover:bg-gray-100">
             Start Learning <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </div>
 
       <div>
-        <h3 className="mb-4 text-xl font-bold font-headline">Your Progress</h3>
+        <h3 className="mb-4 text-xl font-bold">Your Progress</h3>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {progressCards.map((card) => (
             <ProgressCard key={card.title} {...card} />
@@ -45,7 +45,7 @@ const MainContent = () => {
       </div>
 
       <div>
-        <h3 className="mb-4 text-xl font-bold font-headline">Continue Learning</h3>
+        <h3 className="mb-4 text-xl font-bold">Continue Learning</h3>
         <Carousel opts={{ align: 'start' }} className="w-full">
           <CarouselContent>
             {learningCards.map((card, index) => (

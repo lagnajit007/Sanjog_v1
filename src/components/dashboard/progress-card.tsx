@@ -4,7 +4,7 @@ import type { ProgressCardData } from '@/lib/data';
 
 const ProgressCard = ({ title, value, progress, color }: ProgressCardData) => {
   return (
-    <Card className="shadow-subtle">
+    <Card className="shadow-sm">
       <CardHeader>
         <CardTitle className="text-md font-medium text-muted-foreground">{title}</CardTitle>
       </CardHeader>

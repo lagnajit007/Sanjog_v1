@@ -25,9 +25,9 @@ export type ProgressCardData = {
 };
 
 export const progressCards: ProgressCardData[] = [
-  { title: 'Daily Streak', value: '7 Days', progress: 86, color: 'bg-[#6CA6FF]' },
-  { title: 'Lessons Completed', value: '12/48', progress: 25, color: 'bg-[#FF8C66]' },
-  { title: 'Skills Mastered', value: '3/10', progress: 30, color: 'bg-[#66D49D]' },
+  { title: 'Daily Streak', value: '7 Days', progress: 86, color: 'bg-accent-blue' },
+  { title: 'Lessons Completed', value: '12/48', progress: 25, color: 'bg-accent-orange' },
+  { title: 'Skills Mastered', value: '3/10', progress: 30, color: 'bg-accent-green' },
 ];
 
 export type LearningCardData = {
@@ -38,7 +38,7 @@ export type LearningCardData = {
 };
 
 export const learningCards: LearningCardData[] = [
-  { background: 'bg-[#FFD66B]', title: 'A-Z', subtitle: "Beginner’s Guide to Learn Alphabets (A-Z).", category: 'Alphabets' },
+  { background: 'bg-secondary', title: 'A-Z', subtitle: "Beginner’s Guide to Learn Alphabets (A-Z).", category: 'Alphabets' },
   { background: 'bg-[#C9D8FF]', title: '0-9', subtitle: "Beginner’s Guide to Learn Numbers (0-9).", category: 'Numbers' },
   { background: 'bg-[#D2C5FF]', title: 'Greetings', subtitle: "Learn common greetings and introductions.", category: 'Social' },
   { background: 'bg-pink-200', title: 'Family', subtitle: "Learn signs for family members.", category: 'People' },
@@ -50,12 +50,12 @@ export type BadgeData = {
 };
 
 export const badges: BadgeData[] = [
-  { label: 'Alphabet Ace', color: 'bg-[#FF8C66]' },
-  { label: 'Number Ninja', color: 'bg-primary' },
-  { label: 'Streak Keeper', color: 'bg-[#6CA6FF]' },
-  { label: 'Quick Learner', color: 'bg-[#FFD66B]' },
-  { label: 'Weekend Warrior', color: 'bg-[#66D49D]' },
-  { label: 'Perfect Score', color: 'bg-destructive' },
+    { label: 'Alphabet Ace', color: 'border-accent-orange text-accent-orange' },
+    { label: 'Number Ninja', color: 'border-primary text-primary' },
+    { label: 'Streak Keeper', color: 'border-accent-blue text-accent-blue' },
+    { label: 'Quick Learner', color: 'border-secondary text-secondary-foreground' },
+    { label: 'Weekend Warrior', color: 'border-accent-green text-accent-green' },
+    { label: 'Perfect Score', color: 'border-destructive text-destructive' },
 ];
 
 export type LeaderboardEntry = {

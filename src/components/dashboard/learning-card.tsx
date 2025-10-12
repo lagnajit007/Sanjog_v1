@@ -6,13 +6,13 @@ import type { LearningCardData } from '@/lib/data';
 
 const LearningCard = ({ background, title, subtitle, category }: LearningCardData) => {
   return (
-    <Card className={`overflow-hidden shadow-subtle ${background}`}>
+    <Card className={`overflow-hidden shadow-sm ${background}`}>
       <CardHeader>
         <Badge variant="secondary" className="w-fit bg-white/50">{category}</Badge>
       </CardHeader>
       <CardContent>
         <CardTitle className="text-xl font-bold mb-1">{title}</CardTitle>
-        <CardDescription className="text-foreground/70 text-sm">{subtitle}</CardDescription>
+        <CardDescription className="text-foreground/80 text-sm">{subtitle}</CardDescription>
       </CardContent>
       <CardFooter>
         <Button variant="ghost" className="bg-white/50 hover:bg-white/80">

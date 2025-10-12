@@ -32,9 +32,9 @@ const RightSidebar = () => {
           <h4 className="font-semibold">Badges 06/60</h4>
           <Button variant="link" className="h-auto p-0 text-primary">View all</Button>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="grid grid-cols-3 gap-2">
           {badges.map((badge) => (
-            <Badge key={badge.label} className={`${badge.color} text-white text-xs`}>{badge.label}</Badge>
+            <Badge key={badge.label} variant="outline" className={`font-medium ${badge.color}`}>{badge.label}</Badge>
           ))}
         </div>
       </div>
@@ -60,7 +60,7 @@ const RightSidebar = () => {
                   <p className="text-xs text-muted-foreground">{entry.points}</p>
                 </div>
                 <div className="text-right">
-                  {entry.icon && <entry.icon className="h-5 w-5 text-yellow-500" />}
+                  {entry.icon && <entry.icon className="h-5 w-5 text-yellow-400" />}
                   <p className="text-xs font-bold text-muted-foreground">{entry.level}</p>
                 </div>
               </li>
