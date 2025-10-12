@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import React, { useState } from 'react';
@@ -13,9 +12,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Bell } from 'lucide-react';
+import { Bell, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import Link from 'next/link';
@@ -66,19 +66,33 @@ const HeaderRightContent = ({ onLogoutClick }: { onLogoutClick: () => void }) =>
                 <AvatarFallback>{getInitials(user?.displayName)}</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/profile">Profile</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/settings">Settings</Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={onLogoutClick} className="text-red-500 cursor-pointer focus:bg-red-100 focus:text-red-600">
-                Logout
-              </DropdownMenuItem>
+            <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{user?.displayName || 'New User'}</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {user?.email || 'No email'}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile">Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/settings">Settings</Link>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                 <DropdownMenuItem>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    <span>Upgrade to Pro</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={onLogoutClick} className="text-red-500 cursor-pointer focus:bg-red-100 focus:text-red-600">
+                  Logout
+                </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -96,6 +110,7 @@ export default function AppLayout({
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const auth = useAuth();
   const router = useRouter();
+  const { user, isUserLoading } = useUser();
 
   const handleLogout = () => {
     if (auth) {
@@ -107,6 +122,16 @@ export default function AppLayout({
 
   const openLogoutModal = () => setIsLogoutModalOpen(true);
   const closeLogoutModal = () => setIsLogoutModalOpen(false);
+  
+  if (isUserLoading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen w-full bg-background text-foreground">

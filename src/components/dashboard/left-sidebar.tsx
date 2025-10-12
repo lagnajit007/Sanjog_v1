@@ -1,7 +1,7 @@
 
 'use client';
 
-import { LogOut, Menu } from 'lucide-react';
+import { LogOut, Menu, CreditCard } from 'lucide-react';
 import { menuItems } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { usePathname } from 'next/navigation';
 import { useUser } from '@/firebase';
 import { Skeleton } from '../ui/skeleton';
+import { Card, CardContent } from '../ui/card';
 
 const Logo = () => (
     <Link href="/dashboard" className="flex items-center gap-2 mb-8">
@@ -107,7 +108,17 @@ const LeftSidebarContent = ({ onLogoutClick }: { onLogoutClick: () => void }) =>
     <>
       <Logo />
       <NavMenu />
-      <UserProfile onLogoutClick={onLogoutClick} />
+      <div className='mt-auto space-y-2'>
+        <Card className='bg-primary/10 border-primary/20'>
+          <CardContent className='p-4 text-center'>
+            <CreditCard className='mx-auto mb-2 h-6 w-6 text-primary'/>
+            <p className='text-sm font-semibold'>Upgrade to Pro</p>
+            <p className='text-xs text-muted-foreground mb-3'>Unlock all features</p>
+            <Button size='sm' className='w-full'>Upgrade</Button>
+          </CardContent>
+        </Card>
+        <UserProfile onLogoutClick={onLogoutClick} />
+      </div>
     </>
   );
 };
