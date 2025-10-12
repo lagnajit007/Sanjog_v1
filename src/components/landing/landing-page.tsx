@@ -15,6 +15,7 @@ import { useUser } from '@/firebase';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import { Input } from '../ui/input';
 
 const CreativeActivitiesIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -70,7 +71,7 @@ const LandingPage = () => {
         for: 'For startups',
         price: '₹499',
         period: '/monthly',
-        icon: <Video className="h-8 w-8 text-white" />,
+        icon: <Video className="h-8 w-8 text-primary" />,
         description: 'Lorem ipsum dolor sit amet doloroli sitiol conse ctetur adipiscing elit.',
         features: ['Everything in Starter', 'Unlimited access to all activities', 'Progress tracking dashboard', 'Priority support'],
         isPopular: true,
@@ -100,7 +101,7 @@ const LandingPage = () => {
         for: 'For startups',
         price: '₹4990',
         period: '/annually',
-        icon: <Video className="h-8 w-8 text-white" />,
+        icon: <Video className="h-8 w-8 text-primary" />,
         description: 'Lorem ipsum dolor sit amet doloroli sitiol conse ctetur adipiscing elit.',
         features: ['Everything in Starter', 'Unlimited access to all activities', 'Progress tracking dashboard', 'Priority support'],
         isPopular: true,
@@ -360,7 +361,7 @@ const LandingPage = () => {
         <section id="pricing" className="text-textPrimary py-16 md:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-              <span className="inline-block bg-secondary text-sm font-semibold px-4 py-1.5 rounded-full">Pricing</span>
+              <span className="inline-block bg-secondary text-primary text-sm font-semibold px-4 py-1.5 rounded-full">Pricing</span>
               <h2 className="text-3xl font-headline font-bold mt-4 md:text-4xl">Our pricing plans</h2>
               <p className="mx-auto mt-4 max-w-2xl text-textSecondary">
                 Lorem ipsum dolor sit amet consectetur adipiscing elit dolor posuere vel venenatis eu sit massa volutpat.
@@ -377,14 +378,14 @@ const LandingPage = () => {
                 <Card 
                   key={index}
                   className={cn(
-                    "rounded-2xl p-8 h-full flex flex-col",
+                    "rounded-2xl p-8 h-full flex flex-col border",
                     plan.isPopular 
                       ? 'bg-primary text-white relative shadow-2xl shadow-primary/30 scale-105'
-                      : 'bg-card text-card-foreground border'
+                      : 'bg-card text-card-foreground'
                   )}
                 >
                   {plan.isPopular && (
-                    <div className="absolute -top-3 right-8 bg-white text-primary text-sm font-semibold px-4 py-1 rounded-full">Popular</div>
+                    <div className="absolute -top-3 right-8 bg-accent text-accent-foreground text-sm font-semibold px-4 py-1 rounded-full">Popular</div>
                   )}
                   <div className="flex items-center gap-4 mb-4">
                       <div className={cn("w-16 h-16 rounded-lg flex items-center justify-center", plan.isPopular ? "bg-white/20" : "bg-secondary")}>
@@ -464,34 +465,45 @@ const LandingPage = () => {
 
       <footer className="bg-surface py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-8 md:grid-cols-4">
-            <div>
-              <h3 className="font-semibold text-textPrimary">Company</h3>
-              <ul className="mt-4 space-y-2">
-                <li><Link href="#" className="text-sm text-textSecondary hover:text-primary">About</Link></li>
-                <li><Link href="#" className="text-sm text-textSecondary hover:text-primary">Careers</Link></li>
-                <li><Link href="#" className="text-sm text-textSecondary hover:text-primary">Press</Link></li>
+          <div className="grid gap-8 md:grid-cols-12">
+            <div className='md:col-span-4'>
+                <Link href="/" className="flex items-center gap-2">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 17.5V6.5C7 5.11929 8.11929 4 9.5 4H14.5C15.8807 4 17 5.11929 17 6.5V12.5C17 13.8807 15.8807 15 14.5 15H10.5L7 17.5Z" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M12 9H12.01" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span className="text-2xl font-bold text-textPrimary">sanjog</span>
+                </Link>
+                <p className="mt-4 text-textSecondary max-w-xs">Discover thousands of fun and interactive learning activities to support learning progress</p>
+            </div>
+            <div className='md:col-span-2'>
+              <h3 className="font-semibold text-textSecondary tracking-wider uppercase text-sm">Company</h3>
+              <ul className="mt-4 space-y-3">
+                <li><Link href="#" className="text-base text-textPrimary hover:text-primary">About</Link></li>
+                <li><Link href="#" className="text-base text-textPrimary hover:text-primary">Features</Link></li>
+                <li><Link href="#" className="text-base text-textPrimary hover:text-primary">Works</Link></li>
+                <li><Link href="#" className="text-base text-textPrimary hover:text-primary">Career</Link></li>
               </ul>
             </div>
-            <div>
-              <h3 className="font-semibold text-textPrimary">Support</h3>
-              <ul className="mt-4 space-y-2">
-                <li><Link href="#" className="text-sm text-textSecondary hover:text-primary">Customer Support</Link></li>
-                <li><Link href="#" className="text-sm text-textSecondary hover:text-primary">Terms & Conditions</Link></li>
-                <li><Link href="#" className="text-sm text-textSecondary hover:text-primary">Privacy Policy</Link></li>
+            <div className='md:col-span-2'>
+              <h3 className="font-semibold text-textSecondary tracking-wider uppercase text-sm">Help</h3>
+              <ul className="mt-4 space-y-3">
+                <li><Link href="#" className="text-base text-textPrimary hover:text-primary">Customer Support</Link></li>
+                <li><Link href="#" className="text-base text-textPrimary hover:text-primary">Delivery Details</Link></li>
+                <li><Link href="#" className="text-base text-textPrimary hover:text-primary">Terms & Conditions</Link></li>
+                <li><Link href="#" className="text-base text-textPrimary hover:text-primary">Privacy Policy</Link></li>
               </ul>
             </div>
-            <div>
-              <h3 className="font-semibold text-textPrimary">Follow Us</h3>
-              <ul className="mt-4 space-y-2">
-                <li><Link href="#" className="text-sm text-textSecondary hover:text-primary">LinkedIn</Link></li>
-                <li><Link href="#" className="text-sm text-textSecondary hover:text-primary">Twitter</Link></li>
-                <li><Link href="#" className="text-sm text-textSecondary hover:text-primary">Instagram</Link></li>
-              </ul>
+            <div className='md:col-span-4'>
+                <h3 className="font-semibold text-textSecondary tracking-wider uppercase text-sm">Newsletter</h3>
+                <form className="mt-4 flex flex-col sm:flex-row gap-2">
+                    <Input type="email" placeholder="Enter your email address" className="flex-1" />
+                    <Button type="submit">Subscribe Now</Button>
+                </form>
             </div>
           </div>
-          <div className="mt-8 border-t border-border pt-8 text-center text-sm text-textSecondary">
-            <p>&copy; {new Date().getFullYear()} Sanjog. All Rights Reserved.</p>
+          <div className="mt-12 border-t border-border pt-8 text-center text-sm text-textSecondary">
+            <p>&copy; Copyright {new Date().getFullYear()}, All Rights Reserved by Sanjog</p>
           </div>
         </div>
       </footer>
