@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ import { Camera, CheckCircle, XCircle, ArrowRight, Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { GestureRecognizer, FilesetResolver, DrawingUtils } from "@mediapipe/tasks-vision";
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 // Mock Data
 const userProgress = {
@@ -103,32 +104,97 @@ export default function LearnPage() {
   const advancedLessons = allLessons.filter(l => l.category === 'Advanced');
   const specialLessons = allLessons.filter(l => l.category === 'Special Topics');
   const { toast } = useToast();
-  const [isCorrect, setIsCorrect] = React.useState<boolean | null>(null);
-  const [sessionProgress, setSessionProgress] = React.useState(0);
-  const [accuracy, setAccuracy] = React.useState(0);
-  const [predictedSign, setPredictedSign] = React.useState<string | null>(null);
-  const videoRef = React.useRef<HTMLVideoElement>(null);
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const [isWebcamOn, setIsWebcamOn] = React.useState(true);
-  const [hasCameraPermission, setHasCameraPermission] = React.useState<boolean | null>(null);
-  const [gestureRecognizer, setGestureRecognizer] = useState<GestureRecognizer | null>(null);
-  const animationFrameId = useRef<number | null>(null);
 
-  const handleNextSign = () => {
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [sessionProgress, setSessionProgress] = useState(0);
+  const [accuracy, setAccuracy] = useState(0);
+  const [predictedSign, setPredictedSign] = useState<string | null>(null);
+
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+  const gestureRecognizerRef = useRef<GestureRecognizer | null>(null);
+  const animationFrameId = useRef<number | null>(null);
+  const isPredicting = useRef(false);
+
+  const handleNextSign = useCallback(() => {
     setIsCorrect(null);
     setPredictedSign(null);
     setAccuracy(0);
     setSessionProgress(prev => (prev >= 100 ? 0 : prev + (100 / signs.length)));
     setCurrentSignIndex((prev) => (prev + 1) % signs.length);
-  };
+  }, [signs.length]);
 
   useEffect(() => {
-    setCurrentSignIndex(0); // Reset to first sign when mode changes
+    setCurrentSignIndex(0); 
     setSessionProgress(0);
   }, [practiceMode]);
 
+  const predict = useCallback(async () => {
+    if (!gestureRecognizerRef.current || !videoRef.current || !canvasRef.current || isPredicting.current) {
+      return;
+    }
+
+    const video = videoRef.current;
+    if (video.readyState < 2) {
+      animationFrameId.current = requestAnimationFrame(predict);
+      return;
+    }
+
+    isPredicting.current = true;
+    
+    const canvas = canvasRef.current;
+    const canvasCtx = canvas.getContext('2d');
+    if (!canvasCtx) {
+      isPredicting.current = false;
+      return;
+    }
+    
+    const now = performance.now();
+    const results = gestureRecognizerRef.current.recognizeForVideo(video, now);
+    
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+    const drawingUtils = new DrawingUtils(canvasCtx);
+    
+    if (results.landmarks) {
+      for (const landmarks of results.landmarks) {
+        drawingUtils.drawConnectors(landmarks, GestureRecognizer.HAND_CONNECTIONS, { color: '#FFFFFF', lineWidth: 5 });
+        drawingUtils.drawLandmarks(landmarks, { color: '#6C4CF1', lineWidth: 2 });
+      }
+    }
+
+    if (results.gestures.length > 0) {
+      const gesture = results.gestures[0][0];
+      let sign = gesture.categoryName.toUpperCase();
+      
+      const gestureMap: Record<string, string> = {
+          'VICTORY': 'V', 'THUMB_UP': 'A', 'THUMB_DOWN': 'T', 'POINTING_UP': 'D',
+          'OPEN_PALM': 'B', 'ILOVEYOU': 'Y', 'CLOSED_FIST': 'S',
+      };
+      if (gestureMap[sign]) sign = gestureMap[sign];
+      else if (sign.length > 1) sign = '?';
+
+      setPredictedSign(sign);
+      const isMatch = sign === currentSign;
+      setIsCorrect(isMatch);
+      setAccuracy(Math.round(gesture.score * 100));
+
+    } else {
+      setIsCorrect(null);
+      setAccuracy(0);
+      setPredictedSign(null);
+    }
+    
+    isPredicting.current = false;
+    animationFrameId.current = requestAnimationFrame(predict);
+  }, [currentSign]);
+  
+  
   useEffect(() => {
-    const createGestureRecognizer = async () => {
+    async function setup() {
       try {
         const vision = await FilesetResolver.forVisionTasks(
           "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
@@ -141,21 +207,16 @@ export default function LearnPage() {
           runningMode: "VIDEO",
           numHands: 1,
         });
-        setGestureRecognizer(recognizer);
+        gestureRecognizerRef.current = recognizer;
       } catch (error) {
-        console.error("Error creating GestureRecognizer:", error);
+         console.error("Error creating GestureRecognizer:", error);
          toast({
           variant: "destructive",
           title: "Model Loading Failed",
           description: "Could not load the gesture recognition model. Please try refreshing the page.",
         });
       }
-    };
-    createGestureRecognizer();
-  }, [toast]);
 
-  useEffect(() => {
-    const getCameraPermission = async () => {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         setHasCameraPermission(false);
         toast({
@@ -167,9 +228,13 @@ export default function LearnPage() {
       }
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        setHasCameraPermission(true);
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
+          videoRef.current.addEventListener('loadeddata', () => {
+             setHasCameraPermission(true);
+             if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
+             animationFrameId.current = requestAnimationFrame(predict);
+          });
         }
       } catch (error) {
         console.error("Error accessing camera:", error);
@@ -180,92 +245,20 @@ export default function LearnPage() {
           description: "Please enable camera permissions in your browser settings to use this feature.",
         });
       }
-    };
-    getCameraPermission();
-  }, [toast]);
-  
-  useEffect(() => {
-    if (!gestureRecognizer || !isWebcamOn || !hasCameraPermission) {
-      return;
     }
-
-    const predict = () => {
-      const video = videoRef.current;
-      const canvas = canvasRef.current;
-      
-      if (!video || !canvas || video.readyState < 2) {
-        animationFrameId.current = requestAnimationFrame(predict);
-        return;
-      }
-
-      const canvasCtx = canvas.getContext('2d');
-      if (!canvasCtx) {
-        animationFrameId.current = requestAnimationFrame(predict);
-        return;
-      }
-
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-
-      const now = performance.now();
-      const results = gestureRecognizer.recognizeForVideo(video, now);
-      
-      const drawingUtils = new DrawingUtils(canvasCtx);
-      if (results.landmarks) {
-        for (const landmarks of results.landmarks) {
-          drawingUtils.drawConnectors(landmarks, GestureRecognizer.HAND_CONNECTIONS, { color: '#FFFFFF', lineWidth: 5 });
-          drawingUtils.drawLandmarks(landmarks, { color: '#6C4CF1', lineWidth: 2 });
-        }
-      }
-
-      if (results.gestures.length > 0) {
-        const gesture = results.gestures[0][0];
-        let sign = gesture.categoryName.toUpperCase();
-        
-        // Map mediapipe names to our display names if needed
-        const gestureMap: Record<string, string> = {
-            'VICTORY': 'V',
-            'THUMB_UP': 'A', // Note: This is an approximation
-            'THUMB_DOWN': 'T', // Note: This is an approximation
-            'POINTING_UP': 'D',
-            'OPEN_PALM': 'B',
-            'ILOVEYOU': 'Y', // Note: This is an approximation
-            'CLOSED_FIST': 'S',
-        }
-        if (gestureMap[sign]) {
-            sign = gestureMap[sign];
-        } else if (sign.length > 1) { // Ignore complex gestures for now
-            sign = '?';
-        }
-
-        setPredictedSign(sign);
-        const isMatch = sign === currentSign;
-        setIsCorrect(isMatch);
-        setAccuracy(Math.round(gesture.score * 100));
-
-      } else {
-        // No gesture detected, reset state
-        setIsCorrect(null);
-        setAccuracy(0);
-        setPredictedSign(null);
-      }
-      
-      animationFrameId.current = requestAnimationFrame(predict);
-    };
-
-    animationFrameId.current = requestAnimationFrame(predict);
+    
+    setup();
 
     return () => {
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
+      if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
+      if (videoRef.current?.srcObject) {
+        (videoRef.current.srcObject as MediaStream).getTracks().forEach(track => track.stop());
       }
     };
-  }, [gestureRecognizer, isWebcamOn, hasCameraPermission, currentSign]);
+  }, [toast, predict]);
 
 
-  const cameraStatusText = hasCameraPermission === false ? "Camera access denied." : (isWebcamOn ? "Analyzing your sign..." : "Webcam is off.");
-  const toggleWebcam = () => setIsWebcamOn(prev => !prev);
+  const cameraStatusText = hasCameraPermission === false ? "Camera access denied." : "Analyzing your sign...";
 
 
   return (
@@ -318,16 +311,18 @@ export default function LearnPage() {
             isCorrect === false && "border-destructive shadow-red-300",
             isCorrect === null && "border-primary"
           )}
-          onClick={toggleWebcam}
         >
           <video ref={videoRef} className="h-full w-full object-cover scale-x-[-1]" autoPlay muted playsInline />
           <canvas ref={canvasRef} className="absolute inset-0 h-full w-full object-cover scale-x-[-1]" />
           
-          { (!isWebcamOn || hasCameraPermission === false) && (
+          { hasCameraPermission === false && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 text-white p-4">
-              <Camera className="mb-4 h-16 w-16" />
-              <p className="text-lg font-semibold">{hasCameraPermission === false ? "Camera access denied" : "Webcam is off"}</p>
-              <p className="text-center">{hasCameraPermission === false ? "Please allow camera access in your browser." : "Click to turn on"}</p>
+              <Alert variant="destructive">
+                <AlertTitle>Camera Access Required</AlertTitle>
+                <AlertDescription>
+                  Please allow camera access in your browser settings to use this feature.
+                </AlertDescription>
+              </Alert>
             </div>
           )}
 
@@ -486,3 +481,5 @@ export default function LearnPage() {
     </div>
   );
 }
+
+    
