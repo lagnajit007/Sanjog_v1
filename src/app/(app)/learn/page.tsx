@@ -8,7 +8,7 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Award } from 'lucide-react';
 import LessonCard from '@/components/lessons/lesson-card';
-import { Camera, CheckCircle, XCircle, ArrowRight, Target } from 'lucide-react';
+import { Camera, CheckCircle, XCircle, ArrowRight, Target, CameraOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { GestureRecognizer, FilesetResolver, DrawingUtils } from "@mediapipe/tasks-vision";
@@ -119,6 +119,7 @@ export default function LearnPage() {
   const gestureRecognizerRef = useRef<GestureRecognizer | null>(null);
   const animationFrameId = useRef<number | null>(null);
   const isPredicting = useRef(false);
+  const [isCameraOn, setIsCameraOn] = useState(true);
 
   const handleNextSign = useCallback(() => {
     setIsCorrect(null);
@@ -134,14 +135,14 @@ export default function LearnPage() {
   }, [practiceMode]);
 
   const predict = useCallback(async () => {
-    if (!gestureRecognizerRef.current || !videoRef.current || !canvasRef.current || isPredicting.current) {
-      animationFrameId.current = requestAnimationFrame(predict);
+    if (!isCameraOn || !gestureRecognizerRef.current || !videoRef.current || !canvasRef.current || isPredicting.current) {
+      if (isCameraOn) animationFrameId.current = requestAnimationFrame(predict);
       return;
     }
 
     const video = videoRef.current;
     if (video.readyState < 2) {
-      animationFrameId.current = requestAnimationFrame(predict);
+       if (isCameraOn) animationFrameId.current = requestAnimationFrame(predict);
       return;
     }
 
@@ -192,12 +193,19 @@ export default function LearnPage() {
     }
     
     isPredicting.current = false;
-    animationFrameId.current = requestAnimationFrame(predict);
-  }, [currentSign]);
+    if (isCameraOn) animationFrameId.current = requestAnimationFrame(predict);
+  }, [currentSign, isCameraOn]);
   
   
   useEffect(() => {
+    let localStream: MediaStream | null = null;
+    
     async function setup() {
+      if (!isCameraOn) {
+        setHasCameraPermission(null);
+        return;
+      }
+
       try {
         const vision = await FilesetResolver.forVisionTasks(
           "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
@@ -231,6 +239,7 @@ export default function LearnPage() {
       }
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        localStream = stream;
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           videoRef.current.addEventListener('loadeddata', () => {
@@ -254,17 +263,21 @@ export default function LearnPage() {
 
     return () => {
       if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
-      if (videoRef.current?.srcObject) {
-        (videoRef.current.srcObject as MediaStream).getTracks().forEach(track => track.stop());
+      if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+      }
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
       }
        if (gestureRecognizerRef.current) {
         gestureRecognizerRef.current.close();
+        gestureRecognizerRef.current = null;
       }
     };
-  }, [toast, predict]);
+  }, [toast, predict, isCameraOn]);
 
 
-  const cameraStatusText = hasCameraPermission === false ? "Camera access denied." : "Analyzing your sign...";
+  const cameraStatusText = !isCameraOn ? "Camera is off" : hasCameraPermission === false ? "Camera access denied." : "Analyzing your sign...";
 
 
   return (
@@ -318,10 +331,18 @@ export default function LearnPage() {
             isCorrect === null && "border-primary"
           )}
         >
-          <video ref={videoRef} className="h-full w-full object-cover scale-x-[-1]" autoPlay muted playsInline />
+           <video ref={videoRef} className="h-full w-full object-cover scale-x-[-1]" autoPlay muted playsInline />
           <canvas ref={canvasRef} className="absolute inset-0 h-full w-full object-cover scale-x-[-1]" />
           
-          { hasCameraPermission === false && (
+          { !isCameraOn && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 text-white p-4">
+              <CameraOff className="h-12 w-12 mb-4" />
+              <p className="text-lg font-semibold">Camera is off</p>
+              <p className="text-sm text-muted-foreground">Click the camera button to turn it on.</p>
+            </div>
+          )}
+
+          { isCameraOn && hasCameraPermission === false && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 text-white p-4">
               <Alert variant="destructive">
                 <AlertTitle>Camera Access Required</AlertTitle>
@@ -336,8 +357,15 @@ export default function LearnPage() {
           {isCorrect === false && <XCircle className="absolute top-4 right-4 h-10 w-10 text-destructive animate-subtle-bounce" />}
         </div>
         
-        <p className="font-semibold text-primary text-lg">{accuracy}% Accuracy</p>
-        <p className="text-sm text-muted-foreground">{cameraStatusText}</p>
+        <div className="flex items-center gap-4">
+            <Button size="icon" variant={isCameraOn ? "default" : "outline"} onClick={() => setIsCameraOn(prev => !prev)}>
+                {isCameraOn ? <Camera className="h-5 w-5" /> : <CameraOff className="h-5 w-5" />}
+            </Button>
+            <div className="text-center">
+                <p className="font-semibold text-primary text-lg">{accuracy > 0 ? `${accuracy}% Accuracy` : ''}</p>
+                <p className="text-sm text-muted-foreground">{cameraStatusText}</p>
+            </div>
+        </div>
       </div>
     </div>
         <footer className="w-full flex items-center justify-around rounded-2xl bg-white p-4 shadow-lg border-t mt-4">
