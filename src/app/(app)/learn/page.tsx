@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
@@ -14,6 +13,9 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { GestureRecognizer, FilesetResolver, DrawingUtils } from "@mediapipe/tasks-vision";
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { silenceTFLogs } from '@/lib/silent-console';
+
+silenceTFLogs();
 
 // Mock Data
 const userProgress = {
@@ -133,6 +135,7 @@ export default function LearnPage() {
 
   const predict = useCallback(async () => {
     if (!gestureRecognizerRef.current || !videoRef.current || !canvasRef.current || isPredicting.current) {
+      animationFrameId.current = requestAnimationFrame(predict);
       return;
     }
 
@@ -197,11 +200,11 @@ export default function LearnPage() {
     async function setup() {
       try {
         const vision = await FilesetResolver.forVisionTasks(
-          "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
+          "/models/"
         );
         const recognizer = await GestureRecognizer.createFromOptions(vision, {
           baseOptions: {
-            modelAssetPath: `https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task`,
+            modelAssetPath: `/models/gesture_recognizer.task`,
             delegate: "GPU",
           },
           runningMode: "VIDEO",
@@ -253,6 +256,9 @@ export default function LearnPage() {
       if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
       if (videoRef.current?.srcObject) {
         (videoRef.current.srcObject as MediaStream).getTracks().forEach(track => track.stop());
+      }
+       if (gestureRecognizerRef.current) {
+        gestureRecognizerRef.current.close();
       }
     };
   }, [toast, predict]);
@@ -481,5 +487,3 @@ export default function LearnPage() {
     </div>
   );
 }
-
-    
