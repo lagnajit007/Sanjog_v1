@@ -13,7 +13,6 @@ import { Camera, CheckCircle, XCircle, ArrowRight, Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { HandLandmarker, FilesetResolver, DrawingUtils } from "@mediapipe/tasks-vision";
-import { recognizeGesture } from '@/ai/flows/gesture-recognition';
 
 // Mock Data
 const userProgress = {
@@ -181,17 +180,31 @@ export default function LearnPage() {
         if (results.landmarks && results.landmarks.length > 0) {
           const landmarks = results.landmarks[0].flatMap(lm => [lm.x, lm.y]);
           try {
-            const response = await recognizeGesture({ landmarks });
-            const { prediction, confidence } = response;
-            setPredictedSign(prediction);
-            const targetSign = currentSign;
-            setIsCorrect(prediction === targetSign);
-            setAccuracy(Math.round(confidence * 100));
+            const response = await fetch('http://127.0.0.1:5000/predict', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ landmarks }),
+            });
+
+            if (response.ok) {
+                const { prediction, confidence } = await response.json();
+                setPredictedSign(prediction);
+                const targetSign = currentSign;
+                setIsCorrect(prediction === targetSign);
+                setAccuracy(Math.round(confidence * 100));
+            } else {
+                setIsCorrect(null);
+                setAccuracy(0);
+                setPredictedSign(null);
+            }
 
           } catch (error) {
             console.error("Prediction error:", error);
             setIsCorrect(null);
             setAccuracy(0);
+            setPredictedSign(null);
           }
         } else {
           setIsCorrect(null);
@@ -442,6 +455,7 @@ export default function LearnPage() {
     </div>
   );
 }
+
 
 
 
