@@ -2,8 +2,7 @@
 
 'use client';
 
-import React, 'use client';
-
+import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
