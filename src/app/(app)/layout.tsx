@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React, { useState } from 'react';
@@ -101,6 +102,63 @@ const HeaderRightContent = ({ onLogoutClick }: { onLogoutClick: () => void }) =>
   );
 };
 
+const AppLayoutSkeleton = () => (
+  <div className="flex min-h-screen w-full bg-background text-foreground">
+    {/* Sidebar Skeleton */}
+    <aside className="fixed left-0 top-0 z-50 hidden h-screen w-[260px] flex-col border-r bg-card p-6 lg:flex">
+      <div className="flex items-center gap-2 mb-8">
+        <Skeleton className="h-10 w-full" />
+      </div>
+      <div className="flex-1 space-y-4">
+        <div className="space-y-1">
+          <Skeleton className="h-4 w-1/3" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+      </div>
+      <div className="mt-auto space-y-2">
+        <Skeleton className="h-24 w-full" />
+        <Skeleton className="h-16 w-full" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+    </aside>
+
+    <div className="flex flex-1 flex-col lg:ml-[260px]">
+      {/* Header Skeleton */}
+      <header className="sticky top-0 z-40 flex h-[70px] shrink-0 items-center justify-between gap-4 border-b bg-surface p-4 shadow-sm">
+        <Skeleton className="h-10 w-full max-w-sm hidden md:block" />
+        <div className="flex-1" />
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-9 w-9 rounded-full" />
+          <Skeleton className="h-9 w-9 rounded-full" />
+        </div>
+      </header>
+
+      {/* Main Content Skeleton */}
+      <main className="flex-1 overflow-y-auto p-6 lg:p-8">
+        <div className="space-y-8">
+          <Skeleton className="h-48 w-full rounded-lg" />
+          <Skeleton className="h-10 w-48" />
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <Skeleton className="h-32 w-full rounded-lg" />
+            <Skeleton className="h-32 w-full rounded-lg" />
+            <Skeleton className="h-32 w-full rounded-lg" />
+          </div>
+          <Skeleton className="h-10 w-64" />
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <Skeleton className="h-48 w-full rounded-lg" />
+            <Skeleton className="h-48 w-full rounded-lg" />
+            <Skeleton className="h-48 w-full rounded-lg" />
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+);
+
 
 export default function AppLayout({
     children,
@@ -124,13 +182,7 @@ export default function AppLayout({
   const closeLogoutModal = () => setIsLogoutModalOpen(false);
   
   if (isUserLoading) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <p>Loading...</p>
-        </div>
-      </div>
-    );
+    return <AppLayoutSkeleton />;
   }
 
   return (

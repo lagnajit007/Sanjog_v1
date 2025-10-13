@@ -1,7 +1,10 @@
 
+
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, 'use client';
+
+import { useState, useRef, useEffect } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -192,6 +195,86 @@ const getInitials = (name: string | null | undefined) => {
     return name.charAt(0).toUpperCase();
 };
 
+const ProfilePageSkeleton = () => (
+    <div className="space-y-6">
+      <div className="mb-8">
+        <Skeleton className="h-9 w-48" />
+        <Skeleton className="h-5 w-96 mt-2" />
+      </div>
+      
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex flex-col sm:flex-row items-center gap-6">
+            <Skeleton className="h-24 w-24 rounded-full" />
+            <div className="flex-1 w-full space-y-2">
+              <Skeleton className="h-8 w-1/2" />
+              <Skeleton className="h-5 w-3/4" />
+              <Skeleton className="h-6 w-1/4" />
+              <Skeleton className="h-4 w-full mt-2" />
+            </div>
+            <Skeleton className="h-10 w-32" />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <Skeleton className="h-7 w-64" />
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+            {Array.from({ length: 8 }).map((_, index) => (
+              <Skeleton key={index} className="h-32 w-full" />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-7 w-56" />
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-3 gap-4">
+                <Skeleton className="h-24 w-full" />
+                <Skeleton className="h-24 w-full" />
+                <Skeleton className="h-24 w-full" />
+            </div>
+            <div>
+              <Skeleton className="h-28 w-full" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-7 w-48" />
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+       <Card>
+          <CardHeader>
+            <Skeleton className="h-7 w-64" />
+          </CardHeader>
+          <CardContent className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+               <Skeleton className="h-10 w-48" />
+            </div>
+            <Skeleton className="h-10 w-40" />
+          </CardContent>
+        </Card>
+    </div>
+)
+
 export default function ProfilePage() {
     const { user, isUserLoading } = useUser();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -222,14 +305,7 @@ export default function ProfilePage() {
     };
 
     if (isUserLoading) {
-        return (
-            <div className="space-y-6">
-                <Skeleton className="h-10 w-48" />
-                <Skeleton className="h-6 w-96" />
-                <Skeleton className="h-48 w-full" />
-                <Skeleton className="h-48 w-full" />
-            </div>
-        );
+        return <ProfilePageSkeleton />;
     }
 
   return (
@@ -363,5 +439,3 @@ export default function ProfilePage() {
     </div>
   );
 }
-
-    

@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -113,6 +114,17 @@ const AccountTab = () => {
                     <FormField label="Email">
                         <Skeleton className="h-10 w-full" />
                     </FormField>
+                </Section>
+                <Section title="Security" description="Manage your account security settings.">
+                    <FormField label="Password">
+                        <Skeleton className="h-10 w-36" />
+                    </FormField>
+                    <FormField label="Two-Factor Authentication">
+                        <Skeleton className="h-10 w-32" />
+                    </FormField>
+                </Section>
+                 <Section title="Danger Zone" description="These actions are permanent and cannot be undone." className="border-destructive">
+                    <Skeleton className="h-20 w-full" />
                 </Section>
             </div>
         );
