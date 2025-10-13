@@ -113,8 +113,6 @@ export default function LearnPage() {
   const [hasCameraPermission, setHasCameraPermission] = React.useState<boolean | null>(null);
   const [gestureRecognizer, setGestureRecognizer] = useState<GestureRecognizer | null>(null);
   const animationFrameId = useRef<number | null>(null);
-  const lastPredictionTime = useRef(0);
-  const PREDICTION_INTERVAL = 200; // ms
 
   const handleNextSign = () => {
     setIsCorrect(null);
@@ -186,18 +184,26 @@ export default function LearnPage() {
     getCameraPermission();
   }, [toast]);
   
-  const predictWebcam = async () => {
-    if (!gestureRecognizer || !videoRef.current || !canvasRef.current || !isWebcamOn || videoRef.current.readyState < 3) {
-      if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
-      animationFrameId.current = requestAnimationFrame(predictWebcam);
+  useEffect(() => {
+    if (!gestureRecognizer || !isWebcamOn || !hasCameraPermission) {
       return;
     }
 
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    const canvasCtx = canvas.getContext('2d');
+    const predict = () => {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      
+      if (!video || !canvas || video.readyState < 2) {
+        animationFrameId.current = requestAnimationFrame(predict);
+        return;
+      }
 
-    if (canvasCtx) {
+      const canvasCtx = canvas.getContext('2d');
+      if (!canvasCtx) {
+        animationFrameId.current = requestAnimationFrame(predict);
+        return;
+      }
+
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
@@ -213,58 +219,48 @@ export default function LearnPage() {
         }
       }
 
-      if (now - lastPredictionTime.current > PREDICTION_INTERVAL) {
-        lastPredictionTime.current = now;
+      if (results.gestures.length > 0) {
+        const gesture = results.gestures[0][0];
+        let sign = gesture.categoryName.toUpperCase();
         
-        if (results.gestures.length > 0) {
-            const gesture = results.gestures[0][0];
-            let sign = gesture.categoryName.toUpperCase();
-            
-            // Map mediapipe names to our display names if needed
-            const gestureMap: Record<string, string> = {
-                'VICTORY': 'V',
-                'THUMB_UP': 'A',
-                'THUMB_DOWN': 'S',
-                'POINTING_UP': 'D',
-                'OPEN_PALM': 'B',
-                'ILOVEYOU': 'Y',
-            }
-            if (gestureMap[sign]) {
-                sign = gestureMap[sign];
-            } else if (sign.length > 1) { // Ignore complex gestures for now
-                sign = '?';
-            }
-
-
-            setPredictedSign(sign);
-            const isMatch = sign === currentSign;
-            setIsCorrect(isMatch);
-            setAccuracy(Math.round(gesture.score * 100));
-
-        } else {
-            setIsCorrect(null);
-            setAccuracy(0);
-            setPredictedSign(null);
+        // Map mediapipe names to our display names if needed
+        const gestureMap: Record<string, string> = {
+            'VICTORY': 'V',
+            'THUMB_UP': 'A', // Note: This is an approximation
+            'THUMB_DOWN': 'T', // Note: This is an approximation
+            'POINTING_UP': 'D',
+            'OPEN_PALM': 'B',
+            'ILOVEYOU': 'Y', // Note: This is an approximation
+            'CLOSED_FIST': 'S',
         }
-      }
-    }
+        if (gestureMap[sign]) {
+            sign = gestureMap[sign];
+        } else if (sign.length > 1) { // Ignore complex gestures for now
+            sign = '?';
+        }
 
-    animationFrameId.current = requestAnimationFrame(predictWebcam);
-  };
-  
-  useEffect(() => {
-    if (gestureRecognizer && isWebcamOn && hasCameraPermission) {
-      animationFrameId.current = requestAnimationFrame(predictWebcam);
-    } else {
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
+        setPredictedSign(sign);
+        const isMatch = sign === currentSign;
+        setIsCorrect(isMatch);
+        setAccuracy(Math.round(gesture.score * 100));
+
+      } else {
+        // No gesture detected, reset state
+        setIsCorrect(null);
+        setAccuracy(0);
+        setPredictedSign(null);
       }
-    }
+      
+      animationFrameId.current = requestAnimationFrame(predict);
+    };
+
+    animationFrameId.current = requestAnimationFrame(predict);
+
     return () => {
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }
-    }
+    };
   }, [gestureRecognizer, isWebcamOn, hasCameraPermission, currentSign]);
 
 
@@ -490,5 +486,3 @@ export default function LearnPage() {
     </div>
   );
 }
-
-    
