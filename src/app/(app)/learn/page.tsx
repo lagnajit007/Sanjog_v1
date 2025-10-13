@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -13,7 +12,7 @@ import LessonCard from '@/components/lessons/lesson-card';
 import { Camera, CheckCircle, XCircle, ArrowRight, Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { HandLandmarker, FilesetResolver, DrawingUtils } from "@mediapipe/tasks-vision";
+import { GestureRecognizer, FilesetResolver, DrawingUtils } from "@mediapipe/tasks-vision";
 
 // Mock Data
 const userProgress = {
@@ -112,7 +111,7 @@ export default function LearnPage() {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const [isWebcamOn, setIsWebcamOn] = React.useState(true);
   const [hasCameraPermission, setHasCameraPermission] = React.useState<boolean | null>(null);
-  const [handLandmarker, setHandLandmarker] = useState<HandLandmarker | null>(null);
+  const [gestureRecognizer, setGestureRecognizer] = useState<GestureRecognizer | null>(null);
   const animationFrameId = useRef<number | null>(null);
   const lastPredictionTime = useRef(0);
   const PREDICTION_INTERVAL = 200; // ms
@@ -131,22 +130,22 @@ export default function LearnPage() {
   }, [practiceMode]);
 
   useEffect(() => {
-    const createHandLandmarker = async () => {
+    const createGestureRecognizer = async () => {
       try {
         const vision = await FilesetResolver.forVisionTasks(
           "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
         );
-        const landmarker = await HandLandmarker.createFromOptions(vision, {
+        const recognizer = await GestureRecognizer.createFromOptions(vision, {
           baseOptions: {
-            modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
+            modelAssetPath: `https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task`,
             delegate: "GPU",
           },
           runningMode: "VIDEO",
           numHands: 1,
         });
-        setHandLandmarker(landmarker);
+        setGestureRecognizer(recognizer);
       } catch (error) {
-        console.error("Error creating HandLandmarker:", error);
+        console.error("Error creating GestureRecognizer:", error);
          toast({
           variant: "destructive",
           title: "Model Loading Failed",
@@ -154,7 +153,7 @@ export default function LearnPage() {
         });
       }
     };
-    createHandLandmarker();
+    createGestureRecognizer();
   }, [toast]);
 
   useEffect(() => {
@@ -188,7 +187,7 @@ export default function LearnPage() {
   }, [toast]);
   
   const predictWebcam = async () => {
-    if (!handLandmarker || !videoRef.current || !canvasRef.current || !isWebcamOn || videoRef.current.readyState < 3) {
+    if (!gestureRecognizer || !videoRef.current || !canvasRef.current || !isWebcamOn || videoRef.current.readyState < 3) {
       if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
       animationFrameId.current = requestAnimationFrame(predictWebcam);
       return;
@@ -204,12 +203,12 @@ export default function LearnPage() {
       canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
 
       const now = performance.now();
-      const results = handLandmarker.recognizeForVideo(video, now);
+      const results = gestureRecognizer.recognizeForVideo(video, now);
       
       const drawingUtils = new DrawingUtils(canvasCtx);
       if (results.landmarks) {
         for (const landmarks of results.landmarks) {
-          drawingUtils.drawConnectors(landmarks, HandLandmarker.HAND_CONNECTIONS, { color: '#FFFFFF', lineWidth: 5 });
+          drawingUtils.drawConnectors(landmarks, GestureRecognizer.HAND_CONNECTIONS, { color: '#FFFFFF', lineWidth: 5 });
           drawingUtils.drawLandmarks(landmarks, { color: '#6C4CF1', lineWidth: 2 });
         }
       }
@@ -224,11 +223,11 @@ export default function LearnPage() {
             // Map mediapipe names to our display names if needed
             const gestureMap: Record<string, string> = {
                 'VICTORY': 'V',
-                'THUMB_UP': 'A', // Example mapping, may not be accurate
-                'THUMB_DOWN': 'S', // Example
-                'POINTING_UP': 'D', // Example
-                'OPEN_PALM': 'B', // Example
-                'ILOVEYOU': 'Y', // Example
+                'THUMB_UP': 'A',
+                'THUMB_DOWN': 'S',
+                'POINTING_UP': 'D',
+                'OPEN_PALM': 'B',
+                'ILOVEYOU': 'Y',
             }
             if (gestureMap[sign]) {
                 sign = gestureMap[sign];
@@ -254,7 +253,7 @@ export default function LearnPage() {
   };
   
   useEffect(() => {
-    if (handLandmarker && isWebcamOn && hasCameraPermission) {
+    if (gestureRecognizer && isWebcamOn && hasCameraPermission) {
       animationFrameId.current = requestAnimationFrame(predictWebcam);
     } else {
       if (animationFrameId.current) {
@@ -266,7 +265,7 @@ export default function LearnPage() {
         cancelAnimationFrame(animationFrameId.current);
       }
     }
-  }, [handLandmarker, isWebcamOn, hasCameraPermission, currentSign]);
+  }, [gestureRecognizer, isWebcamOn, hasCameraPermission, currentSign]);
 
 
   const cameraStatusText = hasCameraPermission === false ? "Camera access denied." : (isWebcamOn ? "Analyzing your sign..." : "Webcam is off.");
