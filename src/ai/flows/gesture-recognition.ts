@@ -27,53 +27,6 @@ const GestureRecognitionOutputSchema = z.object({
 });
 export type GestureRecognitionOutput = z.infer<typeof GestureRecognitionOutputSchema>;
 
-// Define the tool to run the Python prediction server
-const pythonPredictionTool = ai.defineTool(
-  {
-    name: 'gesturePredictor',
-    description: 'Runs a Python script to predict a sign language gesture from hand landmarks.',
-    inputSchema: GestureRecognitionInputSchema,
-    outputSchema: GestureRecognitionOutputSchema,
-  },
-  async (input) => {
-    const pythonScriptPath = path.resolve(process.cwd(), 'src/models/predict_server.py');
-    const modelPath = path.resolve(process.cwd(), 'src/models/model.p');
-    
-    // Pass landmarks as a JSON string argument to the script.
-    const landmarksJsonString = JSON.stringify(input.landmarks);
-
-    // Escape single quotes in the JSON string for shell command
-    const escapedLandmarks = landmarksJsonString.replace(/'/g, "'\\''");
-
-    try {
-      const { stdout } = await execPromise(`python3 ${pythonScriptPath} '${escapedLandmarks}'`, {
-          env: { ...process.env, MODEL_PATH: modelPath }
-      });
-      const result = JSON.parse(stdout);
-
-      if (result.error) {
-        console.error('Python script error:', result.error);
-        return {
-          prediction: 'unknown',
-          confidence: 0,
-        };
-      }
-      
-      return {
-        prediction: result.prediction,
-        confidence: result.confidence,
-      };
-
-    } catch (error) {
-      console.error("Error executing Python script:", error);
-      return {
-        prediction: 'error',
-        confidence: 0,
-      };
-    }
-  }
-);
-
 // Define the main flow for gesture recognition
 const recognizeGestureFlow = ai.defineFlow(
   {
@@ -82,9 +35,36 @@ const recognizeGestureFlow = ai.defineFlow(
     outputSchema: GestureRecognitionOutputSchema,
   },
   async (input) => {
-    // Call the Python prediction tool
-    const result = await pythonPredictionTool(input);
-    return result;
+    try {
+      const response = await fetch('http://127.0.0.1:5000/predict', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ landmarks: input.landmarks }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Prediction server error:', errorText);
+        return {
+          prediction: 'error',
+          confidence: 0,
+        };
+      }
+
+      const result = await response.json();
+      return {
+        prediction: result.prediction,
+        confidence: result.confidence,
+      };
+    } catch (error) {
+      console.error("Error communicating with prediction server:", error);
+      return {
+        prediction: 'error',
+        confidence: 0,
+      };
+    }
   }
 );
 
