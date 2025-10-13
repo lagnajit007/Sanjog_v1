@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Award, Star } from 'lucide-react';
+import { Award } from 'lucide-react';
 import LessonCard from '@/components/lessons/lesson-card';
 import { Camera, CheckCircle, XCircle, ArrowRight, Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -50,12 +50,42 @@ const signsData = {
   letters: {
     A: { description: "Make the 'A' sign: form a fist with your thumb resting on the side.", image: 'https://picsum.photos/seed/sign-a/300/200', hint: 'sign language A' },
     B: { description: "Make the 'B' sign: hold up your hand with your four fingers extended and your thumb tucked in.", image: 'https://picsum.photos/seed/sign-b/300/200', hint: 'sign language B' },
-    // Add more letters
+    C: { description: "Make the 'C' sign: form a 'C' shape with your hand.", image: 'https://picsum.photos/seed/sign-c/300/200', hint: 'sign language C' },
+    D: { description: "Make the 'D' sign: point your index finger up and touch your thumb to your other fingers.", image: 'https://picsum.photos/seed/sign-d/300/200', hint: 'sign language D' },
+    E: { description: "Make the 'E' sign: bend your four fingers down, with your thumb tucked in.", image: 'https://picsum.photos/seed/sign-e/300/200', hint: 'sign language E' },
+    F: { description: "Make the 'F' sign: touch your index finger and thumb together, with other fingers up.", image: 'https://picsum.photos/seed/sign-f/300/200', hint: 'sign language F' },
+    G: { description: "Make the 'G' sign: point your index finger sideways, with your thumb on top.", image: 'https://picsum.photos/seed/sign-g/300/200', hint: 'sign language G' },
+    H: { description: "Make the 'H' sign: point your index and middle fingers out sideways.", image: 'https://picsum.photos/seed/sign-h/300/200', hint: 'sign language H' },
+    I: { description: "Make the 'I' sign: hold up your pinky finger.", image: 'https://picsum.photos/seed/sign-i/300/200', hint: 'sign language I' },
+    J: { description: "Make the 'J' sign: hold up your pinky finger and draw a 'J' in the air.", image: 'https://picsum.photos/seed/sign-j/300/200', hint: 'sign language J' },
+    K: { description: "Make the 'K' sign: hold up your index and middle fingers, with your thumb between them.", image: 'https://picsum.photos/seed/sign-k/300/200', hint: 'sign language K' },
+    L: { description: "Make the 'L' sign: hold up your index finger and thumb in an 'L' shape.", image: 'https://picsum.photos/seed/sign-l/300/200', hint: 'sign language L' },
+    M: { description: "Make the 'M' sign: tuck your thumb under your first three fingers.", image: 'https://picsum.photos/seed/sign-m/300/200', hint: 'sign language M' },
+    N: { description: "Make the 'N' sign: tuck your thumb under your first two fingers.", image: 'https://picsum.photos/seed/sign-n/300/200', hint: 'sign language N' },
+    O: { description: "Make the 'O' sign: form an 'O' shape with your hand.", image: 'https://picsum.photos/seed/sign-o/300/200', hint: 'sign language O' },
+    P: { description: "Make the 'P' sign: it's like a 'K' sign, but pointing down.", image: 'https://picsum.photos/seed/sign-p/300/200', hint: 'sign language P' },
+    Q: { description: "Make the 'Q' sign: it's like a 'G' sign, but pointing down.", image: 'https://picsum.photos/seed/sign-q/300/200', hint: 'sign language Q' },
+    R: { description: "Make the 'R' sign: cross your index and middle fingers.", image: 'https://picsum.photos/seed/sign-r/300/200', hint: 'sign language R' },
+    S: { description: "Make the 'S' sign: form a fist with your thumb over your fingers.", image: 'https://picsum.photos/seed/sign-s/300/200', hint: 'sign language S' },
+    T: { description: "Make the 'T' sign: tuck your thumb under your index finger.", image: 'https://picsum.photos/seed/sign-t/300/200', hint: 'sign language T' },
+    U: { description: "Make the 'U' sign: hold up your index and middle fingers together.", image: 'https://picsum.photos/seed/sign-u/300/200', hint: 'sign language U' },
+    V: { description: "Make the 'V' sign: hold up your index and middle fingers apart.", image: 'https://picsum.photos/seed/sign-v/300/200', hint: 'sign language V' },
+    W: { description: "Make the 'W' sign: hold up your first three fingers.", image: 'https://picsum.photos/seed/sign-w/300/200', hint: 'sign language W' },
+    X: { description: "Make the 'X' sign: crook your index finger.", image: 'https://picsum.photos/seed/sign-x/300/200', hint: 'sign language X' },
+    Y: { description: "Make the 'Y' sign: make a fist and extend your thumb and pinky.", image: 'https://picsum.photos/seed/sign-y/300/200', hint: 'sign language Y' },
+    Z: { description: "Make the 'Z' sign: hold up your index finger and draw a 'Z' in the air.", image: 'https://picsum.photos/seed/sign-z/300/200', hint: 'sign language Z' },
   },
   numbers: {
     '0': { description: "Make the '0' sign: form an 'O' shape with your hand.", image: 'https://picsum.photos/seed/sign-0/300/200', hint: 'sign language 0' },
     '1': { description: "Make the '1' sign: hold up your index finger.", image: 'https://picsum.photos/seed/sign-1/300/200', hint: 'sign language 1' },
-    // Add more numbers
+    '2': { description: "Make the '2' sign: hold up your index and middle fingers.", image: 'https://picsum.photos/seed/sign-2/300/200', hint: 'sign language 2' },
+    '3': { description: "Make the '3' sign: hold up your thumb, index, and middle fingers.", image: 'https://picsum.photos/seed/sign-3/300/200', hint: 'sign language 3' },
+    '4': { description: "Make the '4' sign: hold up four fingers, with your thumb tucked in.", image: 'https://picsum.photos/seed/sign-4/300/200', hint: 'sign language 4' },
+    '5': { description: "Make the '5' sign: hold up all five fingers.", image: 'https://picsum.photos/seed/sign-5/300/200', hint: 'sign language 5' },
+    '6': { description: "Make the '6' sign: touch your thumb to your pinky, with other fingers up.", image: 'https://picsum.photos/seed/sign-6/300/200', hint: 'sign language 6' },
+    '7': { description: "Make the '7' sign: touch your thumb to your ring finger, with other fingers up.", image: 'https://picsum.photos/seed/sign-7/300/200', hint: 'sign language 7' },
+    '8': { description: "Make the '8' sign: touch your thumb to your middle finger, with other fingers up.", image: 'https://picsum.photos/seed/sign-8/300/200', hint: 'sign language 8' },
+    '9': { description: "Make the '9' sign: touch your thumb to your index finger, with other fingers up.", image: 'https://picsum.photos/seed/sign-9/300/200', hint: 'sign language 9' },
   },
 };
 
@@ -67,7 +97,6 @@ export default function LearnPage() {
   const signs = practiceMode === 'letters' ? Object.keys(signsData.letters) : Object.keys(signsData.numbers);
   const currentSign = signs[currentSignIndex];
   const currentSignData = practiceMode === 'letters' ? signsData.letters[currentSign as keyof typeof signsData.letters] : signsData.numbers[currentSign as keyof typeof signsData.numbers];
-  const nextSign = signs[(currentSignIndex + 1) % signs.length];
   
   const beginnerLessons = allLessons.filter(l => l.category === 'Beginner');
   const intermediateLessons = allLessons.filter(l => l.category === 'Intermediate');
@@ -75,7 +104,7 @@ export default function LearnPage() {
   const specialLessons = allLessons.filter(l => l.category === 'Special Topics');
   const { toast } = useToast();
   const [isCorrect, setIsCorrect] = React.useState<boolean | null>(null);
-  const [sessionProgress, setSessionProgress] = React.useState(20);
+  const [sessionProgress, setSessionProgress] = React.useState(0);
   const [accuracy, setAccuracy] = React.useState(0);
   const [predictedSign, setPredictedSign] = React.useState<string | null>(null);
   const videoRef = React.useRef<HTMLVideoElement>(null);
@@ -85,14 +114,19 @@ export default function LearnPage() {
   const [handLandmarker, setHandLandmarker] = useState<HandLandmarker | null>(null);
   const animationFrameId = useRef<number | null>(null);
   const lastPredictionTime = useRef(0);
-  const PREDICTION_INTERVAL = 100; // 100ms between predictions
+  const PREDICTION_INTERVAL = 200; // ms
 
   const handleNextSign = () => {
+    setIsCorrect(null);
+    setPredictedSign(null);
+    setAccuracy(0);
+    setSessionProgress(prev => (prev >= 100 ? 0 : prev + (100 / signs.length)));
     setCurrentSignIndex((prev) => (prev + 1) % signs.length);
   };
 
   useEffect(() => {
     setCurrentSignIndex(0); // Reset to first sign when mode changes
+    setSessionProgress(0);
   }, [practiceMode]);
 
   useEffect(() => {
@@ -103,7 +137,7 @@ export default function LearnPage() {
         );
         const landmarker = await HandLandmarker.createFromOptions(vision, {
           baseOptions: {
-            modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
+            modelAssetPath: `https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task`,
             delegate: "GPU",
           },
           runningMode: "VIDEO",
@@ -112,10 +146,15 @@ export default function LearnPage() {
         setHandLandmarker(landmarker);
       } catch (error) {
         console.error("Error creating HandLandmarker:", error);
+         toast({
+          variant: "destructive",
+          title: "Model Loading Failed",
+          description: "Could not load the gesture recognition model. Please try refreshing the page.",
+        });
       }
     };
     createHandLandmarker();
-  }, []);
+  }, [toast]);
 
   useEffect(() => {
     const getCameraPermission = async () => {
@@ -164,7 +203,7 @@ export default function LearnPage() {
       canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
 
       const now = performance.now();
-      const results = handLandmarker.detectForVideo(video, now);
+      const results = handLandmarker.recognizeForVideo(video, now);
       
       const drawingUtils = new DrawingUtils(canvasCtx);
       if (results.landmarks) {
@@ -177,39 +216,35 @@ export default function LearnPage() {
       if (now - lastPredictionTime.current > PREDICTION_INTERVAL) {
         lastPredictionTime.current = now;
         
-        if (results.landmarks && results.landmarks.length > 0) {
-          const landmarks = results.landmarks[0].flatMap(lm => [lm.x, lm.y]);
-          try {
-            const response = await fetch('http://127.0.0.1:5000/predict', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ landmarks }),
-            });
-
-            if (response.ok) {
-                const { prediction, confidence } = await response.json();
-                setPredictedSign(prediction);
-                const targetSign = currentSign;
-                setIsCorrect(prediction === targetSign);
-                setAccuracy(Math.round(confidence * 100));
-            } else {
-                setIsCorrect(null);
-                setAccuracy(0);
-                setPredictedSign(null);
+        if (results.gestures.length > 0) {
+            const gesture = results.gestures[0][0];
+            let sign = gesture.categoryName.toUpperCase();
+            
+            // Map mediapipe names to our display names if needed
+            const gestureMap: Record<string, string> = {
+                'VICTORY': 'V',
+                'THUMB_UP': 'A', // Example mapping, may not be accurate
+                'THUMB_DOWN': 'S', // Example
+                'POINTING_UP': 'D', // Example
+                'OPEN_PALM': 'B', // Example
+                'ILOVEYOU': 'Y', // Example
+            }
+            if (gestureMap[sign]) {
+                sign = gestureMap[sign];
+            } else if (sign.length > 1) { // Ignore complex gestures for now
+                sign = '?';
             }
 
-          } catch (error) {
-            console.error("Prediction error:", error);
+
+            setPredictedSign(sign);
+            const isMatch = sign === currentSign;
+            setIsCorrect(isMatch);
+            setAccuracy(Math.round(gesture.score * 100));
+
+        } else {
             setIsCorrect(null);
             setAccuracy(0);
             setPredictedSign(null);
-          }
-        } else {
-          setIsCorrect(null);
-          setAccuracy(0);
-          setPredictedSign(null);
         }
       }
     }
@@ -329,7 +364,7 @@ export default function LearnPage() {
         
         <div className="w-48">
             <p className="text-sm text-muted-foreground mb-1">XP Gain</p>
-            <Progress value={sessionProgress} indicatorClassName="bg-accent-green" className="h-2" />
+            <Progress value={sessionProgress + (isCorrect ? (100 / signs.length) : 0)} indicatorClassName="bg-accent-green" className="h-2" />
         </div>
         
         <Button className="rounded-full font-bold text-white bg-primary px-8 py-6 text-lg" onClick={handleNextSign}>
@@ -455,7 +490,3 @@ export default function LearnPage() {
     </div>
   );
 }
-
-
-
-
