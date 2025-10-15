@@ -24,6 +24,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useUser } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
 
 // Mock Data
 const achievements = [
@@ -277,6 +278,7 @@ const ProfilePageSkeleton = () => (
 export default function ProfilePage() {
     const { user, isUserLoading } = useUser();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const { toast } = useToast();
 
     const [profileData, setProfileData] = useState({
       name: 'Jenny Wilson',
@@ -302,6 +304,40 @@ export default function ProfilePage() {
         setProfileData(prevUser => ({...prevUser, ...updatedUser}));
         // Here you would typically also update the user profile in Firebase
     };
+    
+    const handleInvite = async () => {
+        const shareData = {
+            title: 'Join me on Sanjog!',
+            text: 'Learn sign language with me on Sanjog, the fun and interactive AI-powered app!',
+            url: window.location.origin
+        };
+
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                // User cancelled share, etc.
+                console.error('Share failed:', err);
+            }
+        } else {
+            // Fallback for browsers that don't support Web Share API
+            try {
+                await navigator.clipboard.writeText(shareData.url);
+                toast({
+                    title: 'Link Copied!',
+                    description: 'Invitation link copied to your clipboard.',
+                });
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+                toast({
+                    variant: 'destructive',
+                    title: 'Failed to Copy',
+                    description: 'Could not copy the invitation link.',
+                });
+            }
+        }
+    };
+
 
     if (isUserLoading) {
         return <ProfilePageSkeleton />;
@@ -425,7 +461,7 @@ export default function ProfilePage() {
               </div>
               <span className="text-muted-foreground font-medium">+{friends.length} more</span>
             </div>
-            <Button><UserPlus className="h-4 w-4 mr-2" /> Invite a Friend</Button>
+            <Button onClick={handleInvite}><UserPlus className="h-4 w-4 mr-2" /> Invite a Friend</Button>
           </CardContent>
         </Card>
 
