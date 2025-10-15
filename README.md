@@ -93,6 +93,8 @@ To make learning sign language **accessible, engaging, and human-like** through 
 git clone https://github.com/yourusername/sanjog.git
 cd sanjog
 
+```
+
 🧬 Machine Learning
 
 Built with MediaPipe Hands + Scikit-learn classifier.
@@ -134,3 +136,4 @@ MIT License © 2025 — Made with ❤️ by LagnaJit Ghosh
 
 “Sanjog means connection — between hands, hearts, and humans.”
 Let’s build a world where everyone can communicate freely, one gesture at a time. 🤟
+
