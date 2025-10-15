@@ -128,9 +128,6 @@ Flask & Next.js for making AI web dev painless
 
 And you, for believing that AI + accessibility = magic.
 
-🧭 License
-
-MIT License © 2025 — Made with ❤️ by LagnaJit Ghosh
 
 💬 Final Words
 
