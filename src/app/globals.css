@@ -2,12 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: 'Poppins', 'Inter', sans-serif;
-}
-
 @layer base {
   :root {
+    /* Base Colors - Vibrant Purple Theme */
     --background: 252 100% 99%;
     --foreground: 240 10% 4%;
     --surface: 0 0% 100%;
@@ -15,36 +12,53 @@ body {
     --card-foreground: 240 10% 4%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 4%;
+    
+    /* Primary - Vibrant Purple */
     --primary: 251 100% 63%;
     --primary-foreground: 0 0% 100%;
-    --on-primary: 0 0% 100%;
-    --secondary: 251 100% 63%;
-    --secondary-foreground: 0 0% 100%;
+    
+    /* Secondary */
+    --secondary: 251 100% 96%;
+    --secondary-foreground: 251 100% 63%;
+    
+    /* Muted */
     --muted: 220 17% 91%;
     --muted-foreground: 220 9% 45%;
+    
+    /* Accent */
     --accent: 251 100% 96%;
     --accent-foreground: 251 100% 63%;
+    
+    /* Destructive */
     --destructive: 359 100% 69%;
     --destructive-foreground: 0 0% 98%;
-    --success: 145 100% 39%;
+    
+    /* Border & Input */
     --border: 220 13% 91%;
     --input: 220 13% 91%;
     --ring: 251 100% 63%;
+    
+    /* Radius */
     --radius: 1rem;
+    
+    /* Text Colors */
     --text-primary: 240 10% 12%;
     --text-secondary: 240 4% 43%;
-
+    
+    /* Custom Accent Colors */
     --accent-orange: 14 100% 62%;
     --accent-green: 151 58% 62%;
     --accent-blue: 216 100% 71%;
-
+    
+    /* Chart Colors */
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     
-    --sidebar-background: 0 0% 100%;
+    /* Sidebar */
+    --sidebar: 0 0% 100%;
     --sidebar-foreground: 240 10% 4%;
     --sidebar-primary: 252 98% 62%;
     --sidebar-primary-foreground: 0 0% 100%;
@@ -53,26 +67,159 @@ body {
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 251 100% 63%;
   }
+
+  .dark {
+    --background: 240 10% 8%;
+    --foreground: 0 0% 98%;
+    --surface: 240 10% 12%;
+    --card: 240 10% 12%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 12%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 251 100% 63%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 10% 18%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 10% 18%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 240 10% 18%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 359 100% 69%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 10% 18%;
+    --input: 240 10% 18%;
+    --ring: 251 100% 63%;
+    
+    /* Text Colors */
+    --text-primary: 0 0% 98%;
+    --text-secondary: 240 5% 65%;
+    
+    /* Accent colors remain vibrant in dark mode */
+    --accent-orange: 14 100% 62%;
+    --accent-green: 151 58% 62%;
+    --accent-blue: 216 100% 71%;
+    
+    --sidebar: 240 10% 12%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 251 100% 63%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 10% 18%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 10% 18%;
+    --sidebar-ring: 251 100% 63%;
+  }
 }
 
 @layer base {
-  * {
-    @apply border-border;
+  /* Exclude video elements from global border and outline to prevent interference */
+  *:not(video) {
+    @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Manrope', system-ui, -apple-system, sans-serif;
   }
 }
 
-@keyframes subtle-bounce {
-  0%, 100% {
-    transform: translateY(0);
+@layer components {
+  /* Ensure camera container is properly sized and doesn't clip content */
+  .camera-container {
+    @apply relative w-full h-full bg-black rounded-lg;
+    min-height: 300px;
+    aspect-ratio: 4 / 3;
+    overflow: visible; /* Prevent clipping of video content */
+    position: relative;
+    z-index: 2;
   }
-  50% {
-    transform: translateY(-5px);
+
+  /* Ensure video element is visible and properly sized */
+  .camera-container video {
+    @apply w-full h-full object-contain;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    background-color: #000;
+    position: relative;
+    z-index: 2;
+    /* Temporarily disable transform for debugging; re-enable after confirming rendering */
+    /* transform: scaleX(-1); */
+  }
+
+  /* Ensure canvas overlay is properly aligned and visible */
+  .camera-container canvas {
+    @apply absolute inset-0 w-full h-full;
+    pointer-events: none;
+    z-index: 2;
+    /* Temporarily disable transform for debugging; re-enable after confirming rendering */
+    /* transform: scaleX(-1); */
+  }
+
+  /* Debug border to verify video rendering in development */
+  [data-env="development"] .camera-container video {
+    border: 2px solid red; /* Visible border to confirm video element presence */
   }
 }
 
-.animate-subtle-bounce {
-  animation: subtle-bounce 2s ease-in-out infinite;
+/* Smooth transitions for interactive elements */
+a, button, input, select, .transition-all {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Smoother hover effects on buttons and links */
+button:hover, a:hover, [role="button"]:hover {
+  transition: all 0.15s ease;
+}
+
+/* Smooth transition for page navigation */
+body {
+  overflow-x: hidden;
+}
+
+/* Enhanced focus states */
+:focus-visible {
+  outline: 2px solid #704ee7;
+  outline-offset: 2px;
+  transition: outline-offset 0.15s ease;
+}
+
+/* Smooth image transitions */
+img {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Smoother scrolling behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Disable scroll-behavior if user prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Create subtle hover lift effect for cards */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+.clip-hexagon {
+  clip-path: polygon(
+    25% 6.7%, 75% 6.7%, 
+    100% 50%, 75% 93.3%, 
+    25% 93.3%, 0% 50%
+  );
 }

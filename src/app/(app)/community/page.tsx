@@ -55,78 +55,91 @@ const challengesData = [
   { id: 'c2', title: 'Greeting Master', description: 'Learn 10 new greetings.', progress: 25 },
 ];
 
-const commentsData = {
-    post1: [
-        { id: 'com1', user: { avatar: 'https://picsum.photos/seed/3/30/30', displayName: 'Ben Carter'}, comment: 'Awesome job!' },
-        { id: 'com2', user: { avatar: 'https://picsum.photos/seed/4/30/30', displayName: 'Chloe Garcia'}, comment: 'Keep it up!'},
-    ],
-    post2: [
-        { id: 'com3', user: { avatar: 'https://picsum.photos/seed/1/30/30', displayName: 'Jenny Wilson'}, comment: 'Looks great!' },
-    ]
+interface Comment {
+  id: string;
+  user: {
+    avatar: string;
+    displayName: string;
+  };
+  comment: string;
+}
+
+interface CommentsData {
+  [key: string]: Comment[];
+}
+
+const commentsData: CommentsData = {
+  post1: [
+    { id: 'com1', user: { avatar: 'https://picsum.photos/seed/3/30/30', displayName: 'Ben Carter' }, comment: 'Awesome job!' },
+    { id: 'com2', user: { avatar: 'https://picsum.photos/seed/4/30/30', displayName: 'Chloe Garcia' }, comment: 'Keep it up!' },
+  ],
+  post2: [
+    { id: 'com3', user: { avatar: 'https://picsum.photos/seed/1/30/30', displayName: 'Jenny Wilson' }, comment: 'Looks great!' },
+  ]
 }
 
 const CommunityPost = ({ post }: { post: typeof postsData[0] }) => {
-    const [liked, setLiked] = useState(false);
+  const [liked, setLiked] = useState(false);
 
-    return (
-        <Card className="mb-4">
-            <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10">
-                        <AvatarImage src={post.user.avatar} alt={post.user.displayName} />
-                        <AvatarFallback>{post.user.displayName.charAt(0)}</AvatarFallback>
+  return (
+    <Card className="mb-4">
+      <CardContent className="p-4">
+        <div className="flex items-center gap-3">
+          <Avatar className="h-10 w-10">
+            <AvatarImage src={post.user.avatar} alt={post.user.displayName} />
+            <AvatarFallback>{post.user.displayName.charAt(0)}</AvatarFallback>
+          </Avatar>
+          <div>
+            <p className="font-bold">{post.user.displayName}</p>
+            <p className="text-xs text-muted-foreground">{post.timestamp}</p>
+          </div>
+        </div>
+        <p className="my-4">{post.content}</p>
+        {post.mediaUrl && (
+          <img src={post.mediaUrl} alt="Post media" className="max-h-80 w-full rounded-lg object-cover" />
+        )}
+        <div className="mt-4 flex items-center justify-between border-t pt-2">
+          <Button variant="ghost" className="flex items-center gap-2" onClick={() => setLiked(!liked)}>
+            <Heart className={liked ? 'text-red-500 fill-current' : ''} />
+            <span>{post.likes + (liked ? 1 : 0)}</span>
+          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="ghost" className="flex items-center gap-2">
+                <MessageCircle /> <span>{post.comments} Comments</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Comments</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                {commentsData[post.id]?.map((c) => (
+                  <div key={c.id} className="flex items-start gap-3 rounded-lg bg-secondary/50 p-3">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={c.user.avatar} alt={c.user.displayName} />
+                      <AvatarFallback>{c.user.displayName.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <div>
-                        <p className="font-bold">{post.user.displayName}</p>
-                        <p className="text-xs text-muted-foreground">{post.timestamp}</p>
+                      <p className="font-semibold">{c.user.displayName}</p>
+                      <p>{c.comment}</p>
                     </div>
-                </div>
-                <p className="my-4">{post.content}</p>
-                {post.mediaUrl && (
-                    <img src={post.mediaUrl} alt="Post media" className="max-h-80 w-full rounded-lg object-cover" />
-                )}
-                <div className="mt-4 flex items-center justify-between border-t pt-2">
-                    <Button variant="ghost" className="flex items-center gap-2" onClick={() => setLiked(!liked)}>
-                        <Heart className={liked ? 'text-red-500 fill-current' : ''} /> 
-                        <span>{post.likes + (liked ? 1 : 0)}</span>
-                    </Button>
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button variant="ghost" className="flex items-center gap-2">
-                                <MessageCircle /> <span>{post.comments} Comments</span>
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>Comments</DialogTitle>
-                            </DialogHeader>
-                            <div className="space-y-4">
-                                {(commentsData as any)[post.id]?.map((c: any) => (
-                                    <div key={c.id} className="flex items-start gap-3 rounded-lg bg-secondary/50 p-3">
-                                        <Avatar className="h-8 w-8">
-                                            <AvatarImage src={c.user.avatar} alt={c.user.displayName} />
-                                            <AvatarFallback>{c.user.displayName.charAt(0)}</AvatarFallback>
-                                        </Avatar>
-                                        <div>
-                                            <p className="font-semibold">{c.user.displayName}</p>
-                                            <p>{c.comment}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="mt-4 flex gap-2">
-                                <Input placeholder="Write a comment..." />
-                                <Button>Post</Button>
-                            </div>
-                        </DialogContent>
-                    </Dialog>
-                    <Button variant="ghost" className="flex items-center gap-2">
-                        <Share2 /> <span>Share</span>
-                    </Button>
-                </div>
-            </CardContent>
-        </Card>
-    )
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 flex gap-2">
+                <Input placeholder="Write a comment..." />
+                <Button>Post</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+          <Button variant="ghost" className="flex items-center gap-2">
+            <Share2 /> <span>Share</span>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  )
 }
 
 export default function CommunityPage() {
@@ -155,7 +168,7 @@ export default function CommunityPage() {
         </Card>
 
         <div>
-            {postsData.map(post => <CommunityPost key={post.id} post={post} />)}
+          {postsData.map(post => <CommunityPost key={post.id} post={post} />)}
         </div>
       </div>
 
@@ -185,21 +198,21 @@ export default function CommunityPage() {
             </ul>
           </CardContent>
         </Card>
-        
+
         <Card>
-            <CardHeader>
-                <p className="font-bold">Community Challenges</p>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                {challengesData.map(challenge => (
-                    <div key={challenge.id} className="p-3 bg-secondary/50 rounded-lg">
-                        <p className="font-semibold">{challenge.title}</p>
-                        <p className="text-sm text-muted-foreground mb-2">{challenge.description}</p>
-                        <Progress value={challenge.progress} className="h-2 mb-3" indicatorClassName="bg-primary" />
-                        <Button size="sm" className="w-full rounded-full">Join Challenge</Button>
-                    </div>
-                ))}
-            </CardContent>
+          <CardHeader>
+            <p className="font-bold">Community Challenges</p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {challengesData.map(challenge => (
+              <div key={challenge.id} className="p-3 bg-secondary/50 rounded-lg">
+                <p className="font-semibold">{challenge.title}</p>
+                <p className="text-sm text-muted-foreground mb-2">{challenge.description}</p>
+                <Progress value={challenge.progress} className="h-2 mb-3" indicatorClassName="bg-primary" />
+                <Button size="sm" className="w-full rounded-full">Join Challenge</Button>
+              </div>
+            ))}
+          </CardContent>
         </Card>
       </div>
     </div>
